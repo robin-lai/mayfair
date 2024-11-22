@@ -109,7 +109,7 @@ def get_test_data():
     return m
 
 if __name__ == '__main__':
-    flag = 'sample'
+    flag = 's3'
     if flag == 's3':
         m = get_data_from_s3()
     elif flag == 'mock':
