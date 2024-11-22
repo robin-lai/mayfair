@@ -1,0 +1,13 @@
+in_seq_0d_gdsid, in_seq_0d_ctid, --兼容实时
+in_seq_1d_gdsid, in_seq_1d_ctid,
+in_seq_3d_gdsid, in_seq_3d_ctid
+in_seq_7d_gdsid, in_seq_7d_ctid
+in_seq_14d_gdsid, in_seq_14d_ctid
+in_seq_30d_gdsid, in_seq_30d_ctid
+
+11-13号开发：
+in_seq_lastn_gdsid, in_seq_lastn_ctid - sql-要计数。
+in_clk_seq_lastn_gdsid, in_cart_pay_seq_lastn_ctid,in_wish_seq_lastn_ctid - udf
+is_rel_cate, is_rel_catename,is_rel_cate4  简单做一个target_id跟main_id的匹配 -sql开发
+
+
