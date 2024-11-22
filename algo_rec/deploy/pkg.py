@@ -10,7 +10,7 @@ if __name__ == '__main__':
     deploy_tmp_dir = deploy_dir + 'tmp/'
     deploy_code_dir = deploy_tmp_dir + 'code/'
     code_file = deploy_dir + 'inference.py'
-    sh.cd(deploy_dir)
+    # sh.cd(deploy_dir)
     sh.mkdir(deploy_tmp_dir)
     sh.mkdir(deploy_code_dir)
     sh.cp(code_file, deploy_code_dir)
