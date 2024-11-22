@@ -35,11 +35,11 @@ def main(lines):
         if u in user_bhv_item_list.keys():
             user_bhv_item_list[u].add(itm)
         else:
-            user_bhv_item_list[u] = set(itm)
+            user_bhv_item_list[u] = set([itm])
         if itm in item_bhv_user_list.keys():
             item_bhv_user_list[itm].add(u)
         else:
-            item_bhv_user_list[itm] = set(u)
+            item_bhv_user_list[itm] = set([u])
         # count
         if u in user_bhv_num.keys():
             user_bhv_num[u] += 1
@@ -61,41 +61,63 @@ def main(lines):
     # pprint.pprint(swing('h',1))
     # pprint.pprint(swing('h',1, user_debias=False))
 
-
-
-if __name__ == '__main__':
-    # lines = [
-    #     ("A", 'z', 1, 'cn'),
-    #     ("A", 'p', 1, 'cn'),
-    #     ("A", 't', 1, 'cn'),
-    #     ("A", 'r', 1, 'cn'),
-    #     ("A", 'h', 1, 'cn'),
-    #     ("B", 'h', 1, 'cn'),
-    #     ("B", 't', 1, 'cn'),
-    #     ("B", 'r', 1, 'cn'),
-    #     ("B", 'p', 1, 'cn'),
-    #     ("C", 'h', 1, 'cn'),
-    #     ("C", 'p', 1, 'cn'),
-    #     ("C", 'y', 1, 'cn'),
-    #     ("C", 'q', 1, 'cn'),
-    #     ("D", 'h', 1, 'cn'),
-    #     ("D", 'q', 1, 'cn'),
-    #     ("E", 'h', 1, 'cn'),
-    #     ("E", 'q', 1, 'cn'),
-    #     ("E", 'o', 1, 'cn'),
-    #     ("E", 'x', 1, 'cn'),
-    # ]
-    # lines = lines_t
+def get_data_from_s3():
     raw_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
     pt = parquet.read_table(raw_file)
     m = {}
-    for uuid, goods_id, clk_num, country_code in zip(pt['uuid'], pt['goods_id'],pt['clk_num'], pt['country_code']):
+    for uuid, goods_id, clk_num, country_code in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']):
         country_code = country_code.as_py()
         t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py())
         if country_code in m:
             m[country_code].append(t)
         else:
             m[country_code] = [t]
+    return m
+
+def get_mock_data():
+    m = {'cn': [
+        ("A", 'z', 1, 'cn'),
+        ("A", 'p', 1, 'cn'),
+        ("A", 't', 1, 'cn'),
+        ("A", 'r', 1, 'cn'),
+        ("A", 'h', 1, 'cn'),
+        ("B", 'h', 1, 'cn'),
+        ("B", 't', 1, 'cn'),
+        ("B", 'r', 1, 'cn'),
+        ("B", 'p', 1, 'cn'),
+        ("C", 'h', 1, 'cn'),
+        ("C", 'p', 1, 'cn'),
+        ("C", 'y', 1, 'cn'),
+        ("C", 'q', 1, 'cn'),
+        ("D", 'h', 1, 'cn'),
+        ("D", 'q', 1, 'cn'),
+        ("E", 'h', 1, 'cn'),
+        ("E", 'q', 1, 'cn'),
+        ("E", 'o', 1, 'cn'),
+        ("E", 'x', 1, 'cn'),
+    ]}
+    return m
+
+def get_test_data():
+    m = {}
+    ll = []
+    with open('./cn_rec_detail_recall_ui_relation.txt', 'r') as fout:
+        lines = fout.readlines()
+        for line in lines:
+            ll.append([e.strip('\n') for e in line.split(' ')])
+    m['cn'] = ll
+    return m
+
+if __name__ == '__main__':
+    flag = 'sample'
+    if flag == 's3':
+        m = get_data_from_s3()
+    elif flag == 'mock':
+        m = get_mock_data()
+    elif flag == 'sample':
+        m = get_test_data()
+    print(m)
+
     ret = {}
     row_n = 30
     with open('./cn_rec_detail_recall_i2i_for_redis.txt', 'w') as fout:
