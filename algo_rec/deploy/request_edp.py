@@ -1,5 +1,5 @@
 import json
-from Constant import *
+from constant import *
 import boto3
 
 inputs1 = {

@@ -2,7 +2,7 @@ import boto3
 import sagemaker
 from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
-from Constant import *
+from constant import *
 
 def deploy_new_endpoint(model_data,
                         endpoint_name,

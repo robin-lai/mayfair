@@ -3,7 +3,7 @@ import boto3
 import sagemaker
 from sagemaker import get_execution_role
 import sh
-from Constant import *
+from constant import *
 
 if __name__ == '__main__':
     deploy_dir =  '/home/sagemaker-user/mayfair/algo_rec/deploy/'
