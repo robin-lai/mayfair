@@ -35,6 +35,6 @@ if __name__ == '__main__':
     os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
     # sh.tar("czvf", tar_file, deploy_tmp_dir)
     # upload
-    s3_model_online_tar_file = s3_model_online + tar_file
+    s3_model_online_tar_file = s3_model_online + tar_name
     os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
     # s3_cli.upload_file(tar_file, BUCKET, s3_model_online_tar_file)
