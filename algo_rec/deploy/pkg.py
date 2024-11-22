@@ -24,7 +24,9 @@ if __name__ == '__main__':
 
     # download files
     BUCKET = 'warehouse-algo'
-    s3_cli.download_file(Bucket=BUCKET, Key=s3_model, Filename=deploy_tmp_dir)
+    # s3_cli.download_file(Bucket=BUCKET, Key=s3_model, Filename=deploy_tmp_dir)
+    import os
+    os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
     # tar
     tar_file = deploy_tmp_dir + tar_name
     sh.tar("czvf", tar_file, deploy_tmp_dir)
