@@ -12,7 +12,7 @@ def process(lines):
         u_num = len(user)
         if u_num < 2:
             return swing
-        print('common user num:', u_num)
+        # print('common user num:', u_num)
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 # print('user a', user[i], 'user b', user[j])
