@@ -1,6 +1,7 @@
 # encoding:utf-8
 
 import pprint
+import time
 from pyarrow import parquet
 def main(lines):
     def swing(trig_itm, alph, user_debias=True):
@@ -62,7 +63,9 @@ def main(lines):
     # pprint.pprint(swing('h',1, user_debias=False))
 
 def get_data_from_s3():
+    st = time.time()
     raw_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
+    print('begin read parquet data from file:', raw_file)
     pt = parquet.read_table(raw_file)
     m = {}
     for uuid, goods_id, clk_num, country_code in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']):
@@ -72,6 +75,11 @@ def get_data_from_s3():
             m[country_code].append(t)
         else:
             m[country_code] = [t]
+    ed = time.time()
+    print('end read file,cost:%s'%(str(ed - st)))
+    print('data describe:', '*' * 50)
+    for k, v in m.items():
+        print('country:%s lines:%s' % (k, len(v)))
     return m
 
 def get_mock_data():
@@ -99,13 +107,21 @@ def get_mock_data():
     return m
 
 def get_test_data():
+    st = time.time()
+    file = './cn_rec_detail_recall_ui_relation.txt'
+    print('begin read parquet data from file:', file)
     m = {}
     ll = []
-    with open('./cn_rec_detail_recall_ui_relation.txt', 'r') as fout:
+    with open(file, 'r') as fout:
         lines = fout.readlines()
         for line in lines:
             ll.append([e.strip('\n') for e in line.split(' ')])
     m['cn'] = ll
+    ed = time.time()
+    print('end read file,cost:%s'%(str(ed - st)))
+    print('data describe:', '*' * 50)
+    for k, v in m.items():
+        print('country:%s lines:%s' % (k, len(v)))
     return m
 
 if __name__ == '__main__':
@@ -116,7 +132,7 @@ if __name__ == '__main__':
         m = get_mock_data()
     elif flag == 'sample':
         m = get_test_data()
-    print(m)
+    # print(m)
 
     ret = {}
     row_n = 30
