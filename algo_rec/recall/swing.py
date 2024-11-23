@@ -82,9 +82,9 @@ def process(lines):
         c += 1
         swing_rec = swing(itm, 1)
         ret[itm] = [(k, v) for k, v in swing_rec.items()]
-        if c % 5 == 0:
+        if c % 100 == 0:
             ed = time.time()
-            print('process 5 item cost:',str(ed-st))
+            print('process 100 item cost:',str(ed-st))
     print('hot_item_num:', hot_item_num)
     print('dump swing result to file')
     with open('./swing_i2i_ret.pkl', 'wb') as fout:
