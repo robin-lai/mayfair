@@ -4,6 +4,7 @@ import pprint
 import argparse
 import time
 from pyarrow import parquet
+import pickle
 def process(lines):
     def swing(trig_itm, alph, user_debias=True):
         swing = {}
@@ -56,20 +57,38 @@ def process(lines):
     ed = time.time()
     print('data process for swing cost:',str(ed-st))
     print('data desc: user num %s, item num:%s'%(len(user_bhv_num.keys()), len(item_bhv_user_list.keys())))
+    print('dump data into file')
+    with open('./item_bhv_user_list.pkl', 'wb') as fout:
+        pickle.dump(item_bhv_user_list, fout)
+    with open('./user_bhv_item_list.pkl', 'wb') as fout:
+        pickle.dump(user_bhv_item_list, fout)
+    with open('./user_bhv_num.pkl', 'wb') as fout:
+        pickle.dump(user_bhv_num, fout)
+    with open('./item_bhv_num.pkl', 'wb') as fout:
+        pickle.dump(item_bhv_num, fout)
+
+
 
     # print('user_bhv_item_list:', user_bhv_item_list)
     # print('item_bhv_user_list:', item_bhv_user_list)
     ret = {}
     c = 0
     st = time.time()
+    hot_item_num = 0
     for itm in item_bhv_user_list.keys():
+        if item_bhv_num[itm] > 2000:
+            hot_item_num += 1
+            continue
         c += 1
         swing_rec = swing(itm, 1)
         ret[itm] = [(k, v) for k, v in swing_rec.items()]
         if c % 5 == 0:
             ed = time.time()
             print('process 5 item cost:',str(ed-st))
-
+    print('hot_item_num:', hot_item_num)
+    print('dump swing result to file')
+    with open('./swing_i2i_ret.pkl', 'wb') as fout:
+        pickle.dump(ret, fout)
     # pprint.pprint(ret, compact=True)
     return ret
     # pprint.pprint(swing('h',1))
