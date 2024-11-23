@@ -1,5 +1,5 @@
 import json
-from constant import *
+from algo_rec.constant import *
 import boto3
 
 inputs1 = {

@@ -4,7 +4,7 @@ import sagemaker
 from sagemaker import get_execution_role
 # import sh
 import os
-from constant import *
+from algo_rec.constant import *
 
 if __name__ == '__main__':
     deploy_dir =  '/home/sagemaker-user/mayfair/algo_rec/deploy/'
