@@ -1,7 +1,9 @@
 # encoding:utf-8
 import tensorflow as tf
+import sys
+sys.path.append('/home/sagemaker-user/mayfair')
 from algo_rec.constant import *
-import parquet
+from pyarrow import parquet
 
 def bytes_fea(v_list, n=1, encode=False):
     v_list = v_list if isinstance(v_list, list) else [v_list]
