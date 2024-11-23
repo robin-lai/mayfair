@@ -7,3 +7,6 @@ s3_model_online = 's3://warehouse-algo/rec/model_test/'
 tar_name = 'model_1122.tar.gz'
 s3_model_online_tar_file = 's3://warehouse-algo/rec/model_test/' + tar_name
 endpoint = 'ctr-model-debug1121'
+
+s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
+s3_sp_tfr_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all/"

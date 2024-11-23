@@ -1,3 +1,8 @@
+# encoding:utf-8
+import tensorflow as tf
+from algo_rec.constant import *
+import parquet
+
 def bytes_fea(v_list, n=1, encode=False):
     v_list = v_list if isinstance(v_list, list) else [v_list]
     if len(v_list) > n:
@@ -23,10 +28,6 @@ def cross_fea(v1_list, v2_list, n=1):
     return bytes_fea(v3_list, n, True)
 
 def build_example(sample):
-    query = sample['query'].lower()
-    query_seg = query.split()
-    title = sample['title'].lower()
-    title_seg = title.split()
 
     feature = dict()
     feature.update({k: floats_fea(sample[k]) for k in ["ctr_7d", "cvr_7d"]})
@@ -34,5 +35,14 @@ def build_example(sample):
     feature.update({k: bytes_fea(sample[k], n=20) for k in ["seq_cate_id", "seq_goods_id"]})
     feature.update({k: ints_fea(sample[k]) for k in ["show_7d", "click_7d", "cart_7d", "ord_total", "pay_total", "ord_7d","pay_7d"]})
     feature.update({k: ints_fea(sample[k]) for k in ["is_clk", "is_pay","show_7d", "click_7d", "cart_7d", "ord_total", "pay_total", "ord_7d","pay_7d"]})
-    return tf1.train.Example(features=tf1.train.Features(feature=feature))
+    return tf.train.Example(features=tf.train.Features(feature=feature))
 
+if __name__ == '__main__':
+    ds = 'ds=20241113'
+    trf_path_local = './cn_rec_detail_sample_v1_test' + ds
+    ptpath = s3_sp_pt_dir + ds
+    tfr_path_s3 = s3_sp_tfr_dir + ds + 'test'
+    fout = tf.python_io.TFRecordWriter(trf_path_local)
+    for idx, sample in enumerate(parquet.read_table(ptpath).to_pylist()):
+        record = build_example(sample).SerializeToString()
+        fout.write(record)
