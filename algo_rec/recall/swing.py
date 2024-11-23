@@ -11,6 +11,7 @@ def process(lines):
         u_num = len(user)
         if u_num < 2:
             return swing
+        print('common user num:', u_num)
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 # print('user a', user[i], 'user b', user[j])
@@ -65,9 +66,9 @@ def process(lines):
         c += 1
         swing_rec = swing(itm, 1)
         ret[itm] = [(k, v) for k, v in swing_rec.items()]
-        if c % 1000 == 0:
+        if c % 5 == 0:
             ed = time.time()
-            print('process 1000 item cost:',str(ed-st))
+            print('process 5 item cost:',str(ed-st))
 
     # pprint.pprint(ret, compact=True)
     return ret
