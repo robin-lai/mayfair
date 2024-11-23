@@ -1,9 +1,11 @@
 # encoding:utf-8
 import tensorflow as tf
 import sys
+import time
 sys.path.append('/home/sagemaker-user/mayfair')
 from algo_rec.constant import *
 from pyarrow import parquet
+import argparse
 
 def bytes_fea(v_list, n=1, encode=False):
     v_list = v_list if isinstance(v_list, list) else [v_list]
@@ -39,12 +41,28 @@ def build_example(sample):
     feature.update({k: ints_fea(sample[k]) for k in ["is_clk", "is_pay","show_7d", "click_7d", "cart_7d", "ord_total", "pay_total", "ord_7d","pay_7d"]})
     return tf.train.Example(features=tf.train.Features(feature=feature))
 
-if __name__ == '__main__':
-    ds = 'ds=20241113'
-    trf_path_local = './cn_rec_detail_sample_v1_test' + ds
-    ptpath = s3_sp_pt_dir + ds
-    tfr_path_s3 = s3_sp_tfr_dir + ds + 'test'
+def main(args):
+    trf_path_local = './cn_rec_detail_sample_v1_test' + args.ds
+    ptpath = s3_sp_pt_dir + args.ds
+    tfr_path_s3 = s3_sp_tfr_dir + args.ds + 'test'
+    st = time.time()
+    lines = parquet.read_table(ptpath).to_pylist()
+    ed = time.time()
+    print('read ptpath:%s data cost:%s'%(ptpath, str(ed-st)))
+    st = time.time()
     fout = tf.python_io.TFRecordWriter(trf_path_local)
-    for idx, sample in enumerate(parquet.read_table(ptpath).to_pylist()):
+    for idx, sample in enumerate(lines):
         record = build_example(sample).SerializeToString()
         fout.write(record)
+    ed = time.time()
+    print('gen trf done, cost %s' % str(ed-st))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='gentfr',
+        description='gentfr',
+        epilog='gentfr-help')
+    parser.add_argument('--ds', default='ds=20241113')
+    args = parser.parse_args()
+    main(args)
