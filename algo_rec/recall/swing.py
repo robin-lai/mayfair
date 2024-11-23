@@ -1,9 +1,10 @@
 # encoding:utf-8
 
 import pprint
+import argparse
 import time
 from pyarrow import parquet
-def main(lines):
+def process(lines):
     def swing(trig_itm, alph, user_debias=True):
         swing = {}
         user = list(item_bhv_user_list[trig_itm])
@@ -27,6 +28,7 @@ def main(lines):
                         swing[tgt_item] = score
         return swing
 
+    st = time.time()
     user_bhv_item_list = {}
     user_bhv_num = {}
     item_bhv_user_list = {}
@@ -50,21 +52,30 @@ def main(lines):
             item_bhv_num[itm] += 1
         else:
             item_bhv_num[itm] = 1
+    ed = time.time()
+    print('data process for swing cost:',str(ed-st))
+    print('data desc: user num %s, item num:%s'%(len(user_bhv_num.keys()), len(item_bhv_user_list.keys())))
 
     # print('user_bhv_item_list:', user_bhv_item_list)
     # print('item_bhv_user_list:', item_bhv_user_list)
     ret = {}
+    c = 0
+    st = time.time()
     for itm in item_bhv_user_list.keys():
+        c += 1
         swing_rec = swing(itm, 1)
         ret[itm] = [(k, v) for k, v in swing_rec.items()]
+        if c % 1000 == 0:
+            ed = time.time()
+            print('process 1000 item cost:',str(ed-st))
+
     # pprint.pprint(ret, compact=True)
     return ret
     # pprint.pprint(swing('h',1))
     # pprint.pprint(swing('h',1, user_debias=False))
 
-def get_data_from_s3():
+def get_data_from_s3(raw_file):
     st = time.time()
-    raw_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
     print('begin read parquet data from file:', raw_file)
     pt = parquet.read_table(raw_file)
     m = {}
@@ -124,21 +135,24 @@ def get_test_data():
         print('country:%s lines:%s' % (k, len(v)))
     return m
 
-if __name__ == '__main__':
-    flag = 's3'
-    if flag == 's3':
-        m = get_data_from_s3()
-    elif flag == 'mock':
+def main(args):
+    in_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
+    out_file = './cn_rec_detail_recall_i2i_for_redis_s3_20241118.txt'
+    if args.flag == 's3':
+        m = get_data_from_s3(in_file)
+    elif args.flag == 'mock':
         m = get_mock_data()
-    elif flag == 'sample':
+    elif args.flag == 'sample':
         m = get_test_data()
+    else:
+        print('unknown flag:',args.flag)
     # print(m)
 
     ret = {}
     row_n = 30
-    with open('./cn_rec_detail_recall_i2i_for_redis.txt', 'w') as fout:
+    with open(out_file, 'w') as fout:
         for k, v in m.items():
-            ret[k] = main(v)
+            ret[k] = process(v)
             for trig, tgt in ret[k].items():
                 tgt.sort(key = lambda x: x[1], reverse=True)
                 vs = []
@@ -148,4 +162,12 @@ if __name__ == '__main__':
                 line = (k + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
                 fout.write(line)
 
-    pass
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='swing',
+        description='swing-args',
+        epilog='swing-help')
+    parser.add_argument('--flag',default='mock')
+    args = parser.parse_args()
+    main(args)
