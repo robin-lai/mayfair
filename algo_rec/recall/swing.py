@@ -156,6 +156,7 @@ def get_test_data():
     return m
 
 def main(args):
+    st = time.time()
     in_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
     out_file = './cn_rec_detail_recall_i2i_for_redis_s3_20241118.txt'
     if args.flag == 's3':
@@ -181,6 +182,7 @@ def main(args):
                     vs.append(ele[0] + chr(4) + str(ele[1]))
                 line = (k + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
                 fout.write(line)
+    print('swing end cost:', str(time.time() - st))
 
 
 if __name__ == '__main__':
