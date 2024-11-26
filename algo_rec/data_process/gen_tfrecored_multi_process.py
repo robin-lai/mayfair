@@ -91,7 +91,7 @@ def build_tfrecord(*args):
         print('gen trf done, cost %s' % str(ed - st))
         # upload
         print('upload from %s to %s' % (local_file, out_file))
-        os.system('aws cp %s %s' % (local_file, out_file))
+        os.system('aws s3 cp %s %s' % (local_file, out_file))
 
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
