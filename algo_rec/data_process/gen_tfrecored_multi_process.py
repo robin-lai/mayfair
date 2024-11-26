@@ -42,7 +42,9 @@ def cross_fea(v1_list, v2_list, n=1):
     v3_list = ['%s,,%s' % (v1, v2) for v1 in v1_list for v2 in v2_list]
     return bytes_fea(v3_list, n, True)
 
-def build_tfrecord(from_file_list, out_file_list):
+def build_tfrecord(*args):
+    from_file_list = args[0]
+    out_file_list = args[1]
     for from_file, out_file in zip(from_file_list, out_file_list):
         st = time.time()
         pt = parquet.read_table(from_file)
