@@ -102,7 +102,7 @@ def split_list_into_batch(data_list, batch_count=None, batch_size=None):
         yield data_list[idx * batch_size: (idx + 1) * batch_size]
 
 def run_multi_process(func, ds, batch):
-    trf_path_local = './cn_rec_detail_sample_v1_test' + ds
+    trf_path_local = './cn_rec_detail_sample_v1_test/' + ds
     ptpath = s3_sp_pt_dir + ds
     tfr_path_s3 = s3_sp_tfr_dir + ds + 'test'
     # get files
