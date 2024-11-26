@@ -179,6 +179,8 @@ def main(args):
                 vs = []
                 for ele in tgt:
                     row_n -= 1
+                    if row_n == 0:
+                        break
                     vs.append(ele[0] + chr(4) + str(ele[1]))
                 line = (k + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
                 fout.write(line)
