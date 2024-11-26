@@ -209,10 +209,10 @@ def main(args):
             item_bhv_num = pickle.load(fin)
         item_list = [k for k in item_bhv_num.keys()]
         batch = args.p
-        print('%s process deal data len:%s'%(str(batch), str(len(item_list))))
 
         print('item_list', len(item_list))
         item_batch = list(chunks(item_list, batch))
+        print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
         outfile = './swing_rec_%s_part_%s'
         proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country]) for i, args in enumerate(item_batch)]
         [p.start() for p in proc_list]
