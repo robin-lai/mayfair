@@ -113,8 +113,8 @@ def run_multi_process(func, ds, batch):
         pt_path_tmp = []
         tfr_path_tmp = []
         for file in ll:
-            pt_path_tmp.append(ptpath + file)
-            tfr_path_tmp.append(tfr_path_s3 + file)
+            pt_path_tmp.append(ptpath +  '/' + file)
+            tfr_path_tmp.append(tfr_path_s3 + '/' + file)
 
         args_list.append([pt_path_tmp, tfr_path_tmp])
     print('args_list:', args_list)
