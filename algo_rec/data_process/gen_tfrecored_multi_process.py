@@ -1,4 +1,6 @@
 # encoding:utf-8
+import os
+
 import tensorflow as tf
 import sys
 import time
@@ -45,13 +47,14 @@ def cross_fea(v1_list, v2_list, n=1):
 def build_tfrecord(*args):
     from_file_list = args[0]
     out_file_list = args[1]
-    for from_file, out_file in zip(from_file_list, out_file_list):
+    local_file_list = args[2]
+    for from_file, out_file, local_file in zip(from_file_list, out_file_list, local_file_list):
         st = time.time()
         pt = parquet.read_table(from_file)
         ed = time.time()
         print('read ptpath:%s data cost:%s' % (from_file, str(ed - st)))
         st = time.time()
-        fout = tf.python_io.TFRecordWriter(out_file)
+        fout = tf.python_io.TFRecordWriter(local_file)
         for t in zip(
                 pt["ctr_7d"], pt["cvr_7d"]
                 , pt["cate_id"], pt["goods_id"], pt["cate_level1_id"], pt["cate_level2_id"], pt["cate_level3_id"],
@@ -86,6 +89,10 @@ def build_tfrecord(*args):
             fout.write(record)
         ed = time.time()
         print('gen trf done, cost %s' % str(ed - st))
+        # upload
+        print('upload from %s to %s' % (local_file, out_file))
+        os.system('aws cp %s %s' % (local_file, out_file))
+
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
     assert data_list and (batch_count or batch_size)
@@ -112,11 +119,13 @@ def run_multi_process(func, ds, batch):
     for ll in file_batch:
         pt_path_tmp = []
         tfr_path_tmp = []
+        local_path_tmp = []
         for file in ll:
             pt_path_tmp.append(ptpath +  '/' + file)
             tfr_path_tmp.append(tfr_path_s3 + '/' + file)
+            local_path_tmp.append(trf_path_local + '/' + file)
 
-        args_list.append([pt_path_tmp, tfr_path_tmp])
+        args_list.append([pt_path_tmp, tfr_path_tmp, local_path_tmp])
     print('args_list:', args_list)
     # multiprocess
     proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
