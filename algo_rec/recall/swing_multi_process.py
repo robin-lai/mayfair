@@ -208,7 +208,7 @@ def main(args):
         with open(item_bhv_num_file%(country), 'rb') as fin:
             item_bhv_num = pickle.load(fin)
         item_list = [k for k in item_bhv_num.keys()]
-        batch = 2
+        batch = args.p
         print('%s process deal data len:%s'%(str(batch), str(len(item_list))))
 
         print('item_list', item_list)
@@ -228,5 +228,6 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--flag',default='mock')
+    parser.add_argument('--p',default=1)
     args = parser.parse_args()
     main(args)
