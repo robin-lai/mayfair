@@ -6,6 +6,7 @@ import json, time, os, sys, traceback
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
+sys.path.append('/home/sagemaker-user/mayfair')
 import pandas as pd
 from algo_rec.aws_auth_init import *
 
