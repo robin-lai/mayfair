@@ -211,7 +211,7 @@ def main(args):
         batch = args.p
         print('%s process deal data len:%s'%(str(batch), str(len(item_list))))
 
-        print('item_list', item_list)
+        print('item_list', len(item_list))
         item_batch = list(chunks(item_list, batch))
         outfile = './swing_rec_%s_part_%s'
         proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country]) for i, args in enumerate(item_batch)]
@@ -228,6 +228,6 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--flag',default='mock')
-    parser.add_argument('--p',default=1)
+    parser.add_argument('--p',type=int, default=1)
     args = parser.parse_args()
     main(args)
