@@ -106,10 +106,13 @@ def run_multi_process(func, ds, batch):
     file_batch = np.array_split(file_list, batch)
     args_list = []
     for ll in file_batch:
-        tmp = []
+        pt_path_tmp = []
+        tfr_path_tmp = []
         for file in ll:
-            tmp.append((ptpath + file, trf_path_local + file))
-        args_list.append(tmp)
+            pt_path_tmp.append(ptpath + file)
+            tfr_path_tmp.append(tfr_path_s3 + file)
+
+        args_list.append([pt_path_tmp, tfr_path_tmp])
     print('args_list:', args_list)
     # multiprocess
     proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
