@@ -40,7 +40,7 @@ deploy_sites = ['sg'] # [site] if site != 'all' else 'sg in'.split()
 # target_date = train_range[-1]
 
 sg_estimator = TensorFlow(
-        entry_point='entry_point_dev.py',
+        entry_point='edp_dev.py',
         dependencies=[],
         role=role,
         input_mode="Pipe",
