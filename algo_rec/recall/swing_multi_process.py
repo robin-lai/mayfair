@@ -59,6 +59,7 @@ user_debias = True
 out_file = ''
 def swing(*args):
     trig_itm_list = args[0]
+    print('O(n):', len(trig_itm_list))
     out_file = args[1]
     c = args[2]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
@@ -212,6 +213,8 @@ def main(args):
 
         print('item_list', len(item_list))
         item_batch = list(chunks(item_list, batch))
+        for ele in item_batch:
+            print('batch size:', len(ele))
         print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
         outfile = './swing_rec_%s_part_%s'
         proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country]) for i, args in enumerate(item_batch)]
