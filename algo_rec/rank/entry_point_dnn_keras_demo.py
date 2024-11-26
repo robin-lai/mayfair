@@ -15,11 +15,8 @@ import os
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:',os.environ)
+from algo_rec.aws_auth_init import *
 
-for cmd in ['xxxx XXXX',
-           'xxxx XXXX']:
-    with os.popen(cmd) as f:
-        print(f.read())
 
 def input_fn(mode, channel=None, feature_description=None, label=None, batch_size=256, num_epochs=1,
              num_parallel_calls=8,

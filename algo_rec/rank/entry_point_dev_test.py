@@ -7,11 +7,7 @@ os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 import pandas as pd
-
-for cmd in ['xxxx XXXX',
-            'xxxx XXXX']:
-    with os.popen(cmd) as f:
-        print(f.read())
+from algo_rec.aws_auth_init import *
 
 def input_fn_from_csv():
     from ast import literal_eval
