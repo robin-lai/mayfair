@@ -10,7 +10,7 @@ sys.path.insert(0, '..')
 sys.path.insert(0, '../..')
 # sys.path.append('/home/sagemaker-user/mayfair')
 import pandas as pd
-from algo_rec.aws_auth_init import *
+from aws_auth_init import *
 
 
 

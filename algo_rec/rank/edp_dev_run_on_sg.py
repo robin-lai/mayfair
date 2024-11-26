@@ -41,10 +41,10 @@ deploy_sites = ['sg'] # [site] if site != 'all' else 'sg in'.split()
 
 sg_estimator = TensorFlow(
         entry_point='edp_dev.py',
-        dependencies=[],
+        dependencies=['aws_auth_init.py'],
         role=role,
         input_mode="Pipe",
-        instance_count=4,
+        instance_count=1,
         instance_type="ml.r5.xlarge",
         distribution={'parameter_server': {'enabled': True}},
         volume_size=250,
