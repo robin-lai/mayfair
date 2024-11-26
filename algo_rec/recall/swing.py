@@ -192,6 +192,6 @@ if __name__ == '__main__':
         prog='swing',
         description='swing-args',
         epilog='swing-help')
-    parser.add_argument('--flag',default='mock')
+    parser.add_argument('--flag',default='s3')
     args = parser.parse_args()
     main(args)

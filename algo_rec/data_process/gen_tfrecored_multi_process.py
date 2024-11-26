@@ -98,8 +98,10 @@ def run_multi_process(func, ds, batch):
     tfr_path_s3 = s3_sp_tfr_dir + ds + 'test'
     # get files
     paginator = s3_cli.get_paginator('list_objects_v2')
+    print('key:', s3_sp_pt_dir_key + ds)
     page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_sp_pt_dir_key + ds)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
+    print('file list in dir', file_list)
     # batch
     file_batch = np.array_split(file_list, batch)
     args_list = []
