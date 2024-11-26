@@ -25,7 +25,7 @@ def process(lines):
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
                     if tgt_item in swing:
-                        swing[tgt_item] += score
+                        swing[tgt_item] = round(swing[tgt_item] +  score, 4)
                     else:
                         swing[tgt_item] = score
         return swing
