@@ -103,9 +103,11 @@ def run_multi_process(func, ds, batch):
     print('key:', s3_sp_pt_dir_key + ds)
     page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_sp_pt_dir_key + ds)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
+    file_suffix_list = [v.split('/')[-1] for v in file_list]
     print('file list in dir', file_list)
+    print('file_suffix_list:', file_suffix_list)
     # batch
-    file_batch = np.array_split(file_list, batch)
+    file_batch = np.array_split(file_suffix_list, batch)
     args_list = []
     for ll in file_batch:
         pt_path_tmp = []
