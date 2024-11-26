@@ -3,13 +3,12 @@ import tensorflow as tf
 # import tensorflow.compat.v1 as tf1
 
 from sagemaker_tensorflow import PipeModeDataset
-import json, time, os, sys, traceback
-from tensorflow.python.ops.parsing_ops import FixedLenFeature
+import json, time, sys, traceback
 import os
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:',os.environ)
-from algo_rec.aws_auth_init import *
+from algo_rec.rank.aws_auth_init import *
 
 
 def input_fn(mode, channel=None, feature_description=None, label=None, batch_size=256, num_epochs=1,

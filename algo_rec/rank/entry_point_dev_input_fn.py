@@ -1,13 +1,13 @@
 # encoding:utf-8
 import tensorflow as tf
 import numpy as np
-import json, time, os, sys, traceback
+import json, os
 
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 import pandas as pd
-from algo_rec.aws_auth_init import *
+from algo_rec.rank.aws_auth_init import *
 
 
 def input_fn_from_csv():
