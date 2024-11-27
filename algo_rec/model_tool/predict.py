@@ -121,7 +121,7 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict-help')
-    parser.add_argument('--local_model_dir', default='')
-    parser.add_argument("--version", default="11111")
+    parser.add_argument('--local_model_dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/')
+    parser.add_argument("--version", default="1732718918")
     args = parser.parse_args()
     predict(args)
