@@ -202,7 +202,6 @@ class DIN(tf.estimator.Estimator):
                  params,
                  model_dir=None,
                  optimizer='Adagrad',
-                 mode=None,
                  config=None,
                  warm_start_from=None,
                  ):
@@ -245,7 +244,7 @@ class DIN(tf.estimator.Estimator):
             )
 
         super(DIN, self).__init__(
-            model_fn=_model_fn, model_dir=model_dir,mode=mode, config=config, params=params, warm_start_from=warm_start_from)
+            model_fn=_model_fn, model_dir=model_dir, config=config, params=params, warm_start_from=warm_start_from)
 
 def main(args):
     feature_columns = build_feature_columns()
@@ -258,7 +257,6 @@ def main(args):
             'dropout_rate': 0.0001,
         },
         optimizer='Adam',
-        mode=args.mode,
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
     train_input_fn = lambda: dp.input_fn_from_local_tfrecords(mode=args.mode, batch_size=args.batch_size,
