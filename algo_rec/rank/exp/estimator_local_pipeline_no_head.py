@@ -379,8 +379,8 @@ if __name__ == "__main__":
         part = '0' * (5 - len(str(e))) + str(e)
         list_files.append(filename%(part))
     eval_list_files = list_files[0:19]
-    tf.app.flags.DEFINE_string("eval_path", eval_list_files, "")
-    tf.app.flags.DEFINE_string("train_path", list_files, "")
+    tf.app.flags.DEFINE_list("eval_path", eval_list_files, "")
+    tf.app.flags.DEFINE_list("train_path", list_files, "")
     tf.app.flags.DEFINE_integer("num_parallel_calls", 10, "")
     tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
