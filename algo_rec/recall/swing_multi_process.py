@@ -1,5 +1,6 @@
 # encoding:utf-8
 import multiprocessing
+from random import shuffle
 import pprint
 import argparse
 import time
@@ -208,10 +209,16 @@ def main(args):
         st = time.time()
         with open(item_bhv_num_file%(country), 'rb') as fin:
             item_bhv_num = pickle.load(fin)
-        item_list = [k for k in item_bhv_num.keys()]
+        item_list = []
+        hot_item_num = 0
+        for k, v in item_bhv_num.items():
+            if v > 3000:
+                hot_item_num += 1
+            else:
+                item_list.append(k)
         batch = args.p
-
-        print('item_list', len(item_list))
+        print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num.keys()), len(item_list), hot_item_num))
+        shuffle(item_list)
         item_batch = list(chunks(item_list, batch))
         for ele in item_batch:
             print('batch size:', len(ele))
