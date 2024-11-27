@@ -376,7 +376,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_float("linear_lr", 0.005, "")
     tf.app.flags.DEFINE_float("dnn_lr", 0.01, "")
     tf.app.flags.DEFINE_float("dnn_dropout", 0.0, "")
-    tf.app.flags.DEFINE_integer("batch_size", 24, "")
+    tf.app.flags.DEFINE_integer("batch_size", 2048, "")
     tf.app.flags.DEFINE_integer("train_steps", 1000, 100)
     tf.app.flags.DEFINE_integer("epochs", 1, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
@@ -389,7 +389,7 @@ if __name__ == "__main__":
     eval_list_files = list_files[0:19]
     tf.app.flags.DEFINE_list("eval_path", eval_list_files, "")
     tf.app.flags.DEFINE_list("train_path", list_files, "")
-    tf.app.flags.DEFINE_integer("num_parallel_calls", 10, "")
+    tf.app.flags.DEFINE_integer("num_parallel_calls", 20, "")
     tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret.pkl", "")
