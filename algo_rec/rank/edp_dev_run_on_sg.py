@@ -25,7 +25,7 @@ BUCKET_PREFIX = 's3://%s/' % BUCKET
 REC_DIR = 'rec/'
 
 site = 'in'
-model = 'all_ctr_din_prod_test_train1111_eval1112'
+model = 'all_ctr_din_seq_off_v0'
 tfr_sample_dir = 'rec/cn_rec_detail_sample_v1_tfr-all/'
 cur_model_root_dir = REC_DIR + model + '/'
 eval_pred_dir = cur_model_root_dir + 'eval/'
