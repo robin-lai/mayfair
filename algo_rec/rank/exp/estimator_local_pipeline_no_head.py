@@ -248,7 +248,7 @@ class DIN(tf.estimator.Estimator):
                 return tf.estimator.EstimatorSpec(mode, predictions=predictions, export_outputs=export_outputs)
 
             loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels['is_clk'], logits=logits),
-                                     name="ctr_loss")
+                                     name="loss")
             accuracy = tf.metrics.accuracy(labels=labels['is_clk'],
                                                predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
             auc = tf.metrics.auc(labels['is_clk'], prop)
