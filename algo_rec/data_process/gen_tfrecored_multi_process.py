@@ -62,6 +62,7 @@ def build_tfrecord(*args):
                 , pt["show_7d"], pt["click_7d"], pt["cart_7d"], pt["ord_total"], pt["pay_total"], pt["ord_7d"],
                 pt["pay_7d"], pt["is_clk"], pt["is_pay"]
                 , pt["seq_cate_id"], pt["seq_goods_id"]
+                , pt["sample_id"]
         ):
             feature = dict()
             feature.update({"ctr_7d": floats_fea(t[0].as_py())})
@@ -84,6 +85,7 @@ def build_tfrecord(*args):
             feature.update({"is_pay": ints_fea(t[17].as_py())})
             feature.update({"seq_cate_id": bytes_fea(t[18].as_py(), n=20)})
             feature.update({"seq_goods_id": bytes_fea(t[19].as_py(), n=20)})
+            feature.update({"sample_id": bytes_fea(t[20].as_py())})
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
             record = sample.SerializeToString()
             fout.write(record)
