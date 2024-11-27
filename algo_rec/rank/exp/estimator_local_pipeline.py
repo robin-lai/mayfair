@@ -8,6 +8,8 @@ os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 import pandas as pd
 import sys
+import pickle
+
 
 class DataProcess(object):
     def __init__(self):
@@ -282,10 +284,13 @@ def main(args):
 
     print('begin predict', '#' * 80)
     pred = estimator.predict(input_fn=eval_input_fn)
-    pred_np = pred.numpy()
-    np.save(args.pred_save_file,pred_np)
+    pred_list = []
+    for ele in pred:
+        pred_list.append(ele.numpy().tolist())
+    with open(args.pred_save_file, 'wb') as fout:
+        pickle.dump(pred_list, fout)
     print('end predict', '#' * 80)
-    print('pred_head 100 element:', pred_np[0:100])
+    print('pred_head 100 element:', pred_list[0:100])
     print('save pred result to file:')
 
 
@@ -354,6 +359,6 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_string("train_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-00003-827236cb-422b-4758-9f33-265565f1aad3-c000", "")
     tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq2', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
-    tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret_np.npy", "")
+    tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret.pkl", "")
 
     main(FLAGS)
