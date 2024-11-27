@@ -301,10 +301,33 @@ def main(args):
         json_serving_input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(dp.input_feat_norm)
         print('json_serving_input_fn',json_serving_input_fn)
         return json_serving_input_fn
-
+    feature_spec = {
+        "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
+        "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
+        "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
+        "click_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="click_7d"),
+        "cart_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="cart_7d"),
+        "ord_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_total"),
+        "pay_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_total"),
+        "ord_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_7d"),
+        "pay_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_7d"),
+        "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
+        "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
+        "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
+        "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
+        "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
+        "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
+        "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
+        "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
+        "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+        "is_clk": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="is_clk"),
+        "is_pay": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="is_pay"),
+    }
+    print('feature_spec placeholder', feature_spec)
+    serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
     print('begin export_savemodel', '#' * 80)
     print('model_dir:', args.model_dir)
-    estimator.export_savedmodel(args.model_dir, make_serving_input_receiver_fn())
+    estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn())
 
 
 if __name__ == "__main__":
