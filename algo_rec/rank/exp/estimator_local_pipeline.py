@@ -344,6 +344,6 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_string("checkpoint_path", "", "")
     tf.app.flags.DEFINE_string("eval_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-00003-827236cb-422b-4758-9f33-265565f1aad3-c000", "")
     tf.app.flags.DEFINE_string("train_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-00003-827236cb-422b-4758-9f33-265565f1aad3-c000", "")
-    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq', "")
+    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq2', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     main(FLAGS)
