@@ -7,6 +7,8 @@ os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 import pandas as pd
+import sys
+sys.path.append('../..')
 from algo_rec.rank.aws_auth_init import *
 
 def input_fn_from_csv():
