@@ -25,7 +25,7 @@ BUCKET_PREFIX = 's3://%s/' % BUCKET
 REC_DIR = 'rec/'
 
 site = 'in'
-model = 'all_ctr_din_prod_1104_1112_days'
+model = 'all_ctr_din_prod_1112_1113_days'
 tfr_sample_dir = 'rec/cn_rec_detail_sample_v1_tfr-all/'
 cur_model_root_dir = REC_DIR + model + '/'
 eval_pred_dir = cur_model_root_dir + 'eval/'
@@ -82,8 +82,8 @@ def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
 #                               },
 #                     'job_name': 'Job-%s' % (model_name)}
 
-train_params = {'inputs': {'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all',
-                               'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all/ds=20241112',
+train_params = {'inputs': {'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all/ds=20241112',
+                               'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all/ds=20241113',
                               },
                     'job_name': 'Job-laidehe-test-%s-%s' % (model.replace('_', '-'),ts2date(time.time(), '%m-%d-%H-%M-%S'))}
 print('Train params: ', train_params)
