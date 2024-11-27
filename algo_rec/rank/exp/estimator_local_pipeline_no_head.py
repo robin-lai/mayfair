@@ -1,4 +1,6 @@
 # encoding:utf-8
+import time
+
 import tensorflow as tf
 import numpy as np
 import json, os
@@ -286,28 +288,34 @@ def main(args):
                                      tfrecord_path=args.eval_path,num_parallel_calls=args.num_parallel_calls)
 
     print('begin train', '#' * 80)
+    st = time.time()
     estimator.train(input_fn=train_input_fn, max_steps=None)
-    print('end train', '#' * 80)
+    ed = time.time()
+    print('end train cost:',str(ed-st), '#' * 80)
 
     print('begin evaluate', '#' * 80)
+    st = time.time()
     results = estimator.evaluate(input_fn=eval_input_fn)
-    print('end evaluate', '#' * 80)
     for key in sorted(results):
         print('%s: %s' % (key, results[key]))
 
+    ed = time.time()
+    print('end evaluate cost:', str(ed - st), '#' * 80)
     # print("begin predict", '#' * 80)
     # predictions = estimator.predict(input_fn=eval_input_fn)
     # print("predictions:", predictions)
     # print("predictions:", [v['probabilities'] for v in list(predictions)])
 
     print('begin predict', '#' * 80)
+    st = time.time()
     pred = estimator.predict(input_fn=eval_input_fn)
     pred_list = []
     for ele in pred:
         pred_list.append(ele) # ele is dict
     with open(args.pred_save_file, 'wb') as fout:
         pickle.dump(pred_list, fout)
-    print('end predict', '#' * 80)
+    ed = time.time()
+    print('end predict cost:', str(ed-st), '#' * 80)
     print('pred_head 100 element:', pred_list[0:100])
     print('save pred result to file:')
 
