@@ -281,9 +281,9 @@ def main(args):
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
     train_input_fn = lambda: dp.input_fn_from_local_tfrecords(mode=args.mode, batch_size=args.batch_size,
-                                                             tfrecord_path=args.train_path)
+                                                             tfrecord_path=args.train_path,num_parallel_calls=args.num_parallel_calls)
     eval_input_fn = lambda: dp.input_fn_from_local_tfrecords(mode=args.mode, batch_size=args.batch_size,
-                                     tfrecord_path=args.eval_path)
+                                     tfrecord_path=args.eval_path,num_parallel_calls=args.num_parallel_calls)
 
     print('begin train', '#' * 80)
     estimator.train(input_fn=train_input_fn, max_steps=None)
@@ -373,10 +373,16 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("epochs", 1, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("checkpoint_path", "", "")
-    tf.app.flags.DEFINE_string("eval_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-00003-827236cb-422b-4758-9f33-265565f1aad3-c000", "")
-    tf.app.flags.DEFINE_string("train_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-00003-827236cb-422b-4758-9f33-265565f1aad3-c000", "")
-    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead', "")
+    filename = '/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-%s-827236cb-422b-4758-9f33-265565f1aad3-c000'
+    list_files = []
+    for e in range(0,200):
+        part = '0' * (5 - len(str(e))) + str(e)
+        list_files.append(filename%(part))
+    eval_list_files = list_files[0:19]
+    tf.app.flags.DEFINE_string("eval_path", eval_list_files, "")
+    tf.app.flags.DEFINE_string("train_path", list_files, "")
+    tf.app.flags.DEFINE_integer("num_parallel_calls", 10, "")
+    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret.pkl", "")
-
     main(FLAGS)
