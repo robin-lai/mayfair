@@ -9,7 +9,7 @@ print('os.environ:', os.environ)
 import pandas as pd
 import sys
 sys.path.append('../..')
-from algo_rec.rank.aws_auth_init import *
+from aws_auth_init import *
 
 def input_fn_from_csv():
     from ast import literal_eval
