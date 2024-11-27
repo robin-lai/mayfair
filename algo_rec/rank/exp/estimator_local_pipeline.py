@@ -327,7 +327,7 @@ def main(args):
     serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
     print('begin export_savemodel', '#' * 80)
     print('model_dir:', args.model_dir)
-    estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn())
+    estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn)
 
 
 if __name__ == "__main__":
