@@ -1,18 +1,13 @@
 # encoding:utf-8
 import tensorflow as tf
 import numpy as np
-import json, time, os, sys, traceback
+import json, os
 
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
-sys.path.insert(0, '..')
-sys.path.insert(0, '../..')
-# sys.path.append('/home/sagemaker-user/mayfair')
 import pandas as pd
-from aws_auth_init import *
-
-
+from algo_rec.rank.aws_auth_init import *
 
 def input_fn_from_csv():
     from ast import literal_eval
@@ -49,41 +44,73 @@ def input_fn_from_numpy():
         num_threads=1
     )
 
-def _parse_fea(data):
-   feature_describe = {
-       "ctr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
-       , "cvr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
-       , "show_7d": tf.FixedLenFeature(1, tf.int64, 0)
-       , "click_7d": tf.FixedLenFeature(1, tf.int64, 0)
-       , "cart_7d": tf.FixedLenFeature(1, tf.int64, 0)
-       , "ord_total": tf.FixedLenFeature(1, tf.int64, 0)
-       , "pay_total": tf.FixedLenFeature(1, tf.int64, 0)
-       , "ord_7d": tf.FixedLenFeature(1, tf.int64, 0)
-       , "pay_7d": tf.FixedLenFeature(1, tf.int64, 0)
+class DataProcess(object):
+    def __init__(self):
+        self.input_feat_norm = None
+    def _parse_fea(self, data):
+       feature_describe = {
+           "ctr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
+           , "cvr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
+           , "show_7d": tf.FixedLenFeature(1, tf.int64, 0)
+           , "click_7d": tf.FixedLenFeature(1, tf.int64, 0)
+           , "cart_7d": tf.FixedLenFeature(1, tf.int64, 0)
+           , "ord_total": tf.FixedLenFeature(1, tf.int64, 0)
+           , "pay_total": tf.FixedLenFeature(1, tf.int64, 0)
+           , "ord_7d": tf.FixedLenFeature(1, tf.int64, 0)
+           , "pay_7d": tf.FixedLenFeature(1, tf.int64, 0)
 
-       , "cate_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "cate_level1_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "cate_level2_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "cate_level3_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "cate_level4_id": tf.FixedLenFeature(1, tf.string, "-1")
-       , "country": tf.FixedLenFeature(1, tf.string, '-1')
+           , "cate_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level1_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level2_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level3_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level4_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "country": tf.FixedLenFeature(1, tf.string, '-1')
 
-       # , "seq_cate_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-       # , "seq_goods_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-       , "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-       , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+           # , "seq_cate_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+           # , "seq_goods_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+           , "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+           , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
 
-       , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
-       , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
-   }
-   features = tf.io.parse_single_example(data, features=feature_describe)
+           , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
+           , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
+       }
+       features = tf.io.parse_single_example(data, features=feature_describe)
 
-   is_clk = features.pop('is_clk')
-   is_pay = features.pop('is_pay')
-   print('features_data', features)
+       is_clk = features.pop('is_clk')
+       is_pay = features.pop('is_pay')
+       if self.input_feat_norm is None and features is not None:
+           print('set input_feat_norm', self.input_feat_norm)
+           self.input_feat_norm = features
+       print('features_data', features)
 
-   return features, is_clk
+       return features, is_clk
+
+    def input_fn(self, mode, channel=None, batch_size=256,
+                 num_parallel_calls=20,
+                 shuffle_factor=20, prefetch_factor=10,
+                 fn_mode='', host_num=1, host_rank=0):
+        from sagemaker_tensorflow import PipeModeDataset
+        assert mode in ('ctr', 'cvr', 'mtl')
+
+        print('Begin_input_fn channel', channel, '#' * 80)
+        print('batch_size', batch_size)
+
+        dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
+        # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
+        print('host_num:', host_num, 'host_rank:', host_rank)
+        if fn_mode == 'MultiWorkerShard':
+            dataset = dataset.shard(host_num, host_rank)
+        dataset = dataset.map(self._parse_fea, num_parallel_calls=num_parallel_calls)
+        dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
+        dataset = dataset.prefetch(buffer_size=batch_size * prefetch_factor)
+        dataset = dataset.batch(batch_size)
+        data_iter = dataset.make_one_shot_iterator()
+        print('#' * 40, 'dataset5')
+        features, click = data_iter.get_next()
+        print('raw features:', features)
+        print('raw click:', click)
+        return features, click
 
 
 @tf.function
@@ -125,38 +152,6 @@ def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, 
     except AttributeError:
         data_iter = tf.compat.v1.data.make_one_shot_iterator(dataset)
 
-    features, click = data_iter.get_next()
-    print('raw features:', features)
-    print('raw click:', click)
-    return features, click
-
-
-def input_fn(mode, channel=None, batch_size=256,
-             num_parallel_calls=20,
-             shuffle_factor=20, prefetch_factor=10,
-             fn_mode='', host_num=1, host_rank=0):
-    from sagemaker_tensorflow import PipeModeDataset
-    assert mode in ('ctr', 'cvr', 'mtl')
-
-    print('Begin_input_fn channel', channel, '#' * 80)
-    print('batch_size', batch_size)
-
-    dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
-    # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
-    print('host_num:', host_num, 'host_rank:', host_rank)
-    if fn_mode == 'MultiWorkerShard':
-        dataset = dataset.shard(host_num, host_rank)
-    print('#' * 40, 'dataset0')
-    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
-    print('#' * 40, 'dataset1')
-    dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
-    print('#' * 40, 'dataset2')
-    dataset = dataset.prefetch(buffer_size=batch_size * prefetch_factor)
-    print('#' * 40, 'dataset3')
-    dataset = dataset.batch(batch_size).take(100000)
-    print('#' * 40, 'dataset4')
-    data_iter = dataset.make_one_shot_iterator()
-    print('#' * 40, 'dataset5')
     features, click = data_iter.get_next()
     print('raw features:', features)
     print('raw click:', click)
@@ -298,6 +293,7 @@ def main(args):
     host_rank = args.hosts.index(args.current_host)
     print('args.hosts', args.hosts, 'args.current_host', args.current_host)
     print('num_host', host_num, 'host_rank', host_rank)
+    dp = DataProcess()
     estimator = DIN(
         params={
             'feature_columns': feature_columns,
@@ -309,23 +305,23 @@ def main(args):
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
     # train_input_fn = lambda:input_fn_from_text_dataset('./cn_rec_detail_sample_v1_seq_len20.csv')
-    train_input_fn = lambda: input_fn(mode=args.target, channel="train", batch_size=args.batch_size,
+    train_input_fn = lambda: dp.input_fn(mode=args.target, channel="train", batch_size=args.batch_size,
                                       fn_mode='MultiWorkerShard', host_num=host_num, host_rank=host_rank)
-    eval_input_fn = lambda: input_fn(mode=args.target, channel="eval", batch_size=args.batch_size,
+    eval_input_fn = lambda: dp.input_fn(mode=args.target, channel="eval", batch_size=args.batch_size,
                                      fn_mode='MultiWorkerShard', host_num=host_num, host_rank=host_rank)
 
-    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn)
-    # eval_input_fn = lambda: input_fn_from_text_dataset('./cn_rec_detail_sample_v1_seq_len20.csv')
-    eval_spec = tf.estimator.EvalSpec(
-        input_fn=eval_input_fn
-        , throttle_secs=300, steps=100)
+    # train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn)
+    # # eval_input_fn = lambda: input_fn_from_text_dataset('./cn_rec_detail_sample_v1_seq_len20.csv')
+    # eval_spec = tf.estimator.EvalSpec(
+    #     input_fn=eval_input_fn
+    #     , throttle_secs=300, steps=100)
 
-    print("before train and evaluate")
-    tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-    print("after train and evaluate")
-    # print('begin train', '#' * 80)
-    # estimator.train(input_fn=train_input_fn, max_steps=None)
-    # print('end train', '#' * 80)
+    # print("before train and evaluate")
+    # tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
+    # print("after train and evaluate")
+    print('begin train', '#' * 80)
+    estimator.train(input_fn=train_input_fn, max_steps=None)
+    print('end train', '#' * 80)
 
     print('begin evaluate', '#' * 80)
     results = estimator.evaluate(input_fn=eval_input_fn)
@@ -341,35 +337,10 @@ def main(args):
 
 
     def make_serving_input_receiver_fn():
-        # feature_columns_list = []
-        # for k, v in feature_columns.items():
-        #     feature_columns_list += list(v)
+        feature_columns_list = []
+        for k, v in feature_columns.items():
+            feature_columns_list += list(v)
         # feature_spec = tf.feature_column.make_parse_example_spec(set(feature_columns_list))
-        feature_describe = {
-            "ctr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
-            , "cvr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
-            , "show_7d": tf.FixedLenFeature(1, tf.int64, 0)
-            , "click_7d": tf.FixedLenFeature(1, tf.int64, 0)
-            , "cart_7d": tf.FixedLenFeature(1, tf.int64, 0)
-            , "ord_total": tf.FixedLenFeature(1, tf.int64, 0)
-            , "pay_total": tf.FixedLenFeature(1, tf.int64, 0)
-            , "ord_7d": tf.FixedLenFeature(1, tf.int64, 0)
-            , "pay_7d": tf.FixedLenFeature(1, tf.int64, 0)
-
-            , "cate_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "cate_level1_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "cate_level2_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "cate_level3_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "cate_level4_id": tf.FixedLenFeature(1, tf.string, "-1")
-            , "country": tf.FixedLenFeature(1, tf.string, '-1')
-
-            # , "seq_cate_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-            # , "seq_goods_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-            , "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-            , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-
-        }
         # other_feature_spec = {
         #     "seq_goods_id": tf.FixedLenFeature(20, tf.string),
         #     "goods_id": tf.FixedLenFeature(1, tf.string),
@@ -377,16 +348,17 @@ def main(args):
         #     "cate_id": tf.FixedLenFeature(1, tf.string),
         # }
         # feature_spec.update(other_feature_spec)
-        print('feature_describe:', feature_describe)
+        # print('feature_spec:', feature_spec)
 
-        serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_describe)
-        # serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_describe)
-        return serving_input_receiver_fn
+        # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
+        print('input_feat_norm:', dp.input_feat_norm)
+        json_serving_input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(dp.input_feat_norm)
+        return json_serving_input_fn
 
     if host_rank == 0:
         print('begin export_savemodel', '#' * 80)
         print('model_dir:', args.model_dir)
-        estimator.export_saved_model(args.model_dir, make_serving_input_receiver_fn())
+        estimator.export_savedmodel(args.model_dir, make_serving_input_receiver_fn())
 
 
 if __name__ == "__main__":
