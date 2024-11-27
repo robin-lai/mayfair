@@ -219,13 +219,13 @@ class DIN(tf.estimator.Estimator):
                 numric_cols_emb.append(tf.feature_column.embedding_column(fc, dimension=4))
             numric_cols_emb_input =  tf.feature_column.input_layer(features, numric_cols_emb)
 
-            # seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'],tid_ids=features['goods_id'],
-            #                                   id_type='goods_id', shape=[40000, 32])
-            # seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'],tid_ids=features['cate_id'],
-            #                                     id_type='cate_id', shape=[2000, 16])
+            seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'],tid_ids=features['goods_id'],
+                                              id_type='goods_id', shape=[40000, 32])
+            seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'],tid_ids=features['cate_id'],
+                                                id_type='cate_id', shape=[2000, 16])
 
-            # input_layer = [numric_cols_emb_input, cate_cols_emb_input,seq_goodsid_input, seq_cateid_input]
-            input_layer = [numric_cols_emb_input, cate_cols_emb_input]
+            input_layer = [numric_cols_emb_input, cate_cols_emb_input,seq_goodsid_input, seq_cateid_input]
+            # input_layer = [numric_cols_emb_input, cate_cols_emb_input]
             for ele in input_layer:
                 print('blick layer shape:', ele.get_shape())
             net = tf.concat(input_layer, axis=1)
