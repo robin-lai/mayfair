@@ -299,6 +299,7 @@ def main(args):
         # serving_input_receiver_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
         print('input_feat_norm:', dp.input_feat_norm)
         json_serving_input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(dp.input_feat_norm)
+        print('json_serving_input_fn',json_serving_input_fn)
         return json_serving_input_fn
 
     print('begin export_savemodel', '#' * 80)
