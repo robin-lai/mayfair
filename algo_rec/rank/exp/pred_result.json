@@ -17,7 +17,7 @@ pred_head 100 element:
 
 
 {'logits': array([-3.6173677], dtype=float32),
- 'logistic': array([0.02615103], dtype=float32),
+ 'logistic': array([0.02615103], dtype=float32), sigmode(logits)
  'probabilities': array([0.97384894, 0.02615102], dtype=float32),
  'class_ids': array([0]),
  'classes': array([b'0'], dtype=object),
