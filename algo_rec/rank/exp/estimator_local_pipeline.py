@@ -286,7 +286,7 @@ def main(args):
     pred = estimator.predict(input_fn=eval_input_fn)
     pred_list = []
     for ele in pred:
-        pred_list.append(ele)
+        pred_list.append(ele) # ele is dict
     with open(args.pred_save_file, 'wb') as fout:
         pickle.dump(pred_list, fout)
     print('end predict', '#' * 80)
