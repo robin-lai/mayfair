@@ -8,43 +8,6 @@ os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 import pandas as pd
 import sys
-sys.path.append('../..')
-from aws_auth_init import *
-
-def input_fn_from_csv():
-    from ast import literal_eval
-    x = pd.read_csv(filepath_or_buffer='./cn_rec_detail_sample_v1_1000.csv',
-                    usecols=['ctr_7d', 'cvr_7d', 'is_clk','seq_goods_id', 'country', 'cate_id','goods_id'],
-                    converters={"seq_goods_id": literal_eval},
-                    dtype={'ctr_7d': np.float32, 'cvr_7d': np.float32, 'cate_id': np.str_,
-                           'is_clk': np.int32, 'seq_goods_id': np.str_, 'country':np.str_,
-                           'goods_id': np.str_
-                           })
-
-    print('x:', x.head(20).to_dict())
-    y = x["is_clk"]
-    # x['seq_goods_id'] = pd.Series(id_seq)
-    # x['seq_cate_id'] = pd.Series(id_seq)
-    input_fn =  tf.estimator.inputs.pandas_input_fn(
-        x, y=y, batch_size=20, num_epochs=1, shuffle=True, queue_capacity=1000,
-        num_threads=1
-    )
-    return input_fn
-
-def input_fn_from_numpy():
-    ctr_7d = np.array([0.1] * 1000)
-    cvr_7d = np.array([0.1] * 1000)
-    seq_goods_id = np.array([['1','2','3','4','5']] * 1000)
-    goods_id = np.array(['4']*1000)
-    country = np.array(['in'] * 1000)
-    cate_id = np.array([2] * 1000)
-    y = np.array([1] * 1000)
-    x = {'ctr_7d': ctr_7d, 'cvr_7d': cvr_7d, 'seq_goods_id': seq_goods_id, 'goods_id': goods_id,'country':country,'cate_id':cate_id}
-
-    return tf.estimator.inputs.numpy_input_fn(
-        x, y=y, batch_size=100, num_epochs=1, shuffle=True, queue_capacity=1000,
-        num_threads=1
-    )
 
 class DataProcess(object):
     def __init__(self):
@@ -88,21 +51,13 @@ class DataProcess(object):
 
        return features, is_clk
 
-    def input_fn(self, mode, channel=None, batch_size=256,
-                 num_parallel_calls=20,
-                 shuffle_factor=20, prefetch_factor=10,
-                 fn_mode='', host_num=1, host_rank=0):
-        from sagemaker_tensorflow import PipeModeDataset
-        assert mode in ('ctr', 'cvr', 'mtl')
+    def input_fn_from_local_tfrecords(self,mode='train',batch_size=256,tfrecord_path='',
+                                      num_parallel_calls=8,
+                                      shuffle_factor=10, prefetch_factor=20):
+        assert mode in ('train', 'eval', 'infer')
 
-        print('Begin_input_fn channel', channel, '#' * 80)
-        print('batch_size', batch_size)
-
-        dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
+        dataset = tf.data.TFRecordDataset(tfrecord_path)
         # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
-        print('host_num:', host_num, 'host_rank:', host_rank)
-        if fn_mode == 'MultiWorkerShard':
-            dataset = dataset.shard(host_num, host_rank)
         dataset = dataset.map(self._parse_fea, num_parallel_calls=num_parallel_calls)
         dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
         dataset = dataset.prefetch(buffer_size=batch_size * prefetch_factor)
@@ -114,50 +69,50 @@ class DataProcess(object):
         print('raw click:', click)
         return features, click
 
+    def input_fn_from_csv(self):
+        from ast import literal_eval
+        x = pd.read_csv(filepath_or_buffer='./cn_rec_detail_sample_v1_1000.csv',
+                        usecols=['ctr_7d', 'cvr_7d', 'is_clk', 'seq_goods_id', 'country', 'cate_id', 'goods_id'],
+                        converters={"seq_goods_id": literal_eval},
+                        dtype={'ctr_7d': np.float32, 'cvr_7d': np.float32, 'cate_id': np.str_,
+                               'is_clk': np.int32, 'seq_goods_id': np.str_, 'country': np.str_,
+                               'goods_id': np.str_
+                               })
 
-@tf.function
-def input_fn_from_text_dataset(filenames):
-    dataset = tf.data.TextLineDataset(
-        filenames
-    )
-    dataset = dataset.map(lambda x: _parse_fea(x))
-    dataset = dataset.shuffle(10).batch(20).prefetch(1)
-    return dataset
+        print('x:', x.head(20).to_dict())
+        y = x["is_clk"]
+        # x['seq_goods_id'] = pd.Series(id_seq)
+        # x['seq_cate_id'] = pd.Series(id_seq)
+        input_fn = tf.estimator.inputs.pandas_input_fn(
+            x, y=y, batch_size=20, num_epochs=1, shuffle=True, queue_capacity=1000,
+            num_threads=1
+        )
+        return input_fn
 
-def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, label=None, batch_size=256, num_epochs=1,
-             num_parallel_calls=8,
-             shuffle_factor=10, prefetch_factor=20,
-             fn_mode='', num_host=1, host_rank=0):
-    assert mode in ('ctr', 'cvr', 'mtl')
+    def input_fn_from_numpy(self):
+        ctr_7d = np.array([0.1] * 1000)
+        cvr_7d = np.array([0.1] * 1000)
+        seq_goods_id = np.array([['1', '2', '3', '4', '5']] * 1000)
+        goods_id = np.array(['4'] * 1000)
+        country = np.array(['in'] * 1000)
+        cate_id = np.array([2] * 1000)
+        y = np.array([1] * 1000)
+        x = {'ctr_7d': ctr_7d, 'cvr_7d': cvr_7d, 'seq_goods_id': seq_goods_id, 'goods_id': goods_id, 'country': country,
+             'cate_id': cate_id}
 
-    print('Begin_input_fn channel', channel, '#' * 80)
+        return tf.estimator.inputs.numpy_input_fn(
+            x, y=y, batch_size=100, num_epochs=1, shuffle=True, queue_capacity=1000,
+            num_threads=1
+        )
 
-    dataset = tf.data.TFRecordDataset('rec_sample_test.tfrecords')
-    data_iter_before = dataset.make_one_shot_iterator()
-    print('raw sample:', data_iter_before.get_next())
-    # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
-    if fn_mode == 'MultiWorkerShard':
-        dataset = dataset.shard(num_host, host_rank)
-    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
-
-    dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
-    dataset = dataset.batch(batch_size)
-
-    if channel == 'eval':
-        print('Begin read eval data sample 100000', '#' * 80)
-        dataset = dataset.take(100000)
-
-    if prefetch_factor > 0:
-        dataset = dataset.prefetch(buffer_size=prefetch_factor)
-    try:
-        data_iter = dataset.make_one_shot_iterator()
-    except AttributeError:
-        data_iter = tf.compat.v1.data.make_one_shot_iterator(dataset)
-
-    features, click = data_iter.get_next()
-    print('raw features:', features)
-    print('raw click:', click)
-    return features, click
+    @tf.function
+    def input_fn_from_text_dataset(self,filenames):
+        dataset = tf.data.TextLineDataset(
+            filenames
+        )
+        dataset = dataset.map(lambda x: self._parse_fea(x))
+        dataset = dataset.shuffle(10).batch(20).prefetch(1)
+        return dataset
 
 
 def build_feature_columns():
@@ -247,12 +202,15 @@ class DIN(tf.estimator.Estimator):
                  params,
                  model_dir=None,
                  optimizer='Adagrad',
+                 mode=None,
                  config=None,
                  warm_start_from=None,
                  ):
         def _model_fn(features, labels, mode, params):
             print('features:', features)
             print('labels', labels)
+            print('mode', mode)
+            print('params', params)
             print('features seq_goods_id', features['seq_goods_id'])
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
             cate_cols_emb_input = tf.feature_column.input_layer(features, cate_cols_emb)
@@ -287,14 +245,10 @@ class DIN(tf.estimator.Estimator):
             )
 
         super(DIN, self).__init__(
-            model_fn=_model_fn, model_dir=model_dir, config=config, params=params, warm_start_from=warm_start_from)
+            model_fn=_model_fn, model_dir=model_dir,mode=mode, config=config, params=params, warm_start_from=warm_start_from)
 
 def main(args):
     feature_columns = build_feature_columns()
-    host_num = len(args.hosts)
-    host_rank = args.hosts.index(args.current_host)
-    print('args.hosts', args.hosts, 'args.current_host', args.current_host)
-    print('num_host', host_num, 'host_rank', host_rank)
     dp = DataProcess()
     estimator = DIN(
         params={
@@ -304,23 +258,14 @@ def main(args):
             'dropout_rate': 0.0001,
         },
         optimizer='Adam',
+        mode=args.mode,
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
-    # train_input_fn = lambda:input_fn_from_text_dataset('./cn_rec_detail_sample_v1_seq_len20.csv')
-    train_input_fn = lambda: dp.input_fn(mode=args.target, channel="train", batch_size=args.batch_size,
-                                      fn_mode='MultiWorkerShard', host_num=host_num, host_rank=host_rank)
-    eval_input_fn = lambda: dp.input_fn(mode=args.target, channel="eval", batch_size=args.batch_size,
-                                     fn_mode='MultiWorkerShard', host_num=host_num, host_rank=host_rank)
+    train_input_fn = lambda: dp.input_fn_from_local_tfrecords(mode=args.mode, batch_size=args.batch_size,
+                                                             tfrecord_path=args.train_path)
+    eval_input_fn = lambda: dp.input_fn_from_local_tfrecords(mode=args.mode, batch_size=args.batch_size,
+                                     tfrecord_path=args.eval_path)
 
-    # train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn)
-    # # eval_input_fn = lambda: input_fn_from_text_dataset('./cn_rec_detail_sample_v1_seq_len20.csv')
-    # eval_spec = tf.estimator.EvalSpec(
-    #     input_fn=eval_input_fn
-    #     , throttle_secs=300, steps=100)
-
-    # print("before train and evaluate")
-    # tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-    # print("after train and evaluate")
     print('begin train', '#' * 80)
     estimator.train(input_fn=train_input_fn, max_steps=None)
     print('end train', '#' * 80)
@@ -357,17 +302,14 @@ def main(args):
         json_serving_input_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(dp.input_feat_norm)
         return json_serving_input_fn
 
-    if host_rank == 0:
-        print('begin export_savemodel', '#' * 80)
-        print('model_dir:', args.model_dir)
-        estimator.export_savedmodel(args.model_dir, make_serving_input_receiver_fn())
+    print('begin export_savemodel', '#' * 80)
+    print('model_dir:', args.model_dir)
+    estimator.export_savedmodel(args.model_dir, make_serving_input_receiver_fn())
 
 
 if __name__ == "__main__":
     FLAGS = tf.app.flags.FLAGS
-    tf.app.flags.DEFINE_list("hosts", json.loads(os.environ.get("SM_HOSTS")), "")
-    tf.app.flags.DEFINE_string("current_host", os.environ.get("SM_CURRENT_HOST"), "")
-    tf.app.flags.DEFINE_integer("num_cpus", os.environ.get("SM_NUM_CPUS"), "")
+    tf.app.flags.DEFINE_string("mode", "train", "")
     tf.app.flags.DEFINE_integer("save_checkpoints_steps", 10000, 100)
     tf.app.flags.DEFINE_float("linear_lr", 0.005, "")
     tf.app.flags.DEFINE_float("dnn_lr", 0.01, "")
@@ -376,8 +318,9 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("train_steps", 1000, 100)
     tf.app.flags.DEFINE_integer("epochs", 1, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
-    tf.app.flags.DEFINE_string("mode", "train", "")
-
-    tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
+    tf.app.flags.DEFINE_string("checkpoint_path", "", "")
+    tf.app.flags.DEFINE_string("eval_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241113", "")
+    tf.app.flags.DEFINE_string("train_path", "/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241113", "")
+    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     main(FLAGS)
