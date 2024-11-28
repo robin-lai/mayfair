@@ -17,8 +17,8 @@ def convert_text2pkl(text_dir):
             ll.extend(fin.readlines())
     print('text file lines num:', len(ll))
     m = {}
-    print(ll[0:10])
-    for line in ll[0:10]:
+    # print(ll[0:10])
+    for line in ll:
         k, v = line.split(chr(1))
         ll = v.split(chr(4))
         for ele in ll:
@@ -28,8 +28,6 @@ def convert_text2pkl(text_dir):
                 m[k][fts_name] = trim_v
             else:
                 m[k] = {fts_name: trim_v}
-    print(m)
-
     return m
 
 
@@ -44,6 +42,7 @@ if __name__ == '__main__':
     os.system('rm -rf %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_code_dir)
+    os.system('mkdir %s' % deploy_data_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
     os.system('cp %s %s'%(code_file,deploy_code_dir ))
 
@@ -60,10 +59,13 @@ if __name__ == '__main__':
     os.system('cp -r  %s %s' % (model_local, deploy_tmp_dir))
     os.system('aws s3 cp --recursive %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
     item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
+    with open(fts_item_pickle, 'wb') as fout:
+        import pickle
+        pickle.dump(item_fts_dict, fout)
 
     # tar
-    # tar_file = deploy_tmp_dir + tar_name
-    # os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
-    # # upload
-    # s3_model_online_tar_file = s3_model_online + tar_name
-    # os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
+    tar_file = deploy_tmp_dir + tar_name
+    os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
+    # upload
+    s3_model_online_tar_file = s3_model_online + tar_name
+    os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))

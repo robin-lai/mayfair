@@ -4,11 +4,12 @@ todell_dir = '/home/sagemaker-user/todell/tmp'
 deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/'
 deploy_tmp_dir = deploy_dir + 'tmp/'
 deploy_code_dir = deploy_tmp_dir + 'code/'
+deploy_data_dir = deploy_tmp_dir + 'data/'
 
 # item features
 fts_item_s3_text_dir = 's3://algo-sg/rec/cn_rec_detail_feature_item_base_for_redis/'
 fts_item_local_text_dir = deploy_tmp_dir +  'cn_rec_detail_feature_item_base_for_redis/'
-fts_item_pickle = 'item_features.pkl'
+fts_item_pickle = deploy_data_dir + 'item_features.pkl'
 
 
 # config
