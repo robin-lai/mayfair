@@ -74,8 +74,8 @@ def get_sample_batch(predictor, sample_batch, goods_id2props):
 
 def get_sample_test():
     tensor_dict = {
-        "ctr_7d": tf.constant(0.1, dtype=tf.float32,  name="ctr_7d"),
-        "cvr_7d": tf.constant(0.1, dtype=tf.float32,  name="cvr_7d"),
+        "ctr_7d": tf.constant([0.1], dtype=tf.float32,  name="ctr_7d"),
+        "cvr_7d": tf.constant([0.1], dtype=tf.float32,  name="cvr_7d"),
         "show_7d": tf.constant(100, dtype=tf.int64,  name="show_7d"),
         "click_7d": tf.constant(100, dtype=tf.int64,  name="click_7d"),
         "cart_7d": tf.constant(100, dtype=tf.int64,  name="cart_7d"),
