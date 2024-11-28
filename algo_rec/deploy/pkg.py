@@ -18,7 +18,17 @@ def convert_text2pkl(text_dir):
     print('text file lines num:', len(ll))
     m = {}
     print(ll[0:10])
-    # for line in ll:
+    for line in ll[0:10]:
+        k, v = line.split(chr(1))
+        ll = v.split(chr(4))
+        for ele in ll:
+            fts_name, fts_value = ele.split(chr(2))
+            if k in m:
+                m[k][fts_name] = fts_value
+            else:
+                m[k] = {fts_name: fts_value}
+    print(m)
+
     return m
 
 
@@ -30,7 +40,7 @@ def convert_text2pkl(text_dir):
 if __name__ == '__main__':
     code_file = deploy_dir + 'inference.py'
     # sh.cd(deploy_dir)
-    os.system('mv -f %s %s' % (deploy_tmp_dir, todell_dir))
+    os.system('rm -rf %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_code_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
