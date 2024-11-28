@@ -99,7 +99,7 @@ def get_sample_test():
 
 def predict(args):
     tensor_dict = get_sample_test()
-    predictor = tf.saved_model.load(args.local_model_dir + args.version).signatures["predict"]
+    predictor = tf.saved_model.load_v2(args.local_model_dir + args.version).signatures["predict"]
     print("===========",tensor_dict)
     pred_batch = predictor(**tensor_dict)['pred'].transpose().tolist()[0]  # list(float)
     print('pred_batch:', pred_batch)
