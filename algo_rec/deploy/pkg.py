@@ -13,7 +13,7 @@ def convert_text2pkl(text_dir):
     files = [f for f in listdir(text_dir) if isfile(join(text_dir, f))]
     ll = []
     for file in files:
-        with open(file, 'r') as fin:
+        with open(fts_item_local_text_dir + file, 'r') as fin:
             ll.extend(fin.readlines())
     print('text file lines num:', len(ll))
     m = {}
