@@ -42,7 +42,7 @@ inputs3 = {
     "pay_7d": [100]
 
 }
-ipt4 = {"signature_name": "prediction", "instances": [inputs3, inputs3]}
+ipt4 = {"signature_name": "serving_default", "instances": [inputs3, inputs3]}
 sg_client = boto3.client("sagemaker-runtime")
 
 if __name__ == '__main__':
