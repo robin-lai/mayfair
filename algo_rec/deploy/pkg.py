@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     # tar
     tar_file = deploy_tmp_dir + tar_name
-    os.system('cd deploy_tmp_dir')
+    os.system('cd %s' % deploy_tmp_dir)
     os.system('tar -czvf  %s  %s' % (tar_file, './'))
     # upload
     s3_model_online_tar_file = s3_model_online + tar_name
