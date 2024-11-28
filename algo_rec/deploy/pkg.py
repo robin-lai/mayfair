@@ -47,12 +47,12 @@ if __name__ == '__main__':
     BUCKET = 'warehouse-algo'
     # os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
     os.system('cp -r  %s %s' % (model_local, deploy_tmp_dir))
-    os.system('aws s3 cp  %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
+    os.system('aws s3 cp --recursive %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
     item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
 
     # tar
-    tar_file = deploy_tmp_dir + tar_name
-    os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
-    # upload
-    s3_model_online_tar_file = s3_model_online + tar_name
-    os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
+    # tar_file = deploy_tmp_dir + tar_name
+    # os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
+    # # upload
+    # s3_model_online_tar_file = s3_model_online + tar_name
+    # os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
