@@ -23,10 +23,11 @@ def convert_text2pkl(text_dir):
         ll = v.split(chr(4))
         for ele in ll:
             fts_name, fts_value = ele.split(chr(2))
+            trim_v = str.rstrip(fts_value, '\n')
             if k in m:
-                m[k][fts_name] = fts_value
+                m[k][fts_name] = trim_v
             else:
-                m[k] = {fts_name: fts_value}
+                m[k] = {fts_name: trim_v}
     print(m)
 
     return m
