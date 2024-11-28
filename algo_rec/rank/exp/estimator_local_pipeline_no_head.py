@@ -241,8 +241,7 @@ class DIN(tf.estimator.Estimator):
             prop = tf.sigmoid(logits, name="pred")
             if mode == tf.estimator.ModeKeys.PREDICT:
                 predictions = {
-                    'probabilities': prop,
-                    'goods_id': features['goods_id']
+                    'probabilities': prop
                 }
                 export_outputs = {
                     'prediction': tf.estimator.export.PredictOutput(predictions)
@@ -359,8 +358,6 @@ def main(args):
         "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
         "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
         "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-        "is_clk": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="is_clk"),
-        "is_pay": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="is_pay"),
     }
     print('feature_spec placeholder', feature_spec)
     serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
@@ -376,7 +373,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_float("linear_lr", 0.005, "")
     tf.app.flags.DEFINE_float("dnn_lr", 0.01, "")
     tf.app.flags.DEFINE_float("dnn_dropout", 0.0, "")
-    tf.app.flags.DEFINE_integer("batch_size", 2048, "")
+    tf.app.flags.DEFINE_integer("batch_size", 64, "")
     tf.app.flags.DEFINE_integer("train_steps", 1000, 100)
     tf.app.flags.DEFINE_integer("epochs", 1, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
@@ -386,11 +383,11 @@ if __name__ == "__main__":
     for e in range(0,200):
         part = '0' * (5 - len(str(e))) + str(e)
         list_files.append(filename%(part))
-    eval_list_files = list_files[0:19]
+    eval_list_files = list_files[0:2]
     tf.app.flags.DEFINE_list("eval_path", eval_list_files, "")
-    tf.app.flags.DEFINE_list("train_path", list_files, "")
-    tf.app.flags.DEFINE_integer("num_parallel_calls", 35, "")
-    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day', "")
+    tf.app.flags.DEFINE_list("train_path", list_files[0:2], "")
+    tf.app.flags.DEFINE_integer("num_parallel_calls", 10, "")
+    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day_1128', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret.pkl", "")
     main(FLAGS)
