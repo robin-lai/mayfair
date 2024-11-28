@@ -132,8 +132,8 @@ def predict(args):
     tensor_dict = get_sample_test(args.batch_size)
     predictor = tf.saved_model.load_v2(args.local_model_dir + args.version).signatures[args.signatures]
     print("===========",tensor_dict)
-    pred_batch = predictor(**tensor_dict)
-    # ['pred'].transpose().tolist()[0]  # list(float)
+    pred_batch = predictor(**tensor_dict)['probabilities'].transpose().tolist()
+    # [0]  # list(float)
     print('pred_batch:', pred_batch)
     dump_data = []
     # key_fields = ['click_label', 'pay_label', 'uuid', 'query', 'goods_id']
