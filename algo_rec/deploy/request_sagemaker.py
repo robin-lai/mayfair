@@ -9,7 +9,7 @@ request = {
     "scene": "detail_rec",
     "country": "",
     "ip": "",
-    "debug": "",
+    "debug": "1",
     "city": "",
     "province": "",
     "platform": "",
