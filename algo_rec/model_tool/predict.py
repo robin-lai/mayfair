@@ -72,7 +72,7 @@ def get_sample_batch(predictor, sample_batch, goods_id2props):
                    for name, value in input_dict.items()}
     return tensor_dict
 
-def get_sample_test():
+def get_sample_test(batch_size):
     tensor_dict = {
         "ctr_7d": tf.constant([0.1], dtype=tf.float32,  name="ctr_7d"),
         "cvr_7d": tf.constant([0.1], dtype=tf.float32,  name="cvr_7d"),
@@ -89,18 +89,47 @@ def get_sample_test():
         "cate_level2_id": tf.constant(["1"], dtype=tf.string,  name="cate_level2_id"),
         "cate_level3_id": tf.constant(["1"], dtype=tf.string,  name="cate_level3_id"),
         "cate_level4_id": tf.constant(["1"], dtype=tf.string,  name="cate_level4_id"),
-        "country": tf.constant("IN", dtype=tf.string,  name="country"),
-        "seq_cate_id": tf.constant( ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18","19", "20"],dtype=tf.string, name="seq_cate_id"),
-        "seq_goods_id": tf.constant( ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18","19", "20"],dtype=tf.string, name="seq_goods_id"),
+        "country": tf.constant(["IN"], dtype=tf.string,  name="country"),
+        "seq_cate_id": tf.constant( ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
+                                    ,dtype=tf.string, name="seq_cate_id"),
+        "seq_goods_id": tf.constant( ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
+                                     ,dtype=tf.string, name="seq_goods_id"),
         "is_clk": tf.constant([1], dtype=tf.int64, name="is_clk"),
         "is_pay": tf.constant([1], dtype=tf.int64, name="is_pay"),
     }
-    return tensor_dict
+    tensor_list_dict = {
+        "ctr_7d": tf.constant([[0.1],[0.1]], dtype=tf.float32, name="ctr_7d"),
+        "cvr_7d": tf.constant([[0.1],[0.1]], dtype=tf.float32, name="cvr_7d"),
+        "show_7d": tf.constant([[100],[100]], dtype=tf.int64, name="show_7d"),
+        "click_7d": tf.constant([[100],[100]], dtype=tf.int64, name="click_7d"),
+        "cart_7d": tf.constant([[100],[100]], dtype=tf.int64, name="cart_7d"),
+        "ord_total": tf.constant([[100],[100]], dtype=tf.int64, name="ord_total"),
+        "pay_total": tf.constant([[100], [100]], dtype=tf.int64, name="pay_total"),
+        "ord_7d": tf.constant([[100],[100]], dtype=tf.int64, name="ord_7d"),
+        "pay_7d": tf.constant([[100], [100]], dtype=tf.int64, name="pay_7d"),
+        "cate_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="cate_id"),
+        "goods_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="goods_id"),
+        "cate_level1_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="cate_level1_id"),
+        "cate_level2_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="cate_level2_id"),
+        "cate_level3_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="cate_level3_id"),
+        "cate_level4_id": tf.constant([["1"], ["1"]], dtype=tf.string, name="cate_level4_id"),
+        "country": tf.constant([["IN"],["IN"]], dtype=tf.string, name="country"),
+        "seq_cate_id": tf.constant(
+            [["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
+            ,["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]], dtype=tf.string, name="seq_cate_id"),
+        "seq_goods_id": tf.constant(
+            [["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]
+            ,["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]], dtype=tf.string, name="seq_goods_id"),
+        "is_clk": tf.constant([[1],[1]], dtype=tf.int64, name="is_clk"),
+        "is_pay": tf.constant([[1], [1]], dtype=tf.int64, name="is_pay"),
+    }
+    if batch_size == 1:
+        return tensor_dict
+    elif batch_size > 1:
+        return tensor_list_dict
 
 def predict(args):
-    tensor_dict = get_sample_test()
+    tensor_dict = get_sample_test(args.batch_size)
     predictor = tf.saved_model.load_v2(args.local_model_dir + args.version).signatures[args.signatures]
     print("===========",tensor_dict)
     pred_batch = predictor(**tensor_dict)['pred'].transpose().tolist()[0]  # list(float)
@@ -126,5 +155,6 @@ if __name__ == '__main__':
     parser.add_argument('--local_model_dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/')
     parser.add_argument("--version", default="1732718918")
     parser.add_argument("--signatures", default="serving_default")
+    parser.add_argument("--batch_size", 1)
     args = parser.parse_args()
     predict(args)
