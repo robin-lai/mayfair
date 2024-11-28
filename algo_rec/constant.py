@@ -1,5 +1,6 @@
 # coding: utf-8
 
+todell_dir = '/home/sagemaker-user/todell/tmp'
 deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/'
 deploy_tmp_dir = deploy_dir + 'tmp/'
 deploy_code_dir = deploy_tmp_dir + 'code/'

@@ -30,6 +30,7 @@ def convert_text2pkl(text_dir):
 if __name__ == '__main__':
     code_file = deploy_dir + 'inference.py'
     # sh.cd(deploy_dir)
+    os.system('mv -f %s %s' % (deploy_tmp_dir, todell_dir))
     os.system('mkdir %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_code_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
