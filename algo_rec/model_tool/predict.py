@@ -135,7 +135,8 @@ def predict(args):
     pred_batch = predictor(**tensor_dict)['probabilities']
     print(type(pred_batch))
     print('pred_batch:', pred_batch)
-    print(pred_batch.tolist())
+    print(tf.get_static_value(pred_batch))
+    # print(pred_batch.tolist())
     dump_data = []
     # key_fields = ['click_label', 'pay_label', 'uuid', 'query', 'goods_id']
     # key_fields = sorted(list(sample.keys()))
