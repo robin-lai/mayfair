@@ -1,5 +1,6 @@
 import tensorflow as tf
 import argparse
+tf.compat.v1.enable_eager_execution()
 
 
 def get_sample_batch(predictor, sample_batch, goods_id2props):
@@ -138,7 +139,8 @@ def predict(args):
     print(type(pred_batch))
     print('prob:', pred_batch['probabilities'])
     print(tf.get_static_value(pred_batch['probabilities']))
-    # print(pred_batch.tolist())
+    print(pred_batch.numpy())
+    print(pred_batch.numpy().tolist())
     dump_data = []
     # key_fields = ['click_label', 'pay_label', 'uuid', 'query', 'goods_id']
     # key_fields = sorted(list(sample.keys()))
