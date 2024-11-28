@@ -6,7 +6,7 @@ import sys
 import time
 import multiprocessing
 sys.path.append('/home/sagemaker-user/mayfair')
-from algo_rec.constant import *
+from algo_rec.deploy.constant import *
 from pyarrow import parquet
 import argparse
 import boto3
