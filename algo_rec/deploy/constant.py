@@ -19,7 +19,7 @@ model_local = '~/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/1732718918/'
 s3_model_online = 's3://algo-rec/rec/model_online/'
 tar_name = 'model_seq_off_1128_test.tar.gz'
 s3_model_online_tar_file = s3_model_online + tar_name
-endpoint = 'ctr-model-seq-off-1128'
+endpoint = 'ctr-model-seq-off-1128-1'
 
 s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
 s3_sp_pt_dir_key = "rec/cn_rec_detail_sample_v1/"
