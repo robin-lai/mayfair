@@ -47,6 +47,7 @@ sg_client = boto3.client("sagemaker-runtime")
 
 if __name__ == '__main__':
     print('inp-json-dump', json.dumps(ipt4))
+    endpoint = 'ctr-model-debug1121'
 
     res = sg_client.invoke_endpoint(
         EndpointName=endpoint,
