@@ -1,3 +1,6 @@
+No warmup data file found at /opt/ml/model/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1732718918/assets.extra/tf_serving_warmup_requests
+
+
 # feature_column
 bucket-fc:
 cate

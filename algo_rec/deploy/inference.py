@@ -53,7 +53,7 @@ inputs_no_seq = {
 
 # ipt4 = {"signature_name": "serving_default","instances": [inputs3,inputs3] }
 # ipt4 = {"signature_name": "serving_default","inputs": [inputs3,inputs3] }
-ipt4 = {"signature_name": "predict","instances": [inputs_no_seq,inputs_no_seq] }
+ipt4 = {"signature_name": "prediction","instances": [inputs_no_seq,inputs_no_seq] }
 
 def input_handler(data, context):
     """Pre-process request input before it is sent to TensorFlow Serving REST API

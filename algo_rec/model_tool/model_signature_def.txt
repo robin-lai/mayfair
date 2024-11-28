@@ -1,0 +1,188 @@
+MetaGraphDef with tag-set: 'serve' contains the following SignatureDefs:
+
+signature_def['prediction']:
+  The given SavedModel SignatureDef contains the following input(s):
+    inputs['cart_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: cart_7d:0
+    inputs['cate_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_id:0
+    inputs['cate_level1_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level1_id:0
+    inputs['cate_level2_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level2_id:0
+    inputs['cate_level3_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level3_id:0
+    inputs['cate_level4_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level4_id:0
+    inputs['click_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: click_7d:0
+    inputs['country'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: country:0
+    inputs['ctr_7d'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: ctr_7d:0
+    inputs['cvr_7d'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: cvr_7d:0
+    inputs['goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: goods_id:0
+    inputs['is_clk'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: is_clk:0
+    inputs['is_pay'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: is_pay:0
+    inputs['ord_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: ord_7d:0
+    inputs['ord_total'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: ord_total:0
+    inputs['pay_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: pay_7d:0
+    inputs['pay_total'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: pay_total:0
+    inputs['seq_cate_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 20)
+        name: seq_cate_id:0
+    inputs['seq_goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 20)
+        name: seq_goods_id:0
+    inputs['show_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: show_7d:0
+  The given SavedModel SignatureDef contains the following output(s):
+    outputs['goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: goods_id:0
+    outputs['probabilities'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: pred:0
+  Method name is: tensorflow/serving/predict
+
+signature_def['serving_default']:
+  The given SavedModel SignatureDef contains the following input(s):
+    inputs['cart_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: cart_7d:0
+    inputs['cate_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_id:0
+    inputs['cate_level1_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level1_id:0
+    inputs['cate_level2_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level2_id:0
+    inputs['cate_level3_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level3_id:0
+    inputs['cate_level4_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: cate_level4_id:0
+    inputs['click_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: click_7d:0
+    inputs['country'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: country:0
+    inputs['ctr_7d'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: ctr_7d:0
+    inputs['cvr_7d'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: cvr_7d:0
+    inputs['goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: goods_id:0
+    inputs['is_clk'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: is_clk:0
+    inputs['is_pay'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: is_pay:0
+    inputs['ord_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: ord_7d:0
+    inputs['ord_total'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: ord_total:0
+    inputs['pay_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: pay_7d:0
+    inputs['pay_total'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: pay_total:0
+    inputs['seq_cate_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 20)
+        name: seq_cate_id:0
+    inputs['seq_goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 20)
+        name: seq_goods_id:0
+    inputs['show_7d'] tensor_info:
+        dtype: DT_INT64
+        shape: (-1, 1)
+        name: show_7d:0
+  The given SavedModel SignatureDef contains the following output(s):
+    outputs['goods_id'] tensor_info:
+        dtype: DT_STRING
+        shape: (-1, 1)
+        name: goods_id:0
+    outputs['probabilities'] tensor_info:
+        dtype: DT_FLOAT
+        shape: (-1, 1)
+        name: pred:0
+  Method name is: tensorflow/serving/predict
+The MetaGraph with tag set ['serve'] contains the following ops: {'SparseFillEmptyRows', 'ConcatV2', 'AddV2', 'VariableV2', 'SparseReshape', 'NotEqual', 'StringJoin', 'BiasAdd', 'Add', 'Transpose', 'Relu', 'SparseSegmentMean', 'Softmax', 'Sub', 'ZerosLike', 'BatchMatMulV2', 'ExpandDims', 'Identity', 'RestoreV2', 'Bucketize', 'Const', 'Where', 'GatherV2', 'RandomUniform', 'GreaterEqual', 'SaveV2', 'Range', 'TruncatedNormal', 'Unique', 'Assign', 'Shape', 'Mul', 'StridedSlice', 'GatherNd', 'Select', 'Tile', 'Reshape', 'Sigmoid', 'Prod', 'Mean', 'StringToHashBucketFast', 'Placeholder', 'Pack', 'MatMul', 'NoOp', 'Cast', 'MergeV2Checkpoints', 'PlaceholderWithDefault', 'Slice', 'ShardedFilename'}
