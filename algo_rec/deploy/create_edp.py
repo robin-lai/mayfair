@@ -35,8 +35,8 @@ def deploy_new_endpoint(model_data,
             'Environment': {
                 'TF_DISABLE_MKL': '1',
                 'TF_DISABLE_POOL_ALLOCATOR': '1',
-                # 'SAGEMAKER_SUBMIT_DIRECTORY': '/opt/ml/model/code/',  # Directory inside the container
-                # 'SAGEMAKER_PROGRAM': 'inference.py',
+                'SAGEMAKER_SUBMIT_DIRECTORY': '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/code/',  # Directory inside the container
+                'SAGEMAKER_PROGRAM': 'inference.py',
             },
         }
     )
