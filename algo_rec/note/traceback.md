@@ -1,3 +1,6 @@
+```text
+ValueError: The argument 'country' (value Tensor("country:0", shape=(1,), dtype=string)) is not compatible with the shape this function was traced with. Expected shape (?, 1), but got shape (1,).
+```
 ```txt
 Traceback (most recent call last):
   File "entry_point_dev.py", line 310, in <module>
