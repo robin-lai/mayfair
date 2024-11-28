@@ -70,8 +70,8 @@ def input_handler(data, context):
         d = data.read().decode('utf-8')
         logging.info('[DEBUG] request_data2: %s', d)
 
-        new_data = json.dumps(ipt4).encode('utf-8')
-        return new_data
+        # new_data = json.dumps(ipt4).encode('utf-8')
+        return data
 
     # raise ValueError('Invalid req type: %s' % context.request_content_type)
 
