@@ -21,8 +21,7 @@ def deploy_new_endpoint(model_data,
     img = sagemaker.image_uris.retrieve(
         framework='tensorflow',
         version='1.15',
-        # region='ap-southeast-1',
-        region='ap-south-1',
+        region=sm_sess.boto_region_name,
         image_scope='inference',
         instance_type=instance_type
     )
