@@ -15,9 +15,9 @@ fts_item_pickle = deploy_data_dir + 'item_features.pkl'
 # config
 s3_model = 's3://warehouse-algo/rec/all_ctr_din_prod_1day_1121_test/job/Job-laidehe-test-all-ctr-din-prod-1day-1121-test-11-21-11-24-43/model/'
 model_local = '~/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/1732718918/'
-s3_model_online = 's3://warehouse-algo/rec/model_test/'
+s3_model_online = 's3://algo-sg/rec/model_online/'
 tar_name = 'model_seq_off_1128_test.tar.gz'
-s3_model_online_tar_file = 's3://warehouse-algo/rec/model_test/' + tar_name
+s3_model_online_tar_file = s3_model_online + tar_name
 endpoint = 'ctr-model-seq-off-1128'
 
 s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
