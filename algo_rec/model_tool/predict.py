@@ -155,6 +155,6 @@ if __name__ == '__main__':
     parser.add_argument('--local_model_dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/')
     parser.add_argument("--version", default="1732718918")
     parser.add_argument("--signatures", default="serving_default")
-    parser.add_argument("--batch_size", 1)
+    parser.add_argument("--batch_size", default=1)
     args = parser.parse_args()
     predict(args)
