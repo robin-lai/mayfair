@@ -3,13 +3,13 @@ from constant import *
 import boto3
 
 request = {
-    "uuid": "",
-    "userId": "",
-    "userNo": "",
+    "uuid": "xxxxxx",
+    "userId": "xxxx",
+    "userNo": "1111",
     "scene": "detail_rec",
-    "country": "",
-    "ip": "",
-    "debug": "1",
+    "country": "IN",
+    "ip": "1111",
+    "debug": "",
     "city": "",
     "province": "",
     "platform": "",
@@ -19,7 +19,7 @@ request = {
     "goodsIdList": ["1", "2"],
     "featureMap": {
         "userFeatures": {
-            "high_level_seq": ["1"] * 20,
+            "high_level_seq": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18","19", "20"],
             "low_level_seq": []
         },
         "contextFeatures": {},
