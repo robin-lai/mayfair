@@ -6,18 +6,34 @@ from sagemaker import get_execution_role
 import os
 from algo_rec.constant import *
 
+
+def convert_text2pkl(text_dir):
+    from os import listdir
+    from os.path import isfile, join
+    files = [f for f in listdir(text_dir) if isfile(join(text_dir, f))]
+    ll = []
+    for file in files:
+        with open(file, 'r') as fin:
+            ll.extend(fin.readlines())
+    print('text file lines num:', len(ll))
+    m = {}
+    print(ll[0:10])
+    # for line in ll:
+    return m
+
+
+
+
+
+
+
 if __name__ == '__main__':
-    deploy_dir =  '/home/sagemaker-user/mayfair/algo_rec/deploy/'
-    deploy_tmp_dir = deploy_dir + 'tmp/'
-    deploy_code_dir = deploy_tmp_dir + 'code/'
     code_file = deploy_dir + 'inference.py'
     # sh.cd(deploy_dir)
     os.system('mkdir %s' % deploy_tmp_dir)
-    # sh.mkdir(deploy_tmp_dir)
-    # sh.mkdir(deploy_code_dir)
     os.system('mkdir %s' % deploy_code_dir)
+    os.system('mkdir %s' % fts_item_local_text_dir)
     os.system('cp %s %s'%(code_file,deploy_code_dir ))
-    # sh.cp(code_file, deploy_code_dir)
 
     s3_cli = boto3.client('s3')
     sm_sess = sagemaker.Session()
@@ -28,13 +44,14 @@ if __name__ == '__main__':
 
     # download files
     BUCKET = 'warehouse-algo'
-    # s3_cli.download_file(Bucket=BUCKET, Key=s3_model, Filename=deploy_tmp_dir)
-    os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
+    # os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
+    os.system('cp -r  %s %s' % (model_local, deploy_tmp_dir))
+    os.system('aws s3 cp  %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
+    item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
+
     # tar
     tar_file = deploy_tmp_dir + tar_name
     os.system('tar -czvf  %s  %s' % (tar_file, deploy_tmp_dir))
-    # sh.tar("czvf", tar_file, deploy_tmp_dir)
     # upload
     s3_model_online_tar_file = s3_model_online + tar_name
     os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
-    # s3_cli.upload_file(tar_file, BUCKET, s3_model_online_tar_file)

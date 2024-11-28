@@ -1,8 +1,18 @@
 # coding: utf-8
 
+deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/'
+deploy_tmp_dir = deploy_dir + 'tmp/'
+deploy_code_dir = deploy_tmp_dir + 'code/'
+
+# item features
+fts_item_s3_text_dir = 's3://algo-sg/rec/cn_rec_detail_feature_item_base_for_redis/'
+fts_item_local_text_dir = deploy_tmp_dir +  'cn_rec_detail_feature_item_base_for_redis/'
+fts_item_pickle = 'item_features.pkl'
+
 
 # config
 s3_model = 's3://warehouse-algo/rec/all_ctr_din_prod_1day_1121_test/job/Job-laidehe-test-all-ctr-din-prod-1day-1121-test-11-21-11-24-43/model/'
+model_local = '~/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/1732718918/'
 s3_model_online = 's3://warehouse-algo/rec/model_test/'
 tar_name = 'model_1122.tar.gz'
 s3_model_online_tar_file = 's3://warehouse-algo/rec/model_test/' + tar_name
