@@ -1,4 +1,5 @@
 ```text
+[]- [[]]
 ValueError: The argument 'country' (value Tensor("country:0", shape=(1,), dtype=string)) is not compatible with the shape this function was traced with. Expected shape (?, 1), but got shape (1,).
 ```
 ```txt
