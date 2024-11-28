@@ -2,7 +2,8 @@ import json
 from constant import *
 import boto3
 
-inputs1 = {
+
+inputs_seq = {
     "cate_level1_id": ["1"],
     "cate_level2_id": ["1"],
     "cate_level3_id": ["1"],
@@ -22,27 +23,29 @@ inputs1 = {
     "goods_id": ["1"],
     "seq_cate_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
                     "19", "20"],
-    "cate_id": ["1"]
+    "cate_id": ["1"],
+	"is_clk":[1],
+	"is_pay":[1]
 }
 
-inputs3 = {
-    "cate_level1_id": ["1"],
-    "cate_level2_id": ["1"],
-    "cate_level3_id": ["1"],
-    "cate_level4_id": ["1"],
-    "country": ["IN"],
-    "ctr_7d": [0.1],
-    "cvr_7d": [0.1],
-    "show_7d": [100],
-    "click_7d": [100],
-    "cart_7d": [100],
-    "ord_total": [100],
-    "pay_total": [100],
-    "ord_7d": [100],
-    "pay_7d": [100]
-
+inputs_no_seq = {
+	"cate_level1_id": ["1"],
+	"cate_level2_id": ["1"],
+	"cate_level3_id": ["1"],
+	"cate_level4_id": ["1"],
+	"country": ["IN"],
+	"ctr_7d": [0.1],
+	"cvr_7d": [0.1],
+	"show_7d": [100],
+	"click_7d": [100],
+	"cart_7d": [100],
+	"ord_total": [100],
+	"pay_total": [100],
+	"ord_7d": [100],
+	"pay_7d": [100]
 }
-ipt4 = {"signature_name": "prediction", "instances": [inputs3, inputs3]}
+
+ipt4 = {"signature_name": "prediction", "instances": [inputs_no_seq, inputs_no_seq]}
 sg_client = boto3.client("sagemaker-runtime")
 
 if __name__ == '__main__':
