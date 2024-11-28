@@ -21,7 +21,8 @@ def deploy_new_endpoint(model_data,
     img = sagemaker.image_uris.retrieve(
         framework='tensorflow',
         version='1.15',
-        region=sm_sess.boto_region_name,
+        # region='ap-southeast-1',
+        region='ap-south-1',
         image_scope='inference',
         instance_type=instance_type
     )
@@ -35,8 +36,8 @@ def deploy_new_endpoint(model_data,
             'Environment': {
                 'TF_DISABLE_MKL': '1',
                 'TF_DISABLE_POOL_ALLOCATOR': '1',
-                # 'SAGEMAKER_SUBMIT_DIRECTORY': '/opt/ml/model/code/',  # Directory inside the container
-                # 'SAGEMAKER_PROGRAM': 'inference.py',
+                'SAGEMAKER_SUBMIT_DIRECTORY': '/opt/ml/model/code/',  # Directory inside the container
+                'SAGEMAKER_PROGRAM': 'inference.py',
             },
         }
     )
