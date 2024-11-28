@@ -45,7 +45,7 @@ inputs_no_seq = {
 	"pay_7d": [100]
 }
 
-ipt4 = {"signature_name": "prediction", "instances": [inputs_no_seq, inputs_no_seq]}
+ipt4 = {"signature_name": "serving_default", "instances": [inputs_no_seq, inputs_no_seq]}
 sg_client = boto3.client("sagemaker-runtime")
 
 if __name__ == '__main__':
