@@ -4,7 +4,7 @@ import sagemaker
 from sagemaker import get_execution_role
 # import sh
 import os
-from algo_rec.deploy.constant import *
+from constant import *
 
 
 def convert_text2pkl(text_dir):
