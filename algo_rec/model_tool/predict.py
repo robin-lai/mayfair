@@ -94,6 +94,8 @@ def get_sample_test():
                          "18","19", "20"],dtype=tf.string, name="seq_cate_id"),
         "seq_goods_id": tf.constant( ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
                          "18","19", "20"],dtype=tf.string, name="seq_goods_id"),
+        "is_clk": tf.constant(1, dtype=tf.int64, name="is_clk"),
+        "is_pay": tf.constant(1, dtype=tf.int64, name="is_pay"),
     }
     return tensor_dict
 
