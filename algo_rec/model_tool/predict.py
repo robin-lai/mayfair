@@ -3,7 +3,7 @@ import argparse
 tf.compat.v1.enable_eager_execution()
 
 
-def get_sample_batch(predictor, sample_batch, goods_id2props):
+def get_infer_tensor(sample_batch, goods_id2props):
     input_dict = {k: [] for k in
                   'uuid country query query_seg goods_id cid1 cid2 cid3 cid4 retarget title title_seg high_level_seq low_level_seq attrs hist_cart hist_long rebuy price'.split()}
     input_dict.update({a + '_' + b: [] for a in ['query', 'query_seg', 'country']
