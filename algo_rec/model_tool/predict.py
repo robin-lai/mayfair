@@ -99,7 +99,7 @@ def get_sample_test():
 
 def predict(args):
     tensor_dict = get_sample_test()
-    predictor = tf.saved_model.load_v2(args.local_model_dir + args.version).signatures["predict"]
+    predictor = tf.saved_model.load_v2(args.local_model_dir + args.version).signatures[args.signatures]
     print("===========",tensor_dict)
     pred_batch = predictor(**tensor_dict)['pred'].transpose().tolist()[0]  # list(float)
     print('pred_batch:', pred_batch)
@@ -123,5 +123,6 @@ if __name__ == '__main__':
         epilog='predict-help')
     parser.add_argument('--local_model_dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day/')
     parser.add_argument("--version", default="1732718918")
+    parser.add_argument("--signatures", default="serving_default")
     args = parser.parse_args()
     predict(args)
