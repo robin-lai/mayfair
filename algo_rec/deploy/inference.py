@@ -62,19 +62,19 @@ def get_infer_json_from_request(d):
             example = {}
             for name in item_features_string.keys():
                 if goods_id in m:
-                    example[name] = [m[goods_id][name]]
+                    example[name] = [str(m[goods_id][name])]
                 else:
-                    example[name] = [item_features_string[name]]
+                    example[name] = [str(item_features_string[name])]
             for name in item_features_int.keys():
                 if goods_id in m:
-                    example[name] = [m[goods_id[name]]]
+                    example[name] = [int(m[goods_id[name]])]
                 else:
-                    example[name] = [item_features_int[name]]
+                    example[name] = [int(item_features_int[name])]
             for name in item_features_double.keys():
                 if goods_id in m:
-                    example[name] = [m[goods_id[name]]]
+                    example[name] = [float(m[goods_id[name]])]
                 else:
-                    example[name] = [item_features_double[name]]
+                    example[name] = [float(item_features_double[name])]
             for name in user_seq_string:
                 if name == 'seq_goods_id':
                     example['seq_goods_id'] = d['featureMap']['high_level_seq']
