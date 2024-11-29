@@ -5,6 +5,7 @@ import boto3
 import sagemaker
 from sagemaker import get_execution_role
 from sagemaker.tensorflow import TensorFlow
+from aws_auth_init import *
 
 # from tensorflow.python.ops.numpy_ops import np_config
 # np_config.enable_numpy_behavior()

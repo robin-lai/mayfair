@@ -6,7 +6,7 @@ import json, os
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
-
+from aws_auth_init import *
 
 def _parse_fea(data):
     feature_describe = {
