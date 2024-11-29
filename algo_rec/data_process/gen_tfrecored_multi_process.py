@@ -15,6 +15,8 @@ s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
 
 s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
+s3_sp_tfr_dir_ctr = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/"
+s3_sp_tfr_dir_cvr = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_cvr/"
 s3_sp_pt_dir_key = "rec/cn_rec_detail_sample_v1/"
 
 import math
@@ -55,7 +57,9 @@ def build_tfrecord(*args):
     from_file_list = args[0]
     out_file_ctr_list = args[1]
     out_file_cvr_list = args[2]
-    for from_file, out_file_ctr_file, out_file_cvr_file in zip(from_file_list, out_file_ctr_list, out_file_cvr_list):
+    s3_ctr_path_list = args[3]
+    s3_cvr_path_list = args[4]
+    for from_file, out_file_ctr_file, out_file_cvr_file, s3_ctr_path, s3_cvr_path in zip(from_file_list, out_file_ctr_list, out_file_cvr_list, s3_ctr_path_list, s3_cvr_path_list):
         st = time.time()
         pt = parquet.read_table(from_file)
         ed = time.time()
@@ -104,8 +108,10 @@ def build_tfrecord(*args):
         fout_cvr.close()
         print('gen trf done, cost %s' % str(ed - st))
         # upload
-        # print('upload from %s to %s' % (out_file_cvr_file, out_file_ctr_file))
-        # os.system('aws s3 cp %s %s' % (out_file_cvr_file, out_file_ctr_file))
+        print('upload from %s to %s' % (out_file_ctr_file, s3_ctr_path))
+        os.system('aws s3 cp %s %s' % (out_file_ctr_file, s3_ctr_path))
+        print('upload from %s to %s' % (out_file_cvr_file, s3_cvr_path))
+        os.system('aws s3 cp %s %s' % (out_file_cvr_file, s3_cvr_path))
 
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
@@ -138,12 +144,16 @@ def run_multi_process(func,args):
         pt_path_tmp = []
         local_path_tmp_ctr = []
         local_path_tmp_cvr = []
+        s3_ctr_path = []
+        s3_cvr_path = []
         for file in ll:
             pt_path_tmp.append(ptpath +  '/' + file)
             local_path_tmp_ctr.append(trf_path_local_ctr + '/' + file)
             local_path_tmp_cvr.append(trf_path_local_cvr + '/' + file)
+            s3_ctr_path.append(s3_sp_tfr_dir_ctr  +  '/' + file)
+            s3_cvr_path.append(s3_sp_tfr_dir_cvr  +  '/' + file)
 
-        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr])
+        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr, s3_ctr_path, s3_cvr_path])
     print('args_list top ', args_list)
     # multiprocess
     proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
@@ -162,7 +172,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241113')
-    parser.add_argument('--range', type=str, default='20241102')
+    parser.add_argument('--range', type=str, default='20241113')
     parser.add_argument('--thread', type=int, default=20)
     parser.add_argument('--s3', type=bool, default=False)
     parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
