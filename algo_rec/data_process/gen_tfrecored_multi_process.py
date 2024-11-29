@@ -171,7 +171,7 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--ds', default='ds=20241113')
+    parser.add_argument('--ds', default='ds=20241112')
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=20)
     parser.add_argument('--s3', type=bool, default=False)
@@ -181,6 +181,7 @@ if __name__ == '__main__':
     for ds in args.range.split(','):
         st = time.time()
         args.ds = 'ds=' + ds
+        print('args.ds:', args.ds)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
 
