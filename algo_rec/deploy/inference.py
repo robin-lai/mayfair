@@ -71,7 +71,7 @@ def get_infer_json_from_request(d):
             for name in item_features_int.keys():
                 if goods_id in m:
                     if name in m[goods_id]:
-                        example[name] = [int(m[goods_id[name]])]
+                        example[name] = [int(m[goods_id][name])]
                     else:
                         example[name] = [int(item_features_int[name])]
                 else:
@@ -79,7 +79,7 @@ def get_infer_json_from_request(d):
             for name in item_features_double.keys():
                 if goods_id in m:
                     if name in m[goods_id]:
-                        example[name] = [float(m[goods_id[name]])]
+                        example[name] = [float(m[goods_id][name])]
                     else:
                         example[name] = [float(item_features_double[name])]
                 else:
