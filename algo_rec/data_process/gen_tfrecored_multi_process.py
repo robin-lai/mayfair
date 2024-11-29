@@ -165,8 +165,8 @@ if __name__ == '__main__':
     parser.add_argument('--range', type=str, default='20241102')
     parser.add_argument('--thread', type=int, default=20)
     parser.add_argument('--s3', type=bool, default=False)
-    parser.add_argument('--dir_ctr', default='~/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
-    parser.add_argument('--dir_cvr', default='~/mayfair/algo_rec/data/cn_rec_detail_sample_v1_cvr/')
+    parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
+    parser.add_argument('--dir_cvr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_cvr/')
     args = parser.parse_args()
     for ds in args.range.split(','):
         st = time.time()
