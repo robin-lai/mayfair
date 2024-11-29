@@ -38,6 +38,7 @@ sudo apt install vim -y
 3.在setting下添加
 ssh-keygen -t ed25519 -C "672826043@qq.com"
 vim ~/.ssh/id_ed25519 copy 到github
+/home/sagemaker-user/.ssh/id_ed25519.pub
 ```
 
 ```text

@@ -43,6 +43,7 @@ class DataProcess(object):
 
            , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
            , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
+           , "sample_id": tf.FixedLenFeature(1, tf.string, "-1")
        }
        features = tf.io.parse_single_example(data, features=feature_describe)
 
@@ -241,7 +242,8 @@ class DIN(tf.estimator.Estimator):
             prop = tf.sigmoid(logits, name="pred")
             if mode == tf.estimator.ModeKeys.PREDICT:
                 predictions = {
-                    'probabilities': prop
+                    'probabilities': prop,
+                    'sample_id': features['sample_id']
                 }
                 export_outputs = {
                     'prediction': tf.estimator.export.PredictOutput(predictions)
@@ -378,7 +380,8 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("epochs", 1, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("checkpoint_path", "", "")
-    filename = '/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-%s-827236cb-422b-4758-9f33-265565f1aad3-c000'
+    # filename = '/home/sagemaker-user/mayfair/algo_rec/rank/exp/cn_rec_detail_sample_v1_tfr-all/ds=20241112/part-%s-827236cb-422b-4758-9f33-265565f1aad3-c000'
+    filename = '/home/sagemaker-user/mayfair/algo_rec/data_process/cn_rec_detail_sample_v1_test/ds=20241113/part-%s-7736361e-69bb-4129-b5c2-da50aad1be32-c000'
     list_files = []
     for e in range(0,200):
         part = '0' * (5 - len(str(e))) + str(e)
@@ -387,7 +390,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_list("eval_path", eval_list_files, "")
     tf.app.flags.DEFINE_list("train_path", list_files[0:2], "")
     tf.app.flags.DEFINE_integer("num_parallel_calls", 10, "")
-    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day_1128', "")
+    tf.app.flags.DEFINE_string("model_dir",'/home/sagemaker-user/mayfair/algo_rec/rank/exp/model_seq_nohead_1day_1128_sample_id', "")
     tf.app.flags.DEFINE_string("target", "ctr", "contracted")
     tf.app.flags.DEFINE_string("pred_save_file", "./pred_ret.pkl", "")
     main(FLAGS)
