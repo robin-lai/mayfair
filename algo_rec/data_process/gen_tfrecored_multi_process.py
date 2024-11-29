@@ -138,7 +138,7 @@ def run_multi_process(func, ds, batch):
         raise ValueError('Failed in %d process.' % fail_cnt)
 
 def main(args):
-    run_multi_process(build_tfrecord, args.ds, 2)
+    run_multi_process(build_tfrecord, args.ds, args.thread)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -146,6 +146,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241113')
+    parser.add_argument('--thread', type=int, default=4)
     args = parser.parse_args()
     main(args)
 
