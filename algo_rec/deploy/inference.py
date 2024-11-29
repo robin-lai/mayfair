@@ -62,22 +62,31 @@ def get_infer_json_from_request(d):
             example = {}
             for name in item_features_string.keys():
                 if goods_id in m:
-                    example[name] = [str(m[goods_id][name])]
+                    if name in m[goods_id]:
+                        example[name] = [str(m[goods_id][name])]
+                    else:
+                        example[name] = [str(item_features_string[name])]
                 else:
                     example[name] = [str(item_features_string[name])]
             for name in item_features_int.keys():
                 if goods_id in m:
-                    example[name] = [int(m[goods_id[name]])]
+                    if name in m[goods_id]:
+                        example[name] = [int(m[goods_id[name]])]
+                    else:
+                        example[name] = [int(item_features_int[name])]
                 else:
                     example[name] = [int(item_features_int[name])]
             for name in item_features_double.keys():
                 if goods_id in m:
-                    example[name] = [float(m[goods_id[name]])]
+                    if name in m[goods_id]:
+                        example[name] = [float(m[goods_id[name]])]
+                    else:
+                        example[name] = [float(item_features_double[name])]
                 else:
                     example[name] = [float(item_features_double[name])]
             for name in user_seq_string:
                 if name == 'seq_goods_id':
-                    example['seq_goods_id'] = d['featureMap']['high_level_seq']
+                    example['seq_goods_id'] = d['featureMap']['userFeatures']['high_level_seq']
                 if name == 'seq_cate_id':
                     example['seq_cate_id'] = user_seq_string['seq_cate_id']
 
