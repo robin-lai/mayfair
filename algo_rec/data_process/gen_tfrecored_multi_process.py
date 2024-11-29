@@ -11,6 +11,8 @@ from pyarrow import parquet
 import argparse
 import boto3
 import math
+from algo_rec.utils.util import chunks
+from random import shuffle
 import numpy as np
 
 s3_cli = boto3.client('s3')
@@ -46,15 +48,16 @@ def cross_fea(v1_list, v2_list, n=1):
 
 def build_tfrecord(*args):
     from_file_list = args[0]
-    out_file_list = args[1]
-    local_file_list = args[2]
-    for from_file, out_file, local_file in zip(from_file_list, out_file_list, local_file_list):
+    out_file_ctr_list = args[1]
+    out_file_cvr_list = args[2]
+    for from_file, out_file_ctr_file, out_file_cvr_file in zip(from_file_list, out_file_ctr_list, out_file_cvr_list):
         st = time.time()
         pt = parquet.read_table(from_file)
         ed = time.time()
         print('read ptpath:%s data cost:%s' % (from_file, str(ed - st)))
         st = time.time()
-        fout = tf.python_io.TFRecordWriter(local_file)
+        fout_cvr = tf.python_io.TFRecordWriter(out_file_cvr_file)
+        fout_ctr = tf.python_io.TFRecordWriter(out_file_ctr_file)
         for t in zip(
                 pt["ctr_7d"], pt["cvr_7d"]
                 , pt["cate_id"], pt["goods_id"], pt["cate_level1_id"], pt["cate_level2_id"], pt["cate_level3_id"],
@@ -88,12 +91,14 @@ def build_tfrecord(*args):
             feature.update({"sample_id": bytes_fea(t[20].as_py())})
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
             record = sample.SerializeToString()
-            fout.write(record)
+            fout_ctr.write(record)
+            if t[16].as_py() == 1:
+                fout_cvr.write(record)
         ed = time.time()
         print('gen trf done, cost %s' % str(ed - st))
         # upload
-        print('upload from %s to %s' % (local_file, out_file))
-        os.system('aws s3 cp %s %s' % (local_file, out_file))
+        # print('upload from %s to %s' % (out_file_cvr_file, out_file_ctr_file))
+        # os.system('aws s3 cp %s %s' % (out_file_cvr_file, out_file_ctr_file))
 
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
@@ -103,32 +108,34 @@ def split_list_into_batch(data_list, batch_count=None, batch_size=None):
     for idx in range(batch_count):
         yield data_list[idx * batch_size: (idx + 1) * batch_size]
 
-def run_multi_process(func, ds, batch):
-    trf_path_local = './cn_rec_detail_sample_v1_test/' + ds
-    ptpath = s3_sp_pt_dir + ds
-    tfr_path_s3 = s3_sp_tfr_dir + ds + 'test'
+def run_multi_process(func,args):
+    trf_path_local_ctr = args.dir_ctr + args.ds
+    ptpath = s3_sp_pt_dir + args.ds
+    trf_path_local_cvr = args.dir_cvr + args.ds
     # get files
     paginator = s3_cli.get_paginator('list_objects_v2')
-    print('key:', s3_sp_pt_dir_key + ds)
-    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_sp_pt_dir_key + ds)
+    print('key:', s3_sp_pt_dir_key + args.ds)
+    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_sp_pt_dir_key + args.ds)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
     file_suffix_list = [v.split('/')[-1] for v in file_list]
     print('file list in dir', file_list)
     print('file_suffix_list:', file_suffix_list)
     # batch
-    file_batch = np.array_split(file_suffix_list, batch)
+    shuffle(file_suffix_list)
+    file_batch = list(chunks(file_suffix_list,  args.thread))
+    # file_batch = np.array_split(file_suffix_list, args.thread)
     args_list = []
     for ll in file_batch:
         pt_path_tmp = []
-        tfr_path_tmp = []
-        local_path_tmp = []
+        local_path_tmp_ctr = []
+        local_path_tmp_cvr = []
         for file in ll:
             pt_path_tmp.append(ptpath +  '/' + file)
-            tfr_path_tmp.append(tfr_path_s3 + '/' + file)
-            local_path_tmp.append(trf_path_local + '/' + file)
+            local_path_tmp_ctr.append(trf_path_local_cvr + '/' + file)
+            local_path_tmp_cvr.append(trf_path_local_ctr + '/' + file)
 
-        args_list.append([pt_path_tmp, tfr_path_tmp, local_path_tmp])
-    print('args_list:', args_list)
+        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr])
+    print('args_list top ', args_list)
     # multiprocess
     proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
     [p.start() for p in proc_list]
@@ -138,7 +145,7 @@ def run_multi_process(func, ds, batch):
         raise ValueError('Failed in %d process.' % fail_cnt)
 
 def main(args):
-    run_multi_process(build_tfrecord, args.ds, args.thread)
+    run_multi_process(build_tfrecord, args)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -146,7 +153,15 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241113')
-    parser.add_argument('--thread', type=int, default=4)
+    parser.add_argument('--range', type=str, default='20241102,20241103')
+    parser.add_argument('--thread', type=int, default=20)
+    parser.add_argument('--s3', type=bool, default=False)
+    parser.add_argument('--dir_ctr', default='~/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
+    parser.add_argument('--dir_cvr', default='~/mayfair/algo_rec/data/cn_rec_detail_sample_v1_cvr/')
     args = parser.parse_args()
-    main(args)
+    for ds in args.range.split(','):
+        st = time.time()
+        args.ds = 'ds=' + ds
+        main(args)
+        print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
 
