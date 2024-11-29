@@ -65,8 +65,7 @@ if __name__ == '__main__':
 
     # tar
     tar_file = deploy_dir + tar_name
-    os.system('cd %s' % deploy_pkg_dir)
-    os.system('tar -czvf  %s  %s' % (tar_file, './'))
+    os.system('cd %s ; tar -czvf  %s  %s' % (deploy_pkg_dir, tar_file, './'))
     # upload
     s3_model_online_tar_file = s3_model_online + tar_name
     os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
