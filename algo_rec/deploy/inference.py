@@ -86,7 +86,12 @@ def get_infer_json_from_request(d):
                     example[name] = [float(item_features_double[name])]
             for name in user_seq_string:
                 if name == 'seq_goods_id':
-                    example['seq_goods_id'] = d['featureMap']['userFeatures']['high_level_seq']
+                    seq = d['featureMap']['userFeatures']['high_level_seq']
+                    if len(seq) == 20:
+                        example['seq_goods_id'] = seq
+                    else:
+                        example['seq_goods_id'] = seq + [""] * (20-len(seq))
+
                 if name == 'seq_cate_id':
                     example['seq_cate_id'] = user_seq_string['seq_cate_id']
 

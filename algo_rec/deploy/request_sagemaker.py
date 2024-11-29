@@ -29,7 +29,7 @@ request = {
 }
 
 request2 = {"city": "Menbai", "country": "IN", "debug": "",
-            "featureMap": { "userFeatures": {"high_level_seq": [], "low_level_seq": []}},
+            "featureMap": { "userFeatures": {"high_level_seq": [""] * 20, "low_level_seq": []}},
             "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
             "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
