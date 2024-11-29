@@ -18,8 +18,6 @@ request = {
     },
     "goodsIdList": ["1", "2"],
     "featureMap": {
-        "high_level_seq": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                           "18", "19", "20"],
         "userFeatures": {
             "high_level_seq": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
                                "17", "18", "19", "20"],
@@ -31,7 +29,7 @@ request = {
 }
 
 request2 = {"city": "Menbai", "country": "IN", "debug": "",
-            "featureMap": {"high_level_seq": [], "userFeatures": {"high_level_seq": [], "low_level_seq": []}},
+            "featureMap": { "userFeatures": {"high_level_seq": [], "low_level_seq": []}},
             "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
             "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
