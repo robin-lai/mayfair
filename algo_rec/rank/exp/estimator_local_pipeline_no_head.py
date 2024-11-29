@@ -243,7 +243,7 @@ class DIN(tf.estimator.Estimator):
             if mode == tf.estimator.ModeKeys.PREDICT:
                 predictions = {
                     'probabilities': prop,
-                    'sample_id': features['sample_id']
+                    # 'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
                 }
                 export_outputs = {
                     'prediction': tf.estimator.export.PredictOutput(predictions)
