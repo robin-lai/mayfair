@@ -140,8 +140,8 @@ def run_multi_process(func,args):
         local_path_tmp_cvr = []
         for file in ll:
             pt_path_tmp.append(ptpath +  '/' + file)
-            local_path_tmp_ctr.append(trf_path_local_cvr + '/' + file)
-            local_path_tmp_cvr.append(trf_path_local_ctr + '/' + file)
+            local_path_tmp_ctr.append(trf_path_local_ctr + '/' + file)
+            local_path_tmp_cvr.append(trf_path_local_cvr + '/' + file)
 
         args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr])
     print('args_list top ', args_list)
