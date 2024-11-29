@@ -117,6 +117,8 @@ def run_multi_process(func,args):
     trf_path_local_ctr = args.dir_ctr + args.ds
     ptpath = s3_sp_pt_dir + args.ds
     trf_path_local_cvr = args.dir_cvr + args.ds
+    os.system('mkdir -p %s' % trf_path_local_ctr)
+    os.system('mkdir -p %s' % trf_path_local_cvr)
     # get files
     paginator = s3_cli.get_paginator('list_objects_v2')
     print('key:', s3_sp_pt_dir_key + args.ds)
