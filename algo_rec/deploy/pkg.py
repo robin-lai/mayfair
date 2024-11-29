@@ -39,8 +39,8 @@ def convert_text2pkl(text_dir):
 if __name__ == '__main__':
     code_file = deploy_dir + 'inference.py'
     # sh.cd(deploy_dir)
-    os.system('rm -rf %s' % deploy_tmp_dir)
-    os.system('mkdir %s' % deploy_tmp_dir)
+    os.system('rm -rf %s' % deploy_pkg_dir)
+    os.system('mkdir %s' % deploy_pkg_dir)
     os.system('mkdir %s' % deploy_code_dir)
     # os.system('mkdir %s' % deploy_data_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     # download files
     # os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
-    os.system('cp -r  %s %s' % (model_local, deploy_tmp_dir))
+    os.system('cp -r  %s %s' % (model_local, deploy_pkg_dir))
     os.system('aws s3 cp --recursive %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
     item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
     with open(fts_item_pickle, 'wb') as fout:
@@ -63,8 +63,8 @@ if __name__ == '__main__':
         pickle.dump(item_fts_dict, fout)
 
     # tar
-    tar_file = deploy_tmp_dir + tar_name
-    os.system('cd %s' % deploy_tmp_dir)
+    tar_file = deploy_pkg_dir + tar_name
+    os.system('cd %s' % deploy_pkg_dir)
     os.system('tar -czvf  %s  %s' % (tar_file, './'))
     # upload
     s3_model_online_tar_file = s3_model_online + tar_name
