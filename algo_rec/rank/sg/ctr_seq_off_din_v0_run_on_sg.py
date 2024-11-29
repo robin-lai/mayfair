@@ -76,7 +76,7 @@ sg_estimator = TensorFlow(
 
 def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
     return time.strftime(fmt, time.localtime(ts + offset))
-train_params = {'inputs': {'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241111'
+train_params = {'inputs': {'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr-all/ds=20241111'
                               },
                     'job_name': 'Job-laidehe-test-%s-%s' % (model.replace('_', '-'),ts2date(time.time(), '%m-%d-%H-%M-%S'))}
 print('Train params: ', train_params)
