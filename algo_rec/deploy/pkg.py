@@ -38,9 +38,10 @@ def convert_text2pkl(text_dir):
 
 if __name__ == '__main__':
     code_file = deploy_dir + 'inference.py'
-    # sh.cd(deploy_dir)
     os.system('rm -rf %s' % deploy_pkg_dir)
+    os.system('rm -rf %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_pkg_dir)
+    os.system('mkdir %s' % deploy_tmp_dir)
     os.system('mkdir %s' % deploy_code_dir)
     # os.system('mkdir %s' % deploy_data_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
@@ -63,7 +64,7 @@ if __name__ == '__main__':
         pickle.dump(item_fts_dict, fout)
 
     # tar
-    tar_file = deploy_pkg_dir + tar_name
+    tar_file = deploy_dir + tar_name
     os.system('cd %s' % deploy_pkg_dir)
     os.system('tar -czvf  %s  %s' % (tar_file, './'))
     # upload
