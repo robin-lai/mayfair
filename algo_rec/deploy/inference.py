@@ -96,8 +96,8 @@ def input_handler(data, context):
 
     if context.request_content_type == "application/json":
         logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
-        logging.info('[DEBUG] request_data1: %s %s', context.request_content_type, data)
-        d = data.read().decode('utf-8')
+        d = json.loads(data.read())
+        logging.info('[DEBUG] request_data1: %s %s', d)
         if d["debug"] == '1':
             print('debug=1 json_data', d)
             logging.info('debug=1 json_data',d)
