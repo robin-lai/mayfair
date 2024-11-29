@@ -5,19 +5,24 @@ import tensorflow as tf
 import sys
 import time
 import multiprocessing
-sys.path.append('/home/sagemaker-user/mayfair')
-from algo_rec.deploy.constant import *
 from pyarrow import parquet
 import argparse
 import boto3
-import math
-from algo_rec.utils.util import chunks
 from random import shuffle
 import numpy as np
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
 
+s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
+s3_sp_pt_dir_key = "rec/cn_rec_detail_sample_v1/"
+
+import math
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    c = math.ceil(len(lst) / n)
+    for i in range(0, len(lst), c):
+        yield lst[i:i + c]
 
 def bytes_fea(v_list, n=1, encode=False):
     v_list = v_list if isinstance(v_list, list) else [v_list]
