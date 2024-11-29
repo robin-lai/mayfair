@@ -158,7 +158,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241113')
-    parser.add_argument('--range', type=str, default='20241102,20241103')
+    parser.add_argument('--range', type=str, default='20241102')
     parser.add_argument('--thread', type=int, default=20)
     parser.add_argument('--s3', type=bool, default=False)
     parser.add_argument('--dir_ctr', default='~/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
