@@ -150,8 +150,8 @@ def run_multi_process(func,args):
             pt_path_tmp.append(ptpath +  '/' + file)
             local_path_tmp_ctr.append(trf_path_local_ctr + '/' + file)
             local_path_tmp_cvr.append(trf_path_local_cvr + '/' + file)
-            s3_ctr_path.append(s3_sp_tfr_dir_ctr  +  '/' + file)
-            s3_cvr_path.append(s3_sp_tfr_dir_cvr  +  '/' + file)
+            s3_ctr_path.append(s3_sp_tfr_dir_ctr  + args.ds +  '/' + file)
+            s3_cvr_path.append(s3_sp_tfr_dir_cvr  + args.ds + '/' + file)
 
         args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr, s3_ctr_path, s3_cvr_path])
     print('args_list top ', args_list)
