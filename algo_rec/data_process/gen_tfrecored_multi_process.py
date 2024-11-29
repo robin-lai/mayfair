@@ -61,8 +61,8 @@ def build_tfrecord(*args):
         ed = time.time()
         print('read ptpath:%s data cost:%s' % (from_file, str(ed - st)))
         st = time.time()
-        fout_cvr = tf.python_io.TFRecordWriter(out_file_cvr_file)
-        fout_ctr = tf.python_io.TFRecordWriter(out_file_ctr_file)
+        fout_cvr = tf.io.TFRecordWriter(out_file_cvr_file)
+        fout_ctr = tf.io.TFRecordWriter(out_file_ctr_file)
         for t in zip(
                 pt["ctr_7d"], pt["cvr_7d"]
                 , pt["cate_id"], pt["goods_id"], pt["cate_level1_id"], pt["cate_level2_id"], pt["cate_level3_id"],
@@ -100,6 +100,8 @@ def build_tfrecord(*args):
             if t[16].as_py() == 1:
                 fout_cvr.write(record)
         ed = time.time()
+        fout_ctr.close()
+        fout_cvr.close()
         print('gen trf done, cost %s' % str(ed - st))
         # upload
         # print('upload from %s to %s' % (out_file_cvr_file, out_file_ctr_file))
