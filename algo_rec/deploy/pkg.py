@@ -40,9 +40,9 @@ if __name__ == '__main__':
     code_file = deploy_dir + 'inference.py'
     os.system('rm -rf %s' % deploy_pkg_dir)
     os.system('rm -rf %s' % deploy_tmp_dir)
-    os.system('mkdir %s' % deploy_pkg_dir)
-    os.system('mkdir %s' % deploy_tmp_dir)
-    os.system('mkdir %s' % deploy_code_dir)
+    os.system('mkdir -p %s' % deploy_pkg_dir)
+    os.system('mkdir -p %s' % deploy_tmp_dir)
+    os.system('mkdir -p %s' % deploy_code_dir)
     # os.system('mkdir %s' % deploy_data_dir)
     os.system('mkdir %s' % fts_item_local_text_dir)
     os.system('cp %s %s'%(code_file,deploy_code_dir ))
