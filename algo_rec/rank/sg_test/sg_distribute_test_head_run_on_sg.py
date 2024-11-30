@@ -42,7 +42,6 @@ sg_estimator = TensorFlow(
         keep_alive_period_in_seconds=1800,
         hyperparameters={
             "mode": "train",
-            "epochs":1,
             "hidden_units": "256,64,32",
         },
         metric_definitions=[
