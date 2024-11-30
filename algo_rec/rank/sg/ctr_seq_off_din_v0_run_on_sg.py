@@ -25,7 +25,7 @@ BUCKET_PREFIX = 's3://%s/' % BUCKET
 REC_DIR = 'rec/'
 
 site = 'in'
-model = 'ctr_seq_off_din_v0'
+model = 'ctr_seq_off_din_v0_instance2'
 tfr_sample_dir = 'rec/cn_rec_detail_sample_v1_tfr-all/'
 cur_model_root_dir = REC_DIR + model + '/'
 eval_pred_dir = cur_model_root_dir + 'eval/'
@@ -44,7 +44,7 @@ sg_estimator = TensorFlow(
         dependencies=['aws_auth_init.py'],
         role=role,
         input_mode="Pipe",
-        instance_count=1,
+        instance_count=2,
         instance_type="ml.r5.xlarge",
         distribution={'parameter_server': {'enabled': True}},
         volume_size=250,
