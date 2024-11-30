@@ -125,6 +125,8 @@ def run_multi_process(func,args):
     trf_path_local_ctr = args.dir_ctr + args.ds
     ptpath = s3_sp_pt_dir + args.ds
     trf_path_local_cvr = args.dir_cvr + args.ds
+    os.system('rm %s' % trf_path_local_ctr)
+    os.system('rm %s' % trf_path_local_cvr)
     os.system('mkdir -p %s' % trf_path_local_ctr)
     os.system('mkdir -p %s' % trf_path_local_cvr)
     # get files
@@ -173,7 +175,7 @@ if __name__ == '__main__':
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241112')
     parser.add_argument('--range', type=str, default='')
-    parser.add_argument('--thread', type=int, default=20)
+    parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--s3', type=bool, default=False)
     parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
     parser.add_argument('--dir_cvr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_cvr/')
