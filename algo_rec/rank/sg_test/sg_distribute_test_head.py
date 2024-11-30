@@ -19,9 +19,9 @@ def _parse_fea(data):
     is_clk = features.pop('is_clk')
     is_pay = features.pop('is_pay')
     print('features_data', features)
-    labels = {'is_clk': tf.to_float(is_clk), 'is_pay': tf.to_float(is_pay)}
+    # labels = {'is_clk': tf.to_float(is_clk), 'is_pay': tf.to_float(is_pay)}
 
-    return features, labels
+    return features, is_clk
 
 
 def input_fn(mode='train', batch_size=256, channel='train',
