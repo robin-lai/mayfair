@@ -165,7 +165,6 @@ class DIN(tf.estimator.Estimator):
             print('labels', labels)
             print('mode', mode)
             print('params', params)
-            print('features seq_goods_id', features['seq_goods_id'])
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
             cate_cols_emb_input = tf.feature_column.input_layer(features, cate_cols_emb)
             numric_cols = params["feature_columns"]["numric_cols"]
