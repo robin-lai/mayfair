@@ -141,13 +141,13 @@ def main(args):
 
 if __name__ == "__main__":
     FLAGS = tf.app.flags.FLAGS
-    tf.app.flags.DEFINE_list("hosts", json.loads(os.environ.get("SM_HOSTS")), "")
-    tf.app.flags.DEFINE_string("current_host", os.environ.get("SM_CURRENT_HOST"), "")
+    tf.app.flags.DEFINE_list("hosts", json.loads(os.environ.get("SM_HOSTS")), [])
+    tf.app.flags.DEFINE_string("current_host", os.environ.get("SM_CURRENT_HOST"), [])
     tf.app.flags.DEFINE_string("mode", "train", "")
-    tf.app.flags.DEFINE_integer("save_checkpoints_steps", 100)
-    tf.app.flags.DEFINE_integer("batch_size", 1024, "")
+    tf.app.flags.DEFINE_integer("save_checkpoints_steps", 100, 100)
+    tf.app.flags.DEFINE_integer("batch_size", 1024, 1024)
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
-    tf.app.flags.DEFINE_integer("num_parallel_calls", 15, "")
+    tf.app.flags.DEFINE_integer("num_parallel_calls", 15, 10)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
     print('start main', '#' * 80)
     st = time.time()
