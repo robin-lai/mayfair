@@ -43,8 +43,6 @@ sg_estimator = TensorFlow(
         hyperparameters={
             "mode": "train",
             "epochs":1,
-            "batch_size": 2048,
-            # "batch_norm": False,
             "hidden_units": "256,64,32",
         },
         metric_definitions=[
