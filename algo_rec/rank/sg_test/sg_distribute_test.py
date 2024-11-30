@@ -115,7 +115,6 @@ def main(args):
             'learning_rate': 0.001,
             'dropout_rate': 0.0001,
         },
-        optimizer='Adam',
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
     train_input_fn = lambda: input_fn(mode=args.mode, batch_size=args.batch_size,
