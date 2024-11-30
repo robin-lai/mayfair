@@ -11,6 +11,8 @@ from aws_auth_init import *
 def _parse_fea(data):
     feature_describe = {
         "ctr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
+        , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
+        , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
     }
     features = tf.io.parse_single_example(data, features=feature_describe)
 
