@@ -290,7 +290,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("checkpoint", None, None)
-    tf.app.flags.DEFINE_integer("num_parallel_calls", 15, "")
+    tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
     print('start main', '#' * 80)
     st = time.time()
