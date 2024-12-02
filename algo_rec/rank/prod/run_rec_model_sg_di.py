@@ -7,15 +7,15 @@ from sagemaker import get_execution_role
 from sagemaker.tensorflow import TensorFlow
 from aws_auth_init import *
 
+# steup up
+s3_cli = boto3.client('s3')
+sm_sess = sagemaker.Session()
+print('aws region:', sm_sess.boto_region_name)
+sm_cli = boto3.client('sagemaker')
+role = get_execution_role()
+print('role:', role)
 
 def main(args):
-    s3_cli = boto3.client('s3')
-    sm_cli = boto3.client('sagemaker')
-    sm_sess = sagemaker.Session()
-    role = get_execution_role()
-    print('aws region:', sm_sess.boto_region_name)
-    print('role:', role)
-
     # Basic config
     # job_name = args.model_name + args.ds
     code_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/code/' % args.model_name
