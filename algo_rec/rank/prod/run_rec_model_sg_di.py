@@ -23,7 +23,7 @@ def main(args):
     model_dir_s3_pre = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.pre_ds)
 
     sg_estimator = TensorFlow(
-        entry_point='run_rec_model_sg.py',
+        entry_point='run_rec_model.py',
         dependencies=['aws_auth_init.py'],
         role=role,
         input_mode="Pipe",
