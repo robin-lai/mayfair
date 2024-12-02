@@ -1,6 +1,8 @@
 # encoding:utf-8
 import argparse
-import gc, datetime
+import gc, datetime,time
+import os
+
 import boto3
 import sagemaker
 from sagemaker import get_execution_role
@@ -15,13 +17,18 @@ sm_cli = boto3.client('sagemaker')
 role = get_execution_role()
 print('role:', role)
 
+def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
+    return time.strftime(fmt, time.localtime(ts + offset))
+
 def main(args):
     # Basic config
-    # job_name = args.model_name + args.ds
-    code_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/code/' % args.model_name
-    model_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.ds)
-    model_dir_s3_pre = 's3://warehouse-algo/rec/test_model/%s/%s/model/' % (args.model_name, args.pre_ds)
+    job_name = 'Job-laidehe-%s-%s' % (args.model_name.replace('_', '-'), ts2date(time.time(), '%m-%d-%H-%M-%S'))
+    code_dir_s3 = 's3://warehouse-algo/rec/%s/%s/ds=%s/code/' % (args.model_dir, args.model_name, args.ds)
+    model_dir_s3_prefix = 's3://warehouse-algo/rec/%s/%s/ds=%s/' % (args.model_dir, args.model_name, args.ds)
+    model_dir_s3 = model_dir_s3_prefix + job_name + '/model/'
+    model_dir_s3_pre = 's3://warehouse-algo/rec/%s/%s/ds=%s/model/' % (args.model_dir, args.model_name, args.pre_ds)
     print('model_dir_s3_pre:', model_dir_s3_pre)
+    print('model_dir_s3:', model_dir_s3)
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model.py',
@@ -33,7 +40,7 @@ def main(args):
         distribution={'parameter_server': {'enabled': True}},
         volume_size=250,
         code_location=code_dir_s3,
-        output_path=model_dir_s3,
+        output_path=model_dir_s3_prefix,
         disable_profiler=True,
         framework_version="1.15.2",
         py_version='py37',
@@ -56,13 +63,14 @@ def main(args):
 
     train_params = {
 	    'inputs': {
-	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241112',
-	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241112'
+	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=%s'%args.train_ds,
+	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=%s'%args.eval_ds
 	    },
-	    'job_name': args.job_name
+	    'job_name': job_name
     }
     print('Train params: ', train_params)
     sg_estimator.fit(**train_params)
+    os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + '/model')) # cp can create dest dir
     del sg_estimator
     gc.collect()
     # alert(ctx)
@@ -72,12 +80,15 @@ if __name__ == '__main__':
     parse = argparse.ArgumentParser(prog='run_rec_model_di',
                                     description='run_rec_model_di',
                                     epilog='run_rec_model_di')
-    parse.add_argument('--ds', type=str, default=datetime.date.today().strftime('%Y%m%d'))
+    today = datetime.date.today().strftime('%Y%m%d')
+    parse.add_argument('--ds', type=str, default=today)
+    parse.add_argument('--train_ds', type=str, default=today)
+    parse.add_argument('--eval_ds', type=str, default='20241112')
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
     parse.add_argument('--model_name', type=str, default='prod_ctr_seq_off_din_v0_test')
+    parse.add_argument('--model_dir', type=str, default='test_model')
     parse.add_argument('--instance_count', type=int, default=1)
-    parse.add_argument('--job_name', type=str, default='laidehe-rec-job')
     args = parse.parse_args()
     main(args)

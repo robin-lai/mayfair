@@ -1,0 +1,40 @@
+INFO:tensorflow:Done calling model_fn.
+INFO:tensorflow:Warm-starting with WarmStartSettings: WarmStartSettings(ckpt_to_initialize_from='s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/20241201/model/', vars_to_warm_start='.*', var_name_to_vocab_info={}, var_name_to_prev_var_name={})
+INFO:tensorflow:Warm-starting with WarmStartSettings: WarmStartSettings(ckpt_to_initialize_from='s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/20241201/model/', vars_to_warm_start='.*', var_name_to_vocab_info={}, var_name_to_prev_var_name={})
+INFO:tensorflow:Warm-starting from: s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/20241201/model/
+INFO:tensorflow:Warm-starting from: s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/20241201/model/
+INFO:tensorflow:Warm-starting variables only in TRAINABLE_VARIABLES.
+INFO:tensorflow:Warm-starting variables only in TRAINABLE_VARIABLES.
+
+
+Environment variables:
+SM_HOSTS=["algo-1"]
+SM_NETWORK_INTERFACE_NAME=eth0
+SM_HPS={"checkpoint":"s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241201/","hidden_units":"256,64,32","mode":"train","model_dir":"s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241101/laidehe-rec-job/model"}
+SM_USER_ENTRY_POINT=run_rec_model_sg.py
+SM_FRAMEWORK_PARAMS={"sagemaker_parameter_server_enabled":true}
+SM_RESOURCE_CONFIG={"current_group_name":"homogeneousCluster","current_host":"algo-1","current_instance_type":"ml.r5.xlarge","hosts":["algo-1"],"instance_groups":[{"hosts":["algo-1"],"instance_group_name":"homogeneousCluster","instance_type":"ml.r5.xlarge"}],"network_interface_name":"eth0"}
+SM_INPUT_DATA_CONFIG={"eval":{"RecordWrapperType":"None","S3DistributionType":"FullyReplicated","TrainingInputMode":"Pipe"},"train":{"RecordWrapperType":"None","S3DistributionType":"FullyReplicated","TrainingInputMode":"Pipe"}}
+SM_OUTPUT_DATA_DIR=/opt/ml/output/data
+SM_CHANNELS=["eval","train"]
+SM_CURRENT_HOST=algo-1
+SM_MODULE_NAME=run_rec_model_sg
+SM_LOG_LEVEL=20
+SM_FRAMEWORK_MODULE=sagemaker_tensorflow_container.training:main
+SM_INPUT_DIR=/opt/ml/input
+SM_INPUT_CONFIG_DIR=/opt/ml/input/config
+SM_OUTPUT_DIR=/opt/ml/output
+SM_NUM_CPUS=4
+SM_NUM_GPUS=0
+SM_MODEL_DIR=/opt/ml/model
+SM_MODULE_DIR=s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/code/laidehe-rec-job/source/sourcedir.tar.gz
+SM_TRAINING_ENV={"additional_framework_parameters":{"sagemaker_parameter_server_enabled":true},"channel_input_dirs":{"eval":"/opt/ml/input/data/eval","train":"/opt/ml/input/data/train"},"current_host":"algo-1","framework_module":"sagemaker_tensorflow_container.training:main","hosts":["algo-1"],"hyperparameters":{"checkpoint":"s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241201/","hidden_units":"256,64,32","mode":"train","model_dir":"s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241101/laidehe-rec-job/model"},"input_config_dir":"/opt/ml/input/config","input_data_config":{"eval":{"RecordWrapperType":"None","S3DistributionType":"FullyReplicated","TrainingInputMode":"Pipe"},"train":{"RecordWrapperType":"None","S3DistributionType":"FullyReplicated","TrainingInputMode":"Pipe"}},"input_dir":"/opt/ml/input","is_master":true,"job_name":"laidehe-rec-job","log_level":20,"master_hostname":"algo-1","model_dir":"/opt/ml/model","module_dir":"s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/code/laidehe-rec-job/source/sourcedir.tar.gz","module_name":"run_rec_model_sg","network_interface_name":"eth0","num_cpus":4,"num_gpus":0,"output_data_dir":"/opt/ml/output/data","output_dir":"/opt/ml/output","output_intermediate_dir":"/opt/ml/output/intermediate","resource_config":{"current_group_name":"homogeneousCluster","current_host":"algo-1","current_instance_type":"ml.r5.xlarge","hosts":["algo-1"],"instance_groups":[{"hosts":["algo-1"],"instance_group_name":"homogeneousCluster","instance_type":"ml.r5.xlarge"}],"network_interface_name":"eth0"},"user_entry_point":"run_rec_model_sg.py"}
+SM_USER_ARGS=["--checkpoint","s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241201/","--hidden_units","256,64,32","--mode","train","--model_dir","s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241101/laidehe-rec-job/model"]
+SM_OUTPUT_INTERMEDIATE_DIR=/opt/ml/output/intermediate
+SM_CHANNEL_EVAL=/opt/ml/input/data/eval
+SM_CHANNEL_TRAIN=/opt/ml/input/data/train
+SM_HP_CHECKPOINT=s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241201/
+SM_HP_HIDDEN_UNITS=256,64,32
+SM_HP_MODE=train
+SM_HP_MODEL_DIR=s3://warehouse-algo/rec/test_model/prod_ctr_seq_off_din_v0_test/ds=20241101/laidehe-rec-job/model
+PYTHONPATH=/opt/ml/code:/usr/local/bin:/usr/loc
