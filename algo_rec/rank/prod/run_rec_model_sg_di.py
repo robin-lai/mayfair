@@ -87,8 +87,8 @@ if __name__ == '__main__':
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
-    parse.add_argument('--model_name', type=str, default='prod_ctr_seq_off_din_v0_test')
-    parse.add_argument('--model_dir', type=str, default='test_model')
+    parse.add_argument('--model_name', type=str, default='prod_ctr_seq_off_din_v0')
+    parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--instance_count', type=int, default=1)
     args = parse.parse_args()
     main(args)
