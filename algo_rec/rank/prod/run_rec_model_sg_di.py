@@ -1,6 +1,7 @@
 # encoding:utf-8
 import argparse
 import gc, datetime
+import boto3
 import sagemaker
 from sagemaker import get_execution_role
 from sagemaker.tensorflow import TensorFlow
@@ -8,6 +9,8 @@ from aws_auth_init import *
 
 
 def main(args):
+    s3_cli = boto3.client('s3')
+    sm_cli = boto3.client('sagemaker')
     sm_sess = sagemaker.Session()
     role = get_execution_role()
     print('aws region:', sm_sess.boto_region_name)
