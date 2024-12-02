@@ -14,7 +14,7 @@ def main(args):
     print('role:', role)
 
     # Basic config
-    job_name = args.model_name + args.ds
+    # job_name = args.model_name + args.ds
     code_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/code/' % args.model_name
     model_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.ds)
     model_dir_s3_pre = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.pre_ds)
@@ -55,7 +55,7 @@ def main(args):
 	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241111',
 	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241112'
 	    },
-	    'job_name': job_name
+	    'job_name': args.job_name
     }
     print('Train params: ', train_params)
     sg_estimator.fit(**train_params)
@@ -74,5 +74,6 @@ if __name__ == '__main__':
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
     parse.add_argument('--model_name', type=str, default='prod_ctr_seq_off_din_v0_test')
     parse.add_argument('--instance_count', type=int, default=1)
+    parse.add_argument('--job_name', type=str, default='laidehe-rec-job')
     args = parse.parse_args()
     main(args)
