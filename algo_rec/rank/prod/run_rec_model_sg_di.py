@@ -70,7 +70,7 @@ def main(args):
     }
     print('Train params: ', train_params)
     sg_estimator.fit(**train_params)
-    os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + '/model')) # cp can create dest dir
+    os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + 'model')) # cp can create dest dir,// is wrong
     del sg_estimator
     gc.collect()
     # alert(ctx)
