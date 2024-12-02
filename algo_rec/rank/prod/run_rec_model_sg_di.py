@@ -49,7 +49,8 @@ def main(args):
         hyperparameters={
             "mode": "train",
             "hidden_units": "256,64,32",
-            "warm_start_from": model_dir_s3_pre
+            "warm_start_from": model_dir_s3_pre,
+            "task": args.task
         },
         metric_definitions=[
             {'Name': 'auc:', 'Regex': 'auc=(.*?);'},
@@ -63,8 +64,8 @@ def main(args):
 
     train_params = {
 	    'inputs': {
-	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=%s'%args.train_ds,
-	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=%s'%args.eval_ds
+	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_%s/ds=%s'%(args.task, args.train_ds),
+	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_%s/ds=%s'%(args.task, args.eval_ds)
 	    },
 	    'job_name': job_name
     }
@@ -81,6 +82,7 @@ if __name__ == '__main__':
                                     description='run_rec_model_di',
                                     epilog='run_rec_model_di')
     today = datetime.date.today().strftime('%Y%m%d')
+    parse.add_argument('--task', type=str, default='ctr')
     parse.add_argument('--ds', type=str, default=today)
     parse.add_argument('--train_ds', type=str, default=today)
     parse.add_argument('--eval_ds', type=str, default='20241112')

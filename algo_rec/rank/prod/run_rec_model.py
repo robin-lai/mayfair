@@ -3,6 +3,7 @@
 import time
 import tensorflow as tf
 import json, os,sys
+import argparse
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
@@ -160,8 +161,11 @@ class DIN(tf.estimator.Estimator):
                  warm_start_from=None,
                  ):
         def _model_fn(features, labels, mode, params):
+            print('current task:', params['task'])
+            label = labels['is_clk']
             print('features:', features)
             print('labels', labels)
+            print('label', label)
             print('mode', mode)
             print('params', params)
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
@@ -197,11 +201,11 @@ class DIN(tf.estimator.Estimator):
                 }
                 return tf.estimator.EstimatorSpec(mode, predictions=predictions, export_outputs=export_outputs)
 
-            loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels['is_clk'], logits=logits),
+            loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logits),
                                      name="loss")
-            accuracy = tf.metrics.accuracy(labels=labels['is_clk'],
+            accuracy = tf.metrics.accuracy(labels=label,
                                                predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
-            auc = tf.metrics.auc(labels['is_clk'], prop)
+            auc = tf.metrics.auc(label, prop)
             metrics = {'accuracy': accuracy, 'auc': auc}
             tf.summary.scalar('accuracy', accuracy[1])
             tf.summary.scalar('auc', auc[1])
@@ -234,6 +238,7 @@ def main(args):
             'hidden_units': args.hidden_units.split(','),
             'learning_rate': 0.001,
             'dropout_rate': 0.0001,
+            'task': args.task
         },
         optimizer='Adam',
         warm_start_from=args.warm_start_from,
@@ -295,6 +300,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("save_checkpoints_steps", 10000, 100)
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
+    tf.app.flags.DEFINE_string("task", "ctr", "ctr")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
