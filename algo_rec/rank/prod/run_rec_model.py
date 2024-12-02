@@ -48,7 +48,7 @@ def _parse_fea(data):
     return features, labels
 
 
-def input_fn(batch_size=256, channel='train',
+def input_fn(task='ctr', batch_size=256, channel='train',
              num_parallel_calls=8,
              shuffle_factor=10, prefetch_factor=20, host_num=1, host_rank=0):
 
@@ -65,7 +65,13 @@ def input_fn(batch_size=256, channel='train',
     features, labels = data_iter.get_next()
     print('raw features:', features)
     print('raw click:', labels)
-    return features, labels
+    if task == 'ctr':
+        return features, labels['is_clk']
+    elif task == 'cvr':
+        return features, labels['is_pay']
+    print('unknown task:', task)
+
+
 
 
 def build_feature_columns():
@@ -162,10 +168,8 @@ class DIN(tf.estimator.Estimator):
                  ):
         def _model_fn(features, labels, mode, params):
             print('current task:', params['task'])
-            label = labels['is_clk']
             print('features:', features)
             print('labels', labels)
-            print('label', label)
             print('mode', mode)
             print('params', params)
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
@@ -201,11 +205,11 @@ class DIN(tf.estimator.Estimator):
                 }
                 return tf.estimator.EstimatorSpec(mode, predictions=predictions, export_outputs=export_outputs)
 
-            loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logits),
+            loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits),
                                      name="loss")
-            accuracy = tf.metrics.accuracy(labels=label,
+            accuracy = tf.metrics.accuracy(labels=labels,
                                                predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
-            auc = tf.metrics.auc(label, prop)
+            auc = tf.metrics.auc(labels, prop)
             metrics = {'accuracy': accuracy, 'auc': auc}
             tf.summary.scalar('accuracy', accuracy[1])
             tf.summary.scalar('auc', auc[1])
@@ -245,10 +249,10 @@ def main(args):
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
 
-    train_input_fn = lambda: input_fn(batch_size=args.batch_size,
+    train_input_fn = lambda: input_fn(task=args.task, batch_size=args.batch_size,
                                       channel='train', num_parallel_calls=args.num_parallel_calls,
                                       host_num=host_num, host_rank=host_rank)
-    eval_input_fn = lambda: input_fn(batch_size=args.batch_size,
+    eval_input_fn = lambda: input_fn(task=args.task, batch_size=args.batch_size,
                                      channel='eval', num_parallel_calls=args.num_parallel_calls,
                                      host_num=host_num, host_rank=host_rank)
     if host_rank == 0:
@@ -287,6 +291,7 @@ def main(args):
         serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
         print('begin export_savemodel', '#' * 80)
         print('model_dir:', args.model_dir)
+        # TODO why call model_fn with infer mode
         estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn)
     time.sleep(15 * 2)
     sys.exit(0)
