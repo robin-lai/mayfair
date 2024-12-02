@@ -214,8 +214,13 @@ class DIN(tf.estimator.Estimator):
             train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
             return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
 
-        super(DIN, self).__init__(
-            model_fn=_model_fn, model_dir=model_dir, config=config, params=params)
+        if warm_start_from is None:
+            super(DIN, self).__init__(
+                model_fn=_model_fn, model_dir=model_dir, config=config, params=params)
+        else:
+            super(DIN, self).__init__(
+                model_fn=_model_fn, model_dir=model_dir, config=config, params=params, warm_start_from=warm_start_from)
+
 
 def main(args):
     host_num = len(args.hosts)
@@ -231,6 +236,7 @@ def main(args):
             'dropout_rate': 0.0001,
         },
         optimizer='Adam',
+        warm_start_from=args.warm_start_from,
         config=tf.estimator.RunConfig(model_dir=args.model_dir, save_checkpoints_steps=args.save_checkpoints_steps)
     )
 
@@ -289,7 +295,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("save_checkpoints_steps", 10000, 100)
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
-    tf.app.flags.DEFINE_string("checkpoint", None, None)
+    tf.app.flags.DEFINE_string("warm_start_from", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
     print('start main', '#' * 80)
