@@ -84,6 +84,7 @@ if __name__ == '__main__':
     today = datetime.date.today().strftime('%Y%m%d')
     parse.add_argument('--task', type=str, default='ctr')
     parse.add_argument('--ds', type=str, default=today)
+    parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)
     parse.add_argument('--eval_ds', type=str, default='20241112')
     parse.add_argument('--pre_ds', type=str,
@@ -93,4 +94,13 @@ if __name__ == '__main__':
     parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--instance_count', type=int, default=1)
     args = parse.parse_args()
-    main(args)
+    if args.range != '':
+        ds_range = args.range.split(',')
+        for i in range(1,len(ds_range)):
+            args.ds=ds_range[i]
+            args.train_ds=ds_range[i]
+            args.pre_ds=ds_range[i-1]
+            print('train ds:', args.ds)
+            st = time.time()
+            main(args)
+            print('end train ds:%s cost:%s' % (args.ds, str(time.time()-st)))
