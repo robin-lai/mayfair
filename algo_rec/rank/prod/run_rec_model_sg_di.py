@@ -55,7 +55,7 @@ def main(args):
 
     train_params = {
 	    'inputs': {
-	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241111',
+	    	'train': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241112',
 	    	'eval': 's3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/ds=20241112'
 	    },
 	    'job_name': args.job_name
