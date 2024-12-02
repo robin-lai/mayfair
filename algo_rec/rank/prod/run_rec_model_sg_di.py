@@ -20,7 +20,8 @@ def main(args):
     # job_name = args.model_name + args.ds
     code_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/code/' % args.model_name
     model_dir_s3 = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.ds)
-    model_dir_s3_pre = 's3://warehouse-algo/rec/test_model/%s/ds=%s/' % (args.model_name, args.pre_ds)
+    model_dir_s3_pre = 's3://warehouse-algo/rec/test_model/%s/%s/model/' % (args.model_name, args.pre_ds)
+    print('model_dir_s3_pre:', model_dir_s3_pre)
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model.py',
