@@ -106,3 +106,8 @@ if __name__ == '__main__':
             st = time.time()
             main(args)
             print('end train ds:%s cost:%s' % (args.ds, str(time.time()-st)))
+    else:
+        print('eval ds:', args.eval_ds)
+        st = time.time()
+        main(args)
+        print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
