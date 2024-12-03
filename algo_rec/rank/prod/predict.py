@@ -1,4 +1,5 @@
 import tensorflow as tf
+tf.compat.v1.enable_eager_execution()
 
 def get_infer_tensor_dict():
     tensor_dict = {
@@ -55,4 +56,4 @@ def get_infer_tensor_dict():
 local_model_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733194146'
 predictor = tf.saved_model.load_v2(local_model_dir).signatures["serving_default"]
 tensor_dict = get_infer_tensor_dict()
-predictor(**tensor_dict)
+print(predictor(**tensor_dict))
