@@ -4,6 +4,7 @@ import sagemaker
 from sagemaker import get_execution_role
 # import sh
 import os
+from pyarrow import parquet
 from constant import *
 
 
@@ -29,6 +30,15 @@ def convert_text2pkl(text_dir):
             else:
                 m[k] = {fts_name: trim_v}
     return m
+
+
+def convert_user_seq2pkl(pt_file):
+    pt = parquet.read_table(pt_file)
+    m = {}
+    for t in zip(pt['uuid'],pt['seq_goods_id'], pt['seq_cate_id']):
+        m[t[0]] = {'seq_goods_id': t[1], 'seq_cate_id':t[2]}
+    return m
+
 
 
 

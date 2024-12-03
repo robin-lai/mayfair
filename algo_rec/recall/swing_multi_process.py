@@ -106,9 +106,9 @@ def swing(*args):
                     else:
                         swing[tgt_item] = score
         ret[trig_itm] = [(k, v) for k, v in swing.items()]
-        if n % 300 == 0:
+        if n % 50 == 0:
             ed = time.time()
-            print('process 300 / %s item cost:%s' % (str(N), str(ed - st)))
+            print('process 50 / %s item cost:%s' % (str(N), str(ed - st)))
             st = time.time()
     print('swing process done, cost:', time.time() - st0)
 
