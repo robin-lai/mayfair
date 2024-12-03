@@ -44,7 +44,7 @@ def _parse_fea(data):
    return features, is_clk
 
 
-def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, label=None, batch_size=256, num_epochs=1,
+def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, label=None, batch_size=10, num_epochs=1,
              num_parallel_calls=8,
              shuffle_factor=10, prefetch_factor=20,
              fn_mode='', num_host=1, host_rank=0):
@@ -56,7 +56,7 @@ def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, 
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
     if fn_mode == 'MultiWorkerShard':
         dataset = dataset.shard(num_host, host_rank)
-    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls).take(1)
+    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls).take(100)
 
     dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
     dataset = dataset.batch(batch_size)
