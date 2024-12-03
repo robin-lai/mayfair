@@ -323,6 +323,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("task", "ctr", "ctr")
+    tf.app.flags.DEFINE_string("pred_save_file", "./predict_result.pkl")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
