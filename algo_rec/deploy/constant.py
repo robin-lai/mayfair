@@ -12,6 +12,9 @@ fts_item_s3_text_dir = 's3://algo-sg/rec/cn_rec_detail_feature_item_base_for_red
 fts_item_local_text_dir = deploy_data_dir + 'cn_rec_detail_feature_item_base_for_redis/'
 fts_item_pickle = deploy_pkg_dir + 'item_features.pkl'
 
+fts_user_seq_off_s3 = 's3://algo-sg/rec/cn_rec_detail_feature_user_seq_v2_for_redis/ds=20241201/'
+fts_user_seq_off_pickle = deploy_pkg_dir + 'user_seq_off_features.pkl'
+
 
 # config
 s3_model = 's3://warehouse-algo/rec/all_ctr_din_prod_1day_1121_test/job/Job-laidehe-test-all-ctr-din-prod-1day-1121-test-11-21-11-24-43/model/'

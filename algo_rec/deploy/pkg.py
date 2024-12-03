@@ -4,6 +4,7 @@ import sagemaker
 from sagemaker import get_execution_role
 # import sh
 import os
+import pickle
 from pyarrow import parquet
 from constant import *
 
@@ -70,8 +71,11 @@ if __name__ == '__main__':
     os.system('aws s3 cp --recursive %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
     item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
     with open(fts_item_pickle, 'wb') as fout:
-        import pickle
         pickle.dump(item_fts_dict, fout)
+
+    user_seq_off_dict = convert_user_seq2pkl(fts_user_seq_off_s3)
+    with open(fts_user_seq_off_pickle, 'wb') as fout:
+        pickle.dump(user_seq_off_dict, fout)
 
     # tar
     tar_file = deploy_dir + tar_name
