@@ -47,7 +47,7 @@ def main(args):
         max_run=3600 * 24 * 3,
         keep_alive_period_in_seconds=1800,
         hyperparameters={
-            "mode": "train",
+            "mode": args.mode,
             "hidden_units": "256,64,32",
             "warm_start_from": model_dir_s3_pre,
             "task": args.task
@@ -71,7 +71,8 @@ def main(args):
     }
     print('Train params: ', train_params)
     sg_estimator.fit(**train_params)
-    os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + 'model')) # cp can create dest dir,// is wrong
+    if args.mode == 'train':
+        os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + 'model')) # cp can create dest dir,// is wrong
     del sg_estimator
     gc.collect()
     # alert(ctx)
@@ -83,6 +84,7 @@ if __name__ == '__main__':
                                     epilog='run_rec_model_di')
     today = datetime.date.today().strftime('%Y%m%d')
     parse.add_argument('--task', type=str, default='ctr')
+    parse.add_argument('--mode', type=str, default='train')
     parse.add_argument('--ds', type=str, default=today)
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)

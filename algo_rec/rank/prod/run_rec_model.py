@@ -4,6 +4,7 @@ import time
 import tensorflow as tf
 import json, os,sys
 import argparse
+import pickle
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
@@ -263,37 +264,52 @@ def main(args):
         input_fn=eval_input_fn
         , throttle_secs=300, steps=100)
 
-    print("before train and evaluate")
-    tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-    print("after train and evaluate")
+    if args.mode == 'infer':
+        print('begin predict', '#' * 80)
+        st = time.time()
+        pred = estimator.predict(input_fn=eval_input_fn)
+        pred_list = []
+        for ele in pred:
+            pred_list.append(ele)  # ele is dict
+        with open(args.pred_save_file, 'wb') as fout:
+            pickle.dump(pred_list, fout)
+        ed = time.time()
+        print('end predict cost:', str(ed - st), '#' * 80)
+        print('pred_head 100 element:', pred_list[0:100])
+        print('save pred result to file:')
 
-    if host_rank == 0:
-        feature_spec = {
-            "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
-            "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
-            "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
-            "click_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="click_7d"),
-            "cart_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="cart_7d"),
-            "ord_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_total"),
-            "pay_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_total"),
-            "ord_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_7d"),
-            "pay_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_7d"),
-            "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
-            "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
-            "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
-            "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
-            "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
-            "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
-            "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
-            "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
-            "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-        }
-        print('feature_spec placeholder', feature_spec)
-        serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
-        print('begin export_savemodel', '#' * 80)
-        print('model_dir:', args.model_dir)
-        # TODO why call model_fn with infer mode
-        estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn)
+    if args.mode == 'train':
+        print("before train and evaluate")
+        tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
+        print("after train and evaluate")
+
+        if host_rank == 0:
+            feature_spec = {
+                "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
+                "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
+                "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
+                "click_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="click_7d"),
+                "cart_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="cart_7d"),
+                "ord_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_total"),
+                "pay_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_total"),
+                "ord_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_7d"),
+                "pay_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_7d"),
+                "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
+                "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
+                "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
+                "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
+                "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
+                "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
+                "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
+                "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
+                "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+            }
+            print('feature_spec placeholder', feature_spec)
+            serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
+            print('begin export_savemodel', '#' * 80)
+            print('model_dir:', args.model_dir)
+            # TODO why call model_fn with infer mode
+            estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn)
     time.sleep(15 * 2)
     sys.exit(0)
 
