@@ -73,9 +73,9 @@ if __name__ == '__main__':
     with open(fts_item_pickle, 'wb') as fout:
         pickle.dump(item_fts_dict, fout)
 
-    user_seq_off_dict = convert_user_seq2pkl(fts_user_seq_off_s3)
-    with open(fts_user_seq_off_pickle, 'wb') as fout:
-        pickle.dump(user_seq_off_dict, fout)
+    # user_seq_off_dict = convert_user_seq2pkl(fts_user_seq_off_s3)
+    # with open(fts_user_seq_off_pickle, 'wb') as fout:
+    #     pickle.dump(user_seq_off_dict, fout)
 
     # tar
     tar_file = deploy_dir + tar_name
