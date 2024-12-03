@@ -30,11 +30,12 @@ def main(args):
     print('model_dir_s3_pre:', model_dir_s3_pre)
     print('model_dir_s3:', model_dir_s3)
     hps = {
-            "mode": args.mode,
-            "hidden_units": "256,64,32",
-            "warm_start_from": model_dir_s3_pre,
-            "task": args.task
-        }
+        "mode": args.mode,
+        "hidden_units": "256,64,32",
+        "task": args.task
+    }
+    if args.warm_start_from == 'NEWEST':
+        hps['warm_start_from'] = model_dir_s3_pre
     if args.mode == 'infer':
         hps['pred_local'] = args.model_name + '_' + args.eval_ds + '.pkl'
         hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s.pkl'%(args.model_name, args.eval_ds)
@@ -98,6 +99,7 @@ if __name__ == '__main__':
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
     parse.add_argument('--model_name', type=str, default='prod_ctr_seq_off_din_v0')
     parse.add_argument('--model_dir', type=str, default='prod_model')
+    parse.add_argument('--warm_start_from', type=str, default='NEWEST')
     parse.add_argument('--instance_count', type=int, default=1)
     args = parse.parse_args()
     if args.range != '':
