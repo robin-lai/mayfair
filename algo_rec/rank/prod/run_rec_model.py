@@ -196,6 +196,7 @@ class DIN(tf.estimator.Estimator):
             logits = tf.layers.dense(net, units=1)
             prop = tf.sigmoid(logits, name="pred")
             if mode == tf.estimator.ModeKeys.PREDICT:
+                print('modekeys predict:', mode)
                 predictions = {
                     'probabilities': prop,
                     # 'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
