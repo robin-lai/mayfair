@@ -173,7 +173,7 @@ class DIN(tf.estimator.Estimator):
             print('labels', labels)
             print('mode', mode)
             print('params', params)
-            if 'sample_id' not in  features:
+            if 'sample_id' not in  features and mode != 'infer':
                 batch_size = features['goods_id'].get_shape()[0]
                 idx = [[i] for i in range(batch_size)]
                 features['sample_id'] = tf.constant(idx, shape=[batch_size, 1])
