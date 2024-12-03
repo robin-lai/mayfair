@@ -27,7 +27,7 @@ def get_infer_tensor_dict():
 
     }
     return tensor_dict
-local_model_dir = ''
+local_model_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733194146'
 predictor = tf.saved_model.load(local_model_dir).signatures["predict"]
 tensor_dict = get_infer_tensor_dict()
 predictor(**tensor_dict)
