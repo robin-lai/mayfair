@@ -50,7 +50,7 @@ def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, 
              fn_mode='', num_host=1, host_rank=0):
     print('Begin_input_fn channel', channel, '#' * 80)
 
-    dataset = tf.data.TFRecordDataset('./tfrecord/part-00000-827236cb-422b-4758-9f33-265565f1aad3-c000')
+    dataset = tf.data.TFRecordDataset('./tfrecord/part-00000-e0a162c9-7a56-40c0-ae3f-25f194a0751e-c000')
     # data_iter_before = dataset.make_one_shot_iterator()
     # print('raw sample:', data_iter_before.get_next())
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
