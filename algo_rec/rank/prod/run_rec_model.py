@@ -278,7 +278,6 @@ def main(args):
         os.system('aws s3 cp %s %s' % (args.pred_local, args.pred_s3))
         print('end predict cost:', str(ed - st), '#' * 80)
         print('pred_head 100 element:', pred_list[0:100])
-        print('save pred result to file:')
 
     if args.mode == 'train':
         print("before train and evaluate")
