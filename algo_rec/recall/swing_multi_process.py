@@ -1,5 +1,6 @@
 # encoding:utf-8
 import multiprocessing
+import os
 from random import shuffle
 import pprint
 import argparse
@@ -8,6 +9,9 @@ from pyarrow import parquet
 import pickle
 import numpy as np
 import sys
+
+from algo_rec.learn.tf21_parse_example import parse
+
 sys.path.append('../..')
 from algo_rec.utils.util import chunks
 
@@ -63,6 +67,7 @@ def swing(*args):
     print('O(n):', len(trig_itm_list))
     out_file = args[1]
     c = args[2]
+    s3_file = args[3]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -119,6 +124,7 @@ def swing(*args):
             line = (c + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
             lines.append(line)
         fout.writelines(line)
+    os.system('aws s3 cp %s %s' % (out_file, s3_file))
 
 
 
@@ -186,7 +192,7 @@ def get_test_data():
 def main(args):
     # get data
     st = time.time()
-    in_file = 's3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118'
+    in_file = args.in_file
     if args.flag == 's3':
         m = get_data_from_s3(in_file)
     elif args.flag == 'mock':
@@ -204,7 +210,6 @@ def main(args):
         print('process country:', country)
         process(v, country)
         print('step 2 preprocess done cost:', str(time.time() - st))
-
         # swing
         st = time.time()
         with open(item_bhv_num_file%(country), 'rb') as fin:
@@ -224,7 +229,8 @@ def main(args):
             print('batch size:', len(ele))
         print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
         outfile = './swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country]) for i, args in enumerate(item_batch)]
+        s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
+        proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country, s3_file%(country, i)]) for i, args in enumerate(item_batch)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
@@ -239,5 +245,7 @@ if __name__ == '__main__':
         epilog='swing-help')
     parser.add_argument('--flag',default='mock')
     parser.add_argument('--p',type=int, default=1)
+    parser.add_argument('--s3_dir', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/')
+    parser.add_argument('--in_file', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118')
     args = parser.parse_args()
     main(args)
