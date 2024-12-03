@@ -17,7 +17,8 @@ fts_user_seq_off_pickle = deploy_pkg_dir + 'user_seq_off_features.pkl'
 
 
 # config
-s3_model = 's3://warehouse-algo/rec/prod_model/prod_ctr_seq_off_din_v0/ds=20241107/model/'
+# s3_model = 's3://warehouse-algo/rec/prod_model/prod_ctr_seq_off_din_v0/ds=20241107/model/'
+s3_model = 's3://warehouse-algo/rec/test_model/predict_test/ds=20241112/model'
 model_local = '~/mayfair/algo_rec/rank/exp/model_seq_nohead_1day_1128/1732783231/'
 # s3_model_online = 's3://algo-sg/rec/model_online/'
 s3_model_online = 's3://algo-rec/rec/model_online/'
