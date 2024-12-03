@@ -271,9 +271,11 @@ def main(args):
         pred_list = []
         for ele in pred:
             pred_list.append(ele)  # ele is dict
-        with open(args.pred_save_file, 'wb') as fout:
+        with open(args.pred_local, 'wb') as fout:
             pickle.dump(pred_list, fout)
         ed = time.time()
+        print('upload %s -> %s' % (args.pred_local, args.pred_s3))
+        os.system('aws s3 cp %s %s' % (args.pred_local, args.pred_s3))
         print('end predict cost:', str(ed - st), '#' * 80)
         print('pred_head 100 element:', pred_list[0:100])
         print('save pred result to file:')
@@ -323,7 +325,8 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("task", "ctr", "ctr")
-    tf.app.flags.DEFINE_string("pred_save_file", "./predict_result.pkl", "save_pred_result_file_name")
+    tf.app.flags.DEFINE_string("pred_local", "./predict_result.pkl", "save_pred_result_local")
+    tf.app.flags.DEFINE_string("pred_s3", "s3://warehouse-algo/rec/model_pred/predict_result.pkl", "save_pred_result_s3")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")

@@ -29,6 +29,15 @@ def main(args):
     model_dir_s3_pre = 's3://warehouse-algo/rec/%s/%s/ds=%s/model/' % (args.model_dir, args.model_name, args.pre_ds)
     print('model_dir_s3_pre:', model_dir_s3_pre)
     print('model_dir_s3:', model_dir_s3)
+    hps = {
+            "mode": args.mode,
+            "hidden_units": "256,64,32",
+            "warm_start_from": model_dir_s3_pre,
+            "task": args.task
+        }
+    if args.mode == 'infer':
+        hps['pred_local'] = args.model_name + '_' + args.eval_ds + '.pkl'
+        hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s'%(args.model_name, args.eval_ds)
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model.py',
@@ -46,12 +55,7 @@ def main(args):
         py_version='py37',
         max_run=3600 * 24 * 3,
         keep_alive_period_in_seconds=1800,
-        hyperparameters={
-            "mode": args.mode,
-            "hidden_units": "256,64,32",
-            "warm_start_from": model_dir_s3_pre,
-            "task": args.task
-        },
+        hyperparameters=hps,
         metric_definitions=[
             {'Name': 'auc:', 'Regex': 'auc=(.*?);'},
             {'Name': 'loss:', 'Regex': 'loss=(.*?);'},
