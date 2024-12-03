@@ -37,7 +37,7 @@ def main(args):
         }
     if args.mode == 'infer':
         hps['pred_local'] = args.model_name + '_' + args.eval_ds + '.pkl'
-        hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s'%(args.model_name, args.eval_ds)
+        hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s.pkl'%(args.model_name, args.eval_ds)
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model.py',
