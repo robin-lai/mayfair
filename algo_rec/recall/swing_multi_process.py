@@ -10,10 +10,13 @@ import pickle
 import numpy as np
 import sys
 
-from algo_rec.learn.tf21_parse_example import parse
 
-sys.path.append('../..')
-from algo_rec.utils.util import chunks
+import math
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    c = math.ceil(len(lst) / n)
+    for i in range(0, len(lst), c):
+        yield lst[i:i + c]
 
 item_bhv_user_list_file = './%s_item_bhv_user_list.pkl'
 user_bhv_item_list_file = './%s_user_bhv_item_list.pkl'
