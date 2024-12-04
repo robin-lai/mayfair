@@ -95,7 +95,7 @@ def get_infer_tensor_dict(type=2):
         return tensor_dict3
 
 def process(*args):
-    pt_file = args[0]
+    pt_file = args.pt_file
     pt = parquet.read_table(pt_file).to_pydict()
     n = pt['sample_id']
     ll = [i for i in range(n)]
