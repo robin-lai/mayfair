@@ -173,10 +173,6 @@ class DIN(tf.estimator.Estimator):
             print('labels', labels)
             print('mode', mode)
             print('params', params)
-            if 'sample_id' not in  features:
-                # batch_size = features['goods_id'].get_shape()[0]
-                # idx = [[i] for i in range(batch_size)]
-                features['sample_id'] = tf.constant(1)
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
             cate_cols_emb_input = tf.feature_column.input_layer(features, cate_cols_emb)
             numric_cols = params["feature_columns"]["numric_cols"]
@@ -202,6 +198,8 @@ class DIN(tf.estimator.Estimator):
             prop = tf.sigmoid(logits, name="pred")
             if mode == tf.estimator.ModeKeys.PREDICT:
                 print('modekeys predict:', mode)
+                if 'sample_id' not in features:
+                    features['sample_id'] = tf.constant(1)  # export model will need the key #TODO
                 predictions = {
                     'probabilities': prop,
                     'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
