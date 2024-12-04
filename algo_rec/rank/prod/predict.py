@@ -1,5 +1,15 @@
 import tensorflow as tf
+import argparse
+from pyarrow import parquet
+
 tf.compat.v1.enable_eager_execution()
+
+import math
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    c = math.ceil(len(lst) / n)
+    for i in range(0, len(lst), c):
+        yield lst[i:i + c]
 
 def get_infer_tensor_dict(type=2):
     tensor_dict = {
@@ -83,7 +93,52 @@ def get_infer_tensor_dict(type=2):
         return tensor_dict2
     elif type==2:
         return tensor_dict3
-local_model_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733270759'
-predictor = tf.saved_model.load_v2(local_model_dir).signatures["serving_default"]
-tensor_dict = get_infer_tensor_dict(type=2)
-print(predictor(**tensor_dict))
+
+def process(*args):
+    pt_file = args[0]
+    pt = parquet.read_table(pt_file).to_pydict()
+    n = pt['sample_id']
+    ll = [i for i in range(n)]
+    batch = chunks(ll, 1024)
+    item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
+                            "cate_level3_id": "", "cate_level4_id": "", "country": ""}
+    item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
+    item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
+                         "pay_7d": 0}
+    user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
+    ret = []
+    predictor = tf.saved_model.load_v2(args.dir).signatures["serving_default"]
+    def padding(l):
+        if len(l) > 20:
+            return l[0:20]
+        else:
+            return l + [""] * (20-len(l))
+    for idx in batch:
+        feed_dict = {}
+        for name in item_features_string.keys():
+            v =[ [str(i)] for i in  pt[name][idx[0]:idx[-1]]]
+            feed_dict[name] = tf.constant(v, dtype=tf.string)
+        for name in item_features_int.keys():
+            v =[ [int(i)] for i in  pt[name][idx[0]:idx[-1]]]
+            feed_dict[name] = tf.constant(v, dtype=tf.int32)
+        for name in item_features_double.keys():
+            v =[ [float(i)] for i in  pt[name][idx[0]:idx[-1]]]
+            feed_dict[name] = tf.constant(v, dtype=tf.float32)
+        for name in user_seq_string.keys():
+            v =[ padding(i) for i in  pt[name][idx[0]:idx[-1]]]
+            feed_dict[name] = tf.constant(v, dtype=tf.float32)
+        print('feed_dict', feed_dict)
+        res = predictor(**feed_dict)
+        print('res', res)
+        ret.append(res)
+
+def main(*args):
+    process(args)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='predict',
+        description='predict',
+        epilog='predict')
+    parser.add_argument('--pt_file', default='')
+    parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733270759')
