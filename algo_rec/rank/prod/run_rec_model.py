@@ -173,10 +173,10 @@ class DIN(tf.estimator.Estimator):
             print('labels', labels)
             print('mode', mode)
             print('params', params)
-            if 'sample_id' not in  features and mode != 'infer':
-                batch_size = features['goods_id'].get_shape()[0]
-                idx = [[i] for i in range(batch_size)]
-                features['sample_id'] = tf.constant(idx, shape=[batch_size, 1])
+            if 'sample_id' not in  features:
+                # batch_size = features['goods_id'].get_shape()[0]
+                # idx = [[i] for i in range(batch_size)]
+                features['sample_id'] = tf.constant(1)
             cate_cols_emb = params["feature_columns"]["cate_cols_emb"]
             cate_cols_emb_input = tf.feature_column.input_layer(features, cate_cols_emb)
             numric_cols = params["feature_columns"]["numric_cols"]
