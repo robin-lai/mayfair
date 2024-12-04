@@ -94,7 +94,7 @@ def get_infer_tensor_dict(type=2):
     elif type==2:
         return tensor_dict3
 
-def process(*args):
+def process(args):
     pt_file = args.pt_file
     pt = parquet.read_table(pt_file).to_pydict()
     n = pt['sample_id']
@@ -132,7 +132,7 @@ def process(*args):
         print('res', res)
         ret.append(res)
 
-def main(*args):
+def main(args):
     process(args)
 
 if __name__ == '__main__':
