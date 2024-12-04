@@ -50,10 +50,11 @@ def get_infer_tensor_dict():
             [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
              "19", "20"]], dtype=tf.string),
         "cate_id": tf.constant([["1"]], dtype=tf.string),
+        "sample_id": tf.constant([[2]], dtype=tf.int32),
 
     }
     return tensor_dict2
-local_model_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733194146'
+local_model_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733270759'
 predictor = tf.saved_model.load_v2(local_model_dir).signatures["serving_default"]
 tensor_dict = get_infer_tensor_dict()
 print(predictor(**tensor_dict))
