@@ -136,7 +136,7 @@ def process(args):
         prob = res[SCORE].numpy()
         score[SCORE].extend(prob)
         # print('res', res)
-    print(score)
+    print(score[ID][0:100], score[SCORE][0:100])
     return score
 
 
