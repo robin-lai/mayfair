@@ -97,7 +97,7 @@ def get_infer_tensor_dict(type=2):
 def process(args):
     pt_file = args.pt_file
     pt = parquet.read_table(pt_file).to_pydict()
-    n = pt['sample_id']
+    n = len(pt['sample_id'])
     ll = [i for i in range(n)]
     batch = chunks(ll, 1024)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
