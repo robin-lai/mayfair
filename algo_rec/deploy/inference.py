@@ -60,7 +60,7 @@ def get_infer_json_from_request(d):
             m = pickle.load(fin)
         for goods_id in d['goodsIdList']:
             example = {}
-            example['sample_id'] = int(goods_id)
+            example['sample_id'] = 100
             for name in item_features_string.keys():
                 if goods_id in m:
                     if name in m[goods_id]:
