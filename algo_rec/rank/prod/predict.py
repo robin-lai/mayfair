@@ -135,6 +135,7 @@ def process(args):
         res = predictor(**feed_dict)
         prob = res[SCORE].numpy()
         score[SCORE].extend(prob)
+        break
         # print('res', res)
     print(score[ID][0:100], score[SCORE][0:100])
     return score
