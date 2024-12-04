@@ -120,7 +120,7 @@ def process(args):
             feed_dict[name] = tf.constant(v, dtype=tf.string)
         for name in item_features_int.keys():
             v =[ [int(i)] for i in  pt[name][idx[0]:idx[-1]]]
-            feed_dict[name] = tf.constant(v, dtype=tf.int32)
+            feed_dict[name] = tf.constant(v, dtype=tf.int64)
         for name in item_features_double.keys():
             v =[ [float(i)] for i in  pt[name][idx[0]:idx[-1]]]
             feed_dict[name] = tf.constant(v, dtype=tf.float32)
