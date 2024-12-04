@@ -22,7 +22,7 @@ s3_model = 's3://warehouse-algo/rec/test_model/predict_test3/ds=20241112/model'
 model_local = '~/mayfair/algo_rec/rank/exp/model_seq_nohead_1day_1128/1732783231/'
 # s3_model_online = 's3://algo-sg/rec/model_online/'
 s3_model_online = 's3://algo-rec/rec/model_online/'
-tar_name = 'model_seq_off_1204_test.tar.gz'
+tar_name = 'model_seq_off_1204_test_5.tar.gz'
 s3_model_online_tar_file = s3_model_online + tar_name
 endpoint = 'ctr-model-seq-off-1204-5'
 
