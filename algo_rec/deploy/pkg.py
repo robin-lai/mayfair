@@ -66,7 +66,7 @@ if __name__ == '__main__':
     print('role:', role)
 
     # download files
-    os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_tmp_dir))
+    os.system('aws s3 cp --recursive %s %s' % (s3_model, deploy_pkg_dir))
     # os.system('cp -r  %s %s' % (model_local, deploy_pkg_dir))
     os.system('aws s3 cp --recursive %s %s' % (fts_item_s3_text_dir, fts_item_local_text_dir))
     item_fts_dict = convert_text2pkl(fts_item_local_text_dir)
