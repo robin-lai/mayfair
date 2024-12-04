@@ -118,7 +118,7 @@ def process(args):
 
     for idx in batch:
         feed_dict = {}
-        score[ID].extend(pt[ID])
+        score[ID].extend(pt[ID][idx[0]:idx[-1]])
         for name in item_features_string.keys():
             v =[ [str(i)] for i in  pt[name][idx[0]:idx[-1]]]
             feed_dict[name] = tf.constant(v, dtype=tf.string)
