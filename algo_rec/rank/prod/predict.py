@@ -126,7 +126,7 @@ def process(args):
             feed_dict[name] = tf.constant(v, dtype=tf.float32)
         for name in user_seq_string.keys():
             v =[ padding(i) for i in  pt[name][idx[0]:idx[-1]]]
-            feed_dict[name] = tf.constant(v, dtype=tf.float32)
+            feed_dict[name] = tf.constant(v, dtype=tf.string)
         print('feed_dict', feed_dict)
         res = predictor(**feed_dict)
         print('res', res)
