@@ -140,5 +140,7 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict')
-    parser.add_argument('--pt_file', default='')
-    parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/1733270759')
+    parser.add_argument('--pt_file', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v1/ds=20241112/part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
+    parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/model/model_local_pkg/1732159550')
+    args = parser.parse_args()
+    main(args)
