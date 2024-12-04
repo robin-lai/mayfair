@@ -20,7 +20,7 @@ def deploy_new_endpoint(model_data,
     variant_name = "Variant-xlarge-1"  # start from 1, incr 1 when updating.
     img = sagemaker.image_uris.retrieve(
         framework='tensorflow',
-        version='1.15',
+        version='1.15.3',
         region=sm_sess.boto_region_name,
         image_scope='inference',
         instance_type=instance_type
