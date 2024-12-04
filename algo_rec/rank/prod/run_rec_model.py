@@ -200,6 +200,7 @@ class DIN(tf.estimator.Estimator):
                 print('modekeys predict:', mode)
                 if 'sample_id' not in features:
                     features['sample_id'] = tf.constant(1)  # export model will need the key #TODO
+                features['sample_id'] = tf.identity(features['sample_id'])
                 predictions = {
                     'probabilities': prop,
                     'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
