@@ -138,7 +138,7 @@ def process_tfr(tfr_list, batch_size, dir, score):
     os.system('mkdir tmp')
     for file in tfr_list:
         print('download file into tmp:',file)
-        os.system('aws s3 cp %s %s' % (file, './tmp/%s'%file))
+        os.system('aws s3 cp %s %s' % (file, './tmp/'))
     ds = tf.data.TFRecordDataset(tfr_list)
     ds = ds.map(_parse_fea).batch(batch_size)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v1_tfr_cvr/ds=20241113/')
     parser.add_argument('--tb', default='s3://warehouse-algo/rec/model_pred/predict_v3')
-    parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/prod/tmp')
+    parser.add_argument('--dir', default='')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=1)
     args = parser.parse_args()
