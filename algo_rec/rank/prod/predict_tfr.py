@@ -140,7 +140,7 @@ def process_tfr(args):
     item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
                          "pay_7d": 0}
     user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
-    predictor = tf.saved_model.load_v2(args.dir).signatures["serving_default"]
+    predictor = tf.saved_model.load(args.dir).signatures["serving_default"]
     for idx in ds.as_numpy_iterator():
         feed_dict = {}
         score[ID].extend(idx[ID])
