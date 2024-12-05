@@ -139,7 +139,8 @@ def process_tfr(tfr_list, batch_size, dir, score):
     for file in tfr_list:
         print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, './tmp/'))
-    ds = tf.data.TFRecordDataset(tfr_list)
+    file_suffix = [e.split('/')[-1] for e in tfr_list]
+    ds = tf.data.TFRecordDataset(file_suffix)
     ds = ds.map(_parse_fea).batch(batch_size)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                             "cate_level3_id": "", "cate_level4_id": "", "country": ""}
