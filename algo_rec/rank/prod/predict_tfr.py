@@ -202,7 +202,7 @@ def main(args):
     for proc in jobs:
         proc.join()
     print(score)
-    tb = pa.table(score)
+    tb = pa.table(dict(score))
     parquet.write_table(tb, args.tb)
 
 

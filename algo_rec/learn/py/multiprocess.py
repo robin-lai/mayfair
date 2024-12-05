@@ -18,5 +18,5 @@ if __name__ == "__main__":
 
     for proc in jobs:
         proc.join()
-    print(return_dict)
+    print(dict(return_dict))
     print(return_dict.values())
