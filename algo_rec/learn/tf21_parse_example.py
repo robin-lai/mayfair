@@ -1,6 +1,6 @@
 import tensorflow as tf
 print(tf.__version__)
-file = "/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/ds=20241102/part-00000-84854856-90d1-4bf8-9e52-5032827fdee4-c000"
+file = "./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000"
 ds = tf.data.TFRecordDataset(file)
 import tensorflow.compat.v1 as v1
 
