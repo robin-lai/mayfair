@@ -151,10 +151,12 @@ def process_tfr(tfr_list, batch_size, dir, score):
     predictor = tf.saved_model.load(dir).signatures["serving_default"]
     for idx in ds.as_numpy_iterator():
         feed_dict = {}
+        id = idx[ID].tolist()
+        id = [e[0] for e in id]
         if ID not in score:
-            score[ID] = idx[ID].tolist()
+            score[ID] = id
         else:
-            score[ID].extend(idx[ID].tolist())
+            score[ID].extend(id)
         for name in item_features_string.keys():
             feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
         for name in item_features_int.keys():
@@ -166,6 +168,7 @@ def process_tfr(tfr_list, batch_size, dir, score):
         print('feed_dict', feed_dict)
         res = predictor(**feed_dict)
         prob = res[SCORE].numpy().tolist()
+        prob = [e[0] for e in prob]
         if SCORE not in score:
             score[SCORE] = prob
         else:
