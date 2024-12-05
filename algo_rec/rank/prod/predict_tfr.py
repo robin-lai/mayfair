@@ -7,6 +7,7 @@ print(tf.__version__)
 import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3
+import os
 
 
 import math
@@ -134,6 +135,10 @@ def process_tfr(tfr_list, batch_size, dir, score):
        }
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
+    os.system('mkdir tmp')
+    for file in tfr_list:
+        print('download file into tmp:',file)
+        os.system('aws s3 cp %s %s' % (file, './tmp/%s'%file))
     ds = tf.data.TFRecordDataset(tfr_list)
     ds = ds.map(_parse_fea).batch(batch_size)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
@@ -170,6 +175,7 @@ def main(args):
     paginator = s3_cli.get_paginator('list_objects_v2')
     page_iter = paginator.paginate(Bucket=BUCKET, Prefix=args.tfr_s3)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
+    file_list = ['s3://%s/%s'%(BUCKET, v) for v in file_list]
     print('file list in dir', file_list)
     shuffle(file_list)
     file_batch = list(chunks(file_list,  args.proc))
@@ -196,7 +202,7 @@ if __name__ == '__main__':
         description='predict',
         epilog='predict')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
-    parser.add_argument('--tfr_s3', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_cvr/ds=20241113/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v1_tfr_cvr/ds=20241113/')
     parser.add_argument('--tb', default='s3://warehouse-algo/rec/model_pred/predict_v3')
     parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/prod/tmp')
     parser.add_argument('--batch_size', type=int, default=1024)
