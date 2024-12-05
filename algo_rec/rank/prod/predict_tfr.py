@@ -1,9 +1,12 @@
 import argparse
 import pyarrow as pa
+from random import shuffle
 from pyarrow import parquet
 import tensorflow as tf
 print(tf.__version__)
 import tensorflow.compat.v1 as v1
+import multiprocessing
+import boto3
 
 
 import math
@@ -98,7 +101,7 @@ def get_infer_tensor_dict(type=2):
 ID = 'sample_id'
 SCORE = 'probabilities'
 
-def process_tfr(args):
+def process_tfr(tfr_list, batch_size, dir, score):
 
     def _parse_fea(data):
        feature_describe = {
@@ -131,16 +134,15 @@ def process_tfr(args):
        }
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
-    ds = tf.data.TFRecordDataset(args.tfr)
-    ds = ds.map(_parse_fea).batch(args.batch_size)
-    score = {ID: [], SCORE: []}
+    ds = tf.data.TFRecordDataset(tfr_list)
+    ds = ds.map(_parse_fea).batch(batch_size)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                             "cate_level3_id": "", "cate_level4_id": "", "country": ""}
     item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
     item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
                          "pay_7d": 0}
     user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
-    predictor = tf.saved_model.load(args.dir).signatures["serving_default"]
+    predictor = tf.saved_model.load(dir).signatures["serving_default"]
     for idx in ds.as_numpy_iterator():
         feed_dict = {}
         score[ID].extend(idx[ID])
@@ -159,13 +161,31 @@ def process_tfr(args):
         break
         # print('res', res)
     print(score[ID][0:100], score[SCORE][0:100])
-    return score
-        
-        
-
 
 def main(args):
-    score = process_tfr(args)
+    s3_cli = boto3.client('s3')
+    BUCKET = 'warehouse-algo'
+
+    # get files
+    paginator = s3_cli.get_paginator('list_objects_v2')
+    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=args.tfr_s3)
+    file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
+    print('file list in dir', file_list)
+    shuffle(file_list)
+    file_batch = list(chunks(file_list,  args.proc))
+
+    manager = multiprocessing.Manager()
+    score = manager.dict()
+    score[ID] = []
+    score[SCORE] = []
+    jobs = []
+    for tfr_list in file_batch:
+        p = multiprocessing.Process(target=process_tfr, args=(tfr_list, args.batch_size, args.dir, score))
+        jobs.append(p)
+        p.start()
+    for proc in jobs:
+        proc.join()
+    print(score)
     tb = pa.table(score)
     parquet.write_table(tb, args.tb)
 
@@ -176,8 +196,10 @@ if __name__ == '__main__':
         description='predict',
         epilog='predict')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
-    parser.add_argument('--tb', default='s3://warehouse-algo/rec/model_pred/predict_v2')
+    parser.add_argument('--tfr_s3', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_cvr/ds=20241113/')
+    parser.add_argument('--tb', default='s3://warehouse-algo/rec/model_pred/predict_v3')
     parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/prod/tmp')
     parser.add_argument('--batch_size', type=int, default=1024)
+    parser.add_argument('--proc', type=int, default=1)
     args = parser.parse_args()
     main(args)
