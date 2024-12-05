@@ -36,8 +36,16 @@ def parse(data):
     features = tf.io.parse_single_example(data, features=feature_describe)
     return features
 
-ds = ds.map(parse)
-print(list(ds.take(1000).as_numpy_iterator()))
+ds2 = ds.map(parse).batch(2)
+print(list(ds.as_numpy_iterator()))
+# [{'is_clk': array([[1],
+#          [1]]),
+#   'is_pay': array([[0],
+#          [0]])},
+#  {'is_clk': array([[1],
+#          [1]]),
+#   'is_pay': array([[0],
+#          [0]])},
 
 
 

@@ -1,0 +1,183 @@
+import argparse
+import pyarrow as pa
+from pyarrow import parquet
+import tensorflow as tf
+print(tf.__version__)
+import tensorflow.compat.v1 as v1
+
+
+import math
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    c = math.ceil(len(lst) / n)
+    for i in range(0, len(lst), c):
+        yield lst[i:i + c]
+
+def get_infer_tensor_dict(type=2):
+    tensor_dict = {
+        "cate_level1_id": tf.constant(["1"], dtype=tf.string),
+        "cate_level2_id": tf.constant(["1"], dtype=tf.string),
+        "cate_level3_id": tf.constant(["1"], dtype=tf.string),
+        "cate_level4_id": tf.constant(["1"], dtype=tf.string),
+        "country": tf.constant(["1"], dtype=tf.string),
+        "ctr_7d": tf.constant([0.1], dtype=tf.float32),
+        "cvr_7d": tf.constant([0.1], dtype=tf.float32),
+        "show_7d": tf.constant([100], dtype=tf.int64),
+        "click_7d": tf.constant([100], dtype=tf.int64),
+        "cart_7d": tf.constant([100], dtype=tf.int64),
+        "ord_total": tf.constant([100], dtype=tf.int64),
+        "pay_total": tf.constant([100], dtype=tf.int64),
+        "ord_7d": tf.constant([100], dtype=tf.int64),
+        "pay_7d": tf.constant([100], dtype=tf.int64),
+        "seq_goods_id": tf.constant(
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+             "19", "20"], dtype=tf.string),
+        "goods_id": tf.constant(["1"], dtype=tf.string),
+        "seq_cate_id": tf.constant(
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+             "19", "20"], dtype=tf.string),
+        "cate_id": tf.constant(["1"], dtype=tf.string),
+
+    },
+    tensor_dict2 = {
+        "cate_level1_id": tf.constant([["1"]], dtype=tf.string),
+        "cate_level2_id": tf.constant([["1"]], dtype=tf.string),
+        "cate_level3_id": tf.constant([["1"]], dtype=tf.string),
+        "cate_level4_id": tf.constant([["1"]], dtype=tf.string),
+        "country": tf.constant([["1"]], dtype=tf.string),
+        "ctr_7d": tf.constant([[0.1]], dtype=tf.float32),
+        "cvr_7d": tf.constant([[0.1]], dtype=tf.float32),
+        "show_7d": tf.constant([[100]], dtype=tf.int64),
+        "click_7d": tf.constant([[100]], dtype=tf.int64),
+        "cart_7d": tf.constant([[100]], dtype=tf.int64),
+        "ord_total": tf.constant([[100]], dtype=tf.int64),
+        "pay_total": tf.constant([[100]], dtype=tf.int64),
+        "ord_7d": tf.constant([[100]], dtype=tf.int64),
+        "pay_7d": tf.constant([[100]], dtype=tf.int64),
+        "seq_goods_id": tf.constant(
+            [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+             "19", "20"]], dtype=tf.string),
+        "goods_id": tf.constant([["1"]], dtype=tf.string),
+        "seq_cate_id": tf.constant(
+            [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+             "19", "20"]], dtype=tf.string),
+        "cate_id": tf.constant([["1"]], dtype=tf.string),
+        "sample_id": tf.constant([[2]], dtype=tf.int32),
+    }
+    tensor_dict3 = {
+        "cate_level1_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "cate_level2_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "cate_level3_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "cate_level4_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "country": tf.constant([["1"],["1"]], dtype=tf.string),
+        "ctr_7d": tf.constant([[0.1],[0.1]], dtype=tf.float32),
+        "cvr_7d": tf.constant([[0.1],[0.1]], dtype=tf.float32),
+        "show_7d": tf.constant([[100],[100]], dtype=tf.int64),
+        "click_7d": tf.constant([[100],[100]], dtype=tf.int64),
+        "cart_7d": tf.constant([[100],[100]], dtype=tf.int64),
+        "ord_total": tf.constant([[100],[100]], dtype=tf.int64),
+        "pay_total": tf.constant([[100],[100]], dtype=tf.int64),
+        "ord_7d": tf.constant([[100],[100]], dtype=tf.int64),
+        "pay_7d": tf.constant([[100],[100]], dtype=tf.int64),
+        "seq_goods_id": tf.constant(
+            [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+              "19", "20"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+              "19", "20"]], dtype=tf.string),
+        "goods_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "seq_cate_id": tf.constant(
+            [["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+              "19", "20"],["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+              "19", "20"]], dtype=tf.string),
+        "cate_id": tf.constant([["1"],["1"]], dtype=tf.string),
+        "sample_id": tf.constant([[2],[2]], dtype=tf.int32),
+    }
+    if type==1:
+        return tensor_dict2
+    elif type==2:
+        return tensor_dict3
+ID = 'sample_id'
+SCORE = 'probabilities'
+
+def process_tfr(args):
+
+    def _parse_fea(data):
+       feature_describe = {
+           "ctr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
+           , "cvr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
+           , "show_7d": v1.FixedLenFeature(1, tf.int64, 0)
+           , "click_7d": v1.FixedLenFeature(1, tf.int64, 0)
+           , "cart_7d": v1.FixedLenFeature(1, tf.int64, 0)
+           , "ord_total": v1.FixedLenFeature(1, tf.int64, 0)
+           , "pay_total": v1.FixedLenFeature(1, tf.int64, 0)
+           , "ord_7d": v1.FixedLenFeature(1, tf.int64, 0)
+           , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
+
+           , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
+           , "country": v1.FixedLenFeature(1, tf.string, '-1')
+
+           # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+           # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+           , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+           , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+
+           , "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
+           , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
+           , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
+       }
+       features = tf.io.parse_single_example(data, features=feature_describe)
+       return features
+    ds = tf.data.TFRecordDataset(args.tfr)
+    ds = ds.map(_parse_fea).batch(args.batch_size)
+    score = {ID: [], SCORE: []}
+    item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
+                            "cate_level3_id": "", "cate_level4_id": "", "country": ""}
+    item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
+    item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
+                         "pay_7d": 0}
+    user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
+    predictor = tf.saved_model.load_v2(args.dir).signatures["serving_default"]
+    for idx in ds.as_numpy_iterator():
+        feed_dict = {}
+        score[ID].extend(idx[ID])
+        for name in item_features_string.keys():
+            feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
+        for name in item_features_int.keys():
+            feed_dict[name] = tf.constant(idx[name], dtype=tf.int64)
+        for name in item_features_double.keys():
+            feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
+        for name in user_seq_string.keys():
+            feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
+        print('feed_dict', feed_dict)
+        res = predictor(**feed_dict)
+        prob = res[SCORE].numpy()
+        score[SCORE].extend(prob)
+        break
+        # print('res', res)
+    print(score[ID][0:100], score[SCORE][0:100])
+    return score
+        
+        
+
+
+def main(args):
+    score = process_tfr(args)
+    tb = pa.table(score)
+    parquet.write_table(tb, args.tb)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='predict',
+        description='predict',
+        epilog='predict')
+    parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
+    parser.add_argument('--tb', default='s3://warehouse-algo/rec/model_pred/predict_v2')
+    parser.add_argument('--dir', default='/home/sagemaker-user/mayfair/algo_rec/rank/prod/tmp')
+    parser.add_argument('--batch_size', type=int, default=1024)
+    args = parser.parse_args()
+    main(args)
