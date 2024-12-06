@@ -8,7 +8,8 @@ import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3
 import os
-
+import numpy as np
+from sklearn.metrics import roc_auc_score
 
 import math
 def chunks(lst, n):
@@ -101,6 +102,8 @@ def get_infer_tensor_dict(type=2):
         return tensor_dict3
 ID = 'sample_id'
 SCORE = 'probabilities'
+CLK = 'is_clk'
+PAY = 'is_pay'
 
 def process_tfr(tfr_list, batch_size, dir, score):
 
@@ -157,6 +160,22 @@ def process_tfr(tfr_list, batch_size, dir, score):
             score[ID] = id
         else:
             score[ID].extend(id)
+        
+        # is_clk
+        clk = idx[CLK].tolist()
+        clk = [e[0] for e in clk]
+        if CLK not in score:
+            score[CLK] = clk
+        else:
+            score[CLK].extend(clk)
+        # is_pay
+        pay = idx[PAY].tolist()
+        pay = [e[0] for e in pay]
+        if PAY not in score:
+            score[PAY] = pay
+        else:
+            score[PAY].extend(pay)
+
         for name in item_features_string.keys():
             feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
         for name in item_features_int.keys():
@@ -204,6 +223,12 @@ def main(args):
     print(score)
     tb = pa.table(dict(score))
     parquet.write_table(tb, args.tb)
+    y_score = score[SCORE]
+    is_clk = score[CLK]
+    auc = roc_auc_score(is_clk, y_score)
+    avg_pred = np.mean(y_score)
+    avg_label = np.mean(is_clk)
+    print('auc:', auc, 'avg_pred:', avg_pred, 'avg_label:', avg_label)
 
 
 if __name__ == '__main__':
