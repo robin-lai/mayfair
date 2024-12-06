@@ -222,9 +222,10 @@ def main(args):
     parquet.write_table(tb, args.tb)
     y_score = score[SCORE]
     is_clk = score[CLK]
-    auc = roc_auc_score(is_clk, y_score)
     avg_pred = np.mean(y_score)
     avg_label = np.mean(is_clk)
+    print('avg_pred:', avg_pred, 'avg_label:', avg_label)
+    auc = roc_auc_score(is_clk, y_score)
     print('auc:', auc, 'avg_pred:', avg_pred, 'avg_label:', avg_label)
 
 
