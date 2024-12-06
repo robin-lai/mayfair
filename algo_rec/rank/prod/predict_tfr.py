@@ -184,7 +184,6 @@ def process_tfr(tfr_list, batch_size, dir, score):
             feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
         for name in user_seq_string.keys():
             feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
-        print('feed_dict', feed_dict)
         res = predictor(**feed_dict)
         prob = res[SCORE].numpy().tolist()
         prob = [e[0] for e in prob]
@@ -192,9 +191,7 @@ def process_tfr(tfr_list, batch_size, dir, score):
             score[SCORE] = prob
         else:
             score[SCORE].extend(prob)
-        break
         # print('res', res)
-    print(score[ID][0:100], score[SCORE][0:100])
 
 def main(args):
     s3_cli = boto3.client('s3')
@@ -220,8 +217,8 @@ def main(args):
         p.start()
     for proc in jobs:
         proc.join()
-    print(score)
-    tb = pa.table(dict(score))
+    score = dict(score)
+    tb = pa.table(score)
     parquet.write_table(tb, args.tb)
     y_score = score[SCORE]
     is_clk = score[CLK]
