@@ -138,6 +138,7 @@ def process_tfr(tfr_list, batch_size, dir, score):
        }
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
+    os.system('rm -rf ./tmp')
     os.system('mkdir tmp')
     for file in tfr_list:
         print('download file into tmp:',file)
