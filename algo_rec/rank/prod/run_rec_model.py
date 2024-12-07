@@ -132,7 +132,7 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
         seq_ids_hash = tf.string_to_hash_bucket_fast(seq_ids, shape[0])
         tid_ids_hash = tf.string_to_hash_bucket_fast(tid_ids, shape[0])
         with tf.variable_scope("att_" + id_type, reuse=tf.AUTO_REUSE) as name:
-            embeddings = tf.get_variable(name="emb_" + name , dtype=tf.float32,
+            embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
                                          shape=shape, trainable=True, initializer=tf.glorot_uniform_initializer())
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
         seq_len = seq_emb.get_shape()[1]
