@@ -205,10 +205,17 @@ if __name__ == '__main__':
     item_feature = get_item_feature(args.item)
     debug = True
     print('get item features:', len(item_feature.keys()))
-    for ds in args.range.split(','):
+    if args.range != '':
+        for ds in args.range.split(','):
+            st = time.time()
+            args.ds = 'ds=' + ds
+            print('args.ds:', args.ds)
+            main(args)
+            print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
+    else:
         st = time.time()
-        args.ds = 'ds=' + ds
         print('args.ds:', args.ds)
         main(args)
-        print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
+        print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
+
 
