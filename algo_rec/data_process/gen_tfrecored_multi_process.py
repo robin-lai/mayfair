@@ -68,8 +68,11 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
             cate_level3_name_list = []
             cate_level4_id_list = []
             cate_level4_name_list = []
-            for t in v:
-                e = int(t.split(chr(1))[1])
+            for token in v:
+                tt = token.split(chr(1))
+                if len(tt) < 1:
+                    break
+                e = int(tt[1])
                 goods.append(str(e))
                 cate_id_list.append(str(item_feature[e]["cate_id"]))
                 cate_name_list.append(str(item_feature[e]["cate_name"]))
