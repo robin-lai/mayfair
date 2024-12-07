@@ -51,7 +51,7 @@ def cross_fea(v1_list, v2_list, n=1):
     v3_list = ['%s,,%s' % (v1, v2) for v1 in v1_list for v2 in v2_list]
     return bytes_fea(v3_list, n, True)
 
-def build_tfrecord(*args):
+def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_seq_on(seq_on):
         ret = {}
         js = dict(json.loads(seq_on))
@@ -83,19 +83,13 @@ def build_tfrecord(*args):
             ret[k + '_len'] = ints_fea(n)
         return ret
 
-    from_file_list = args[0]
-    out_file_ctr_list = args[1]
-    out_file_cvr_list = args[2]
-    s3_ctr_path_list = args[3]
-    s3_cvr_path_list = args[4]
-    for from_file, out_file_ctr_file, out_file_cvr_file, s3_ctr_path, s3_cvr_path in zip(from_file_list, out_file_ctr_list, out_file_cvr_list, s3_ctr_path_list, s3_cvr_path_list):
+    for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         st = time.time()
-        pt = parquet.read_table(from_file)
+        pt = parquet.read_table(pt_file)
         ed = time.time()
-        print('read ptpath:%s data cost:%s' % (from_file, str(ed - st)))
+        print('read ptpath:%s data cost:%s' % (pt_file, str(ed - st)))
         st = time.time()
-        fout_cvr = tf.io.TFRecordWriter(out_file_cvr_file)
-        fout_ctr = tf.io.TFRecordWriter(out_file_ctr_file)
+        fout_ctr = tf.io.TFRecordWriter(tfr_local_file)
         for t in zip(
                 pt["ctr_7d"], pt["cvr_7d"]
                 , pt["cate_id"], pt["goods_id"], pt["cate_level1_id"], pt["cate_level2_id"], pt["cate_level3_id"],
@@ -133,17 +127,12 @@ def build_tfrecord(*args):
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
             record = sample.SerializeToString()
             fout_ctr.write(record)
-            if t[16].as_py() == 1:
-                fout_cvr.write(record)
         ed = time.time()
         fout_ctr.close()
-        fout_cvr.close()
         print('gen trf done, cost %s' % str(ed - st))
         # upload
-        print('upload from %s to %s' % (out_file_ctr_file, s3_ctr_path))
-        os.system('aws s3 cp %s %s' % (out_file_ctr_file, s3_ctr_path))
-        print('upload from %s to %s' % (out_file_cvr_file, s3_cvr_path))
-        os.system('aws s3 cp %s %s' % (out_file_cvr_file, s3_cvr_path))
+        print('upload from %s to %s' % (tfr_local_file, tfr_s3_file))
+        os.system('aws s3 cp %s %s' % (tfr_local_file, tfr_s3_file))
 
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
@@ -154,17 +143,16 @@ def split_list_into_batch(data_list, batch_count=None, batch_size=None):
         yield data_list[idx * batch_size: (idx + 1) * batch_size]
 
 def run_multi_process(func,args):
-    ptpath = s3_buk + s3_obj + args.dir + args.ds
-    trf_path_local_ctr = local_data + args.dir_ctr + args.ds
-    trf_path_local_cvr =local_data + args.dir_cvr + args.ds
-    os.system('rm %s' % trf_path_local_ctr)
-    os.system('rm %s' % trf_path_local_cvr)
-    os.system('mkdir -p %s' % trf_path_local_ctr)
-    os.system('mkdir -p %s' % trf_path_local_cvr)
+    path_pt = s3_buk + s3_obj + args.dir_pt + args.ds
+    path_pt_suffix = s3_obj + args.dir_pt + args.ds
+    path_tfr_local = local_data + args.dir_tfr + args.ds
+    path_tfr_s3 = s3_buk + s3_obj + args.dir_tfr + args.ds
+    os.system('rm %s' % path_tfr_local)
+    os.system('mkdir -p %s' % path_tfr_local)
     # get files
     paginator = s3_cli.get_paginator('list_objects_v2')
-    print('key:', s3_obj + args.dir + args.ds)
-    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_obj + args.dir + args.ds)
+    print('key:', path_pt_suffix)
+    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=path_pt_suffix)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
     file_suffix_list = [v.split('/')[-1] for v in file_list]
     print('file list in dir', file_list)
@@ -175,22 +163,15 @@ def run_multi_process(func,args):
     # file_batch = np.array_split(file_suffix_list, args.thread)
     args_list = []
     for ll in file_batch:
-        pt_path_tmp = []
-        local_path_tmp_ctr = []
-        local_path_tmp_cvr = []
-        s3_ctr_path = []
-        # s3_cvr_path = []
+        l1, l2, l3 = [],[],[]
         for file in ll:
-            pt_path_tmp.append(ptpath +  '/' + file)
-            local_path_tmp_ctr.append(trf_path_local_ctr + '/' + file)
-            local_path_tmp_cvr.append(trf_path_local_cvr + '/' + file)
-            s3_ctr_path.append(s3_buk + s3_obj + args.dir + args.ds +  '/' + file)
-            # s3_cvr_path.append(s3_sp_tfr_dir_cvr  + args.ds + '/' + file)
-
-        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr, s3_ctr_path])
+            l1.append(path_pt +  '/' + file)
+            l2.append(path_tfr_local + '/' + file)
+            l3.append(path_tfr_s3 +  '/' + file)
+        args_list.append([l1, l2, l3])
     print('args_list top ', args_list)
     # multiprocess
-    proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
+    proc_list = [multiprocessing.Process(target=func, args=(args[0], args[1], args[2])) for args in args_list]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
     fail_cnt = sum([p.exitcode for p in proc_list])
@@ -216,10 +197,8 @@ if __name__ == '__main__':
     parser.add_argument('--ds', default='ds=20241202')
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
-    parser.add_argument('--s3', type=bool, default=False)
-    parser.add_argument('--dir', default='cn_rec_detail_sample_v10/')
-    parser.add_argument('--dir_ctr', default='cn_rec_detail_sample_v10_ctr/')
-    parser.add_argument('--dir_cvr', default='cn_rec_detail_sample_v10_cvr/')
+    parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
+    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_ctr/')
     parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/ds=20241206/')
 
     args = parser.parse_args()
