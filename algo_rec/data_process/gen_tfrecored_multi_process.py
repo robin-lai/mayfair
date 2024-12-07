@@ -200,6 +200,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', default='ds=20241202')
+    parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
@@ -208,7 +209,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     item_feature = get_item_feature(args.item)
-    debug = True
+    debug = args.debug
     print('get item features:', len(item_feature.keys()))
     if args.range != '':
         for ds in args.range.split(','):
