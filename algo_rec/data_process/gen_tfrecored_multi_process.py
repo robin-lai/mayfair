@@ -150,6 +150,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         # upload
         print('upload from %s to %s' % (tfr_local_file, tfr_s3_file))
         os.system('aws s3 cp %s %s' % (tfr_local_file, tfr_s3_file))
+        os.system('rm %s' % tfr_local_file)
 
 
 def split_list_into_batch(data_list, batch_count=None, batch_size=None):
