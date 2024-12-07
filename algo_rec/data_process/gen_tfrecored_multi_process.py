@@ -70,7 +70,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
             cate_level4_name_list = []
             for token in v:
                 tt = token.split(chr(1))
-                if len(tt) < 1:
+                if len(tt) < 2:
                     break
                 e = int(tt[1])
                 goods.append(str(e))
