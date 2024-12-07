@@ -131,8 +131,9 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
         print('raw tid_ipt tensor shape:', tid_ids.get_shape())
         seq_ids_hash = tf.string_to_hash_bucket_fast(seq_ids, shape[0])
         tid_ids_hash = tf.string_to_hash_bucket_fast(tid_ids, shape[0])
-        embeddings = tf.get_variable(name="embeddings", dtype=tf.float32,
-                                     shape=shape)
+        with tf.variable_scope("att_" + id_type, reuse=tf.AUTO_REUSE) as name:
+            embeddings = tf.get_variable(name="emb_" + name , dtype=tf.float32,
+                                         shape=shape, trainable=True, initializer=tf.glorot_uniform_initializer())
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
         seq_len = seq_emb.get_shape()[1]
         print('seq_emb',seq_emb.get_shape())
@@ -189,9 +190,9 @@ class DIN(tf.estimator.Estimator):
             numric_cols_emb_input =  tf.feature_column.input_layer(features, numric_cols_emb)
 
             seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'],tid_ids=features['goods_id'],
-                                              id_type='goods_id', shape=[40000, 32])
+                                              id_type='seq_off_goods_id', shape=[40000, 32])
             seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'],tid_ids=features['cate_id'],
-                                                id_type='cate_id', shape=[2000, 16])
+                                                id_type='seq_off_cate_id', shape=[2000, 16])
 
             input_layer = [numric_cols_emb_input, cate_cols_emb_input,seq_goodsid_input, seq_cateid_input]
             # input_layer = [numric_cols_emb_input, cate_cols_emb_input]
@@ -249,17 +250,17 @@ class DIN(tf.estimator.Estimator):
             numric_cols_emb_input = tf.feature_column.input_layer(features, numric_cols_emb)
 
             seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
-                                                id_type='goods_id', shape=[40000, 32])
+                                                id_type='seq_off_goods_id', shape=[40000, 32])
             seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'], tid_ids=features['cate_id'],
-                                               id_type='cate_id', shape=[2000, 16])
+                                               id_type='seq_off_cate_id', shape=[2000, 16])
             seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
-                                                id_type='goods_id', shape=[40000, 32])
+                                                id_type='seq_on_high_goods_id', shape=[40000, 32])
             seq_high_on_cateid_input = attention_layer(seq_ids=features['highLevelSeqListCateId'], tid_ids=features['cate_id'],
-                                               id_type='cate_id', shape=[2000, 16])
+                                               id_type='seq_on_high_cate_id', shape=[2000, 16])
             seq_low_on_goodsid_input = attention_layer(seq_ids=features['lowerLevelSeqListGoods'], tid_ids=features['goods_id'],
-                                                        id_type='goods_id', shape=[40000, 32])
+                                                        id_type='seq_on_low_goods_id', shape=[40000, 32])
             seq_low_on_cateid_input = attention_layer(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
-                                                       id_type='cate_id', shape=[2000, 16])
+                                                       id_type='seq_on_low_cate_id', shape=[2000, 16])
 
             input_layer = [numric_cols_emb_input, cate_cols_emb_input, seq_goodsid_input, seq_cateid_input, seq_high_on_cateid_input,
                            seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input]
