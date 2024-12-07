@@ -55,7 +55,10 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_seq_on(seq_on):
         print('seq_on',seq_on)
         ret = {}
-        js = dict(json.loads(seq_on))
+        if seq_on == "":
+            js = dict()
+        else:
+            js = dict(json.loads(seq_on))
         for k, v in js.items():
             goods = []
             cate_id_list = []
