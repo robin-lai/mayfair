@@ -64,7 +64,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
             cate_level4_id_list = []
             cate_level4_name_list = []
             for t in v:
-                e = t.split(chr(1))[1]
+                e = int(t.split(chr(1))[1])
                 goods.append(e)
                 cate_id_list.append(item_feature[e]["cate_id"])
                 cate_name_list.append(item_feature[e]["cate_name"])
@@ -182,7 +182,7 @@ def get_item_feature(file):
     ret = {}
     pt = parquet.read_table(file).to_pylist()
     for e in pt:
-        ret[e['goods_id']] = e
+        ret[int(e['goods_id'])] = e
     return ret
 
 
