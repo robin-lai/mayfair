@@ -13,11 +13,9 @@ import numpy as np
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
-
-s3_sp_pt_dir = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1/"
-s3_sp_tfr_dir_ctr = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_ctr/"
-s3_sp_tfr_dir_cvr = "s3://warehouse-algo/rec/cn_rec_detail_sample_v1_tfr_cvr/"
-s3_sp_pt_dir_key = "rec/cn_rec_detail_sample_v1/"
+s3_buk = "s3://warehouse-algo/"
+s3_obj = "rec/"
+local_data = "/home/sagemaker-user/mayfair/algo_rec/data/"
 
 import math
 def chunks(lst, n):
@@ -156,17 +154,17 @@ def split_list_into_batch(data_list, batch_count=None, batch_size=None):
         yield data_list[idx * batch_size: (idx + 1) * batch_size]
 
 def run_multi_process(func,args):
-    trf_path_local_ctr = args.dir_ctr + args.ds
-    ptpath = s3_sp_pt_dir + args.ds
-    trf_path_local_cvr = args.dir_cvr + args.ds
+    ptpath = s3_buk + s3_obj + args.dir + args.ds
+    trf_path_local_ctr = local_data + args.dir_ctr + args.ds
+    trf_path_local_cvr =local_data + args.dir_cvr + args.ds
     os.system('rm %s' % trf_path_local_ctr)
     os.system('rm %s' % trf_path_local_cvr)
     os.system('mkdir -p %s' % trf_path_local_ctr)
     os.system('mkdir -p %s' % trf_path_local_cvr)
     # get files
     paginator = s3_cli.get_paginator('list_objects_v2')
-    print('key:', s3_sp_pt_dir_key + args.ds)
-    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_sp_pt_dir_key + args.ds)
+    print('key:', s3_obj + args.dir + args.ds)
+    page_iter = paginator.paginate(Bucket=BUCKET, Prefix=s3_obj + args.dir + args.ds)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
     file_suffix_list = [v.split('/')[-1] for v in file_list]
     print('file list in dir', file_list)
@@ -181,15 +179,15 @@ def run_multi_process(func,args):
         local_path_tmp_ctr = []
         local_path_tmp_cvr = []
         s3_ctr_path = []
-        s3_cvr_path = []
+        # s3_cvr_path = []
         for file in ll:
             pt_path_tmp.append(ptpath +  '/' + file)
             local_path_tmp_ctr.append(trf_path_local_ctr + '/' + file)
             local_path_tmp_cvr.append(trf_path_local_cvr + '/' + file)
-            s3_ctr_path.append(s3_sp_tfr_dir_ctr  + args.ds +  '/' + file)
-            s3_cvr_path.append(s3_sp_tfr_dir_cvr  + args.ds + '/' + file)
+            s3_ctr_path.append(s3_buk + s3_obj + args.dir + args.ds +  '/' + file)
+            # s3_cvr_path.append(s3_sp_tfr_dir_cvr  + args.ds + '/' + file)
 
-        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr, s3_ctr_path, s3_cvr_path])
+        args_list.append([pt_path_tmp, local_path_tmp_ctr, local_path_tmp_cvr, s3_ctr_path])
     print('args_list top ', args_list)
     # multiprocess
     proc_list = [multiprocessing.Process(target=func, args=args) for args in args_list]
@@ -215,12 +213,13 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--ds', default='ds=20241112')
+    parser.add_argument('--ds', default='ds=20241202')
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--s3', type=bool, default=False)
-    parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v10_ctr/')
-    parser.add_argument('--dir_cvr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v10_cvr/')
+    parser.add_argument('--dir', default='cn_rec_detail_sample_v10/')
+    parser.add_argument('--dir_ctr', default='cn_rec_detail_sample_v10_ctr/')
+    parser.add_argument('--dir_cvr', default='cn_rec_detail_sample_v10_cvr/')
     parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/ds=20241206/')
 
     args = parser.parse_args()
