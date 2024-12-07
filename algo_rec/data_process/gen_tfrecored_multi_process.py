@@ -56,7 +56,6 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         ret = {}
         js = dict(json.loads(seq_on))
         for k, v in js.items():
-            t = v.split(chr(1))
             goods = []
             cate_id_list = []
             cate_name_list = []
@@ -64,7 +63,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
             cate_level3_name_list = []
             cate_level4_id_list = []
             cate_level4_name_list = []
-            for e in t[1]:
+            for t in v:
+                e = t.split(chr(1))[1]
                 goods.append(e)
                 cate_id_list.append(item_feature[e]["cate_id"])
                 cate_name_list.append(item_feature[e]["cate_name"])
