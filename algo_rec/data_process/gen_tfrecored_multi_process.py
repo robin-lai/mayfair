@@ -1,6 +1,6 @@
 # encoding:utf-8
 import os
-
+import json
 import tensorflow as tf
 import sys
 import time
@@ -54,6 +54,37 @@ def cross_fea(v1_list, v2_list, n=1):
     return bytes_fea(v3_list, n, True)
 
 def build_tfrecord(*args):
+    def build_seq_on(seq_on):
+        ret = {}
+        js = dict(json.loads(seq_on))
+        for k, v in js:
+            t = v.split(chr(1))
+            goods = []
+            cate_id_list = []
+            cate_name_list = []
+            cate_level3_id_list = []
+            cate_level3_name_list = []
+            cate_level4_id_list = []
+            cate_level4_name_list = []
+            for e in t[1]:
+                goods.append(e)
+                cate_id_list.append(item_feature[e]["cate_id"])
+                cate_name_list.append(item_feature[e]["cate_name"])
+                cate_level3_id_list.append(item_feature[e]["cate_level3_id"])
+                cate_level3_name_list.append(item_feature[e]["cate_level3_name"])
+                cate_level4_id_list.append(item_feature[e]["cate_level4_id"])
+                cate_level4_name_list.append(item_feature[e]["cate_level4_name"])
+            n = 20 if len(goods) >= 20 else len(goods)
+            ret[k + 'Goods'] = bytes_fea(goods, n=20)
+            ret[k + 'CateId'] = bytes_fea(cate_id_list, n=20)
+            ret[k + 'CateName'] = bytes_fea(cate_name_list, n=20)
+            ret[k + 'CateId3'] = bytes_fea(cate_level3_id_list, n=20)
+            ret[k + 'CateName3'] = bytes_fea(cate_level3_name_list, n=20)
+            ret[k + 'CateId4'] = bytes_fea(cate_level4_id_list, n=20)
+            ret[k + 'CateName4'] = bytes_fea(cate_level4_name_list, n=20)
+            ret[k + '_len'] = ints_fea(n)
+        return ret
+
     from_file_list = args[0]
     out_file_ctr_list = args[1]
     out_file_cvr_list = args[2]
@@ -74,7 +105,7 @@ def build_tfrecord(*args):
                 , pt["show_7d"], pt["click_7d"], pt["cart_7d"], pt["ord_total"], pt["pay_total"], pt["ord_7d"],
                 pt["pay_7d"], pt["is_clk"], pt["is_pay"]
                 , pt["seq_cate_id"], pt["seq_goods_id"]
-                , pt["sample_id"]
+                , pt["sample_id"], pt['seq_on']
         ):
             feature = dict()
             feature.update({"ctr_7d": floats_fea(t[0].as_py())})
@@ -98,6 +129,9 @@ def build_tfrecord(*args):
             feature.update({"seq_cate_id": bytes_fea(t[18].as_py(), n=20)})
             feature.update({"seq_goods_id": bytes_fea(t[19].as_py(), n=20)})
             feature.update({"sample_id": bytes_fea(t[20].as_py())})
+            feature.update(build_seq_on(t[21].as_py()))
+            if debug:
+                print('features',feature)
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
             record = sample.SerializeToString()
             fout_ctr.write(record)
@@ -165,6 +199,14 @@ def run_multi_process(func,args):
     if fail_cnt:
         raise ValueError('Failed in %d process.' % fail_cnt)
 
+def get_item_feature(file):
+    ret = {}
+    pt = parquet.read_table(file).to_pylist()
+    for e in pt:
+        ret[e['goods_id']] = e
+    return ret
+
+
 def main(args):
     run_multi_process(build_tfrecord, args)
 
@@ -177,9 +219,14 @@ if __name__ == '__main__':
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--s3', type=bool, default=False)
-    parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_ctr/')
-    parser.add_argument('--dir_cvr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v1_cvr/')
+    parser.add_argument('--dir_ctr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v10_ctr/')
+    parser.add_argument('--dir_cvr', default='/home/sagemaker-user/mayfair/algo_rec/data/cn_rec_detail_sample_v10_cvr/')
+    parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/ds=20241206/')
+
     args = parser.parse_args()
+    item_feature = get_item_feature(args.item)
+    debug = True
+    print('get item features:', len(item_feature.keys()))
     for ds in args.range.split(','):
         st = time.time()
         args.ds = 'ds=' + ds

@@ -1,10 +1,13 @@
 import multiprocessing
 
+d = {"1":2}
 
 def worker(procnum, return_dict):
     """worker function"""
     print(str(procnum) + " represent!")
     return_dict[procnum] = procnum
+    print(d["1"])
+    return_dict["2"] = d["1"]
 
 
 if __name__ == "__main__":
