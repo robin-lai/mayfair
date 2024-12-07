@@ -10,7 +10,6 @@ import argparse
 import boto3
 from random import shuffle
 import numpy as np
-from statsmodels.sandbox.distributions.examples.matchdist import categ
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
