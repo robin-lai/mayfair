@@ -53,6 +53,7 @@ def cross_fea(v1_list, v2_list, n=1):
 
 def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_seq_on(seq_on):
+        print('seq_on',seq_on)
         ret = {}
         js = dict(json.loads(seq_on))
         for k, v in js.items():
