@@ -10,6 +10,7 @@ import argparse
 import boto3
 from random import shuffle
 import numpy as np
+from statsmodels.sandbox.distributions.examples.matchdist import categ
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
@@ -91,6 +92,32 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
             ret[k + '_len'] = ints_fea(n)
         return ret
 
+    def build_feature(t):
+        feature = dict()
+        feature.update({"ctr_7d": floats_fea(t[0].as_py())})
+        feature.update({"cvr_7d": floats_fea(t[1].as_py())})
+        feature.update({"cate_id": bytes_fea(t[2].as_py())})
+        feature.update({"goods_id": bytes_fea(t[3].as_py())})
+        feature.update({"cate_level1_id": bytes_fea(t[4].as_py())})
+        feature.update({"cate_level2_id": bytes_fea(t[5].as_py())})
+        feature.update({"cate_level3_id": bytes_fea(t[6].as_py())})
+        feature.update({"cate_level4_id": bytes_fea(t[7].as_py())})
+        feature.update({"country": bytes_fea(t[8].as_py())})
+        feature.update({"show_7d": ints_fea(t[9].as_py())})
+        feature.update({"click_7d": ints_fea(t[10].as_py())})
+        feature.update({"cart_7d": ints_fea(t[11].as_py())})
+        feature.update({"ord_total": ints_fea(t[12].as_py())})
+        feature.update({"pay_total": ints_fea(t[13].as_py())})
+        feature.update({"ord_7d": ints_fea(t[14].as_py())})
+        feature.update({"pay_7d": ints_fea(t[15].as_py())})
+        feature.update({"is_clk": ints_fea(t[16].as_py())})
+        feature.update({"is_pay": ints_fea(t[17].as_py())})
+        feature.update({"seq_cate_id": bytes_fea(t[18].as_py(), n=20)})
+        feature.update({"seq_goods_id": bytes_fea(t[19].as_py(), n=20)})
+        feature.update({"sample_id": bytes_fea(t[20].as_py())})
+        feature.update(build_seq_on(t[21].as_py()))
+        return feature
+
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         st = time.time()
         pt = parquet.read_table(pt_file)
@@ -108,33 +135,16 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
                 , pt["sample_id"], pt['seq_on']
         ):
             feature = dict()
-            feature.update({"ctr_7d": floats_fea(t[0].as_py())})
-            feature.update({"cvr_7d": floats_fea(t[1].as_py())})
-            feature.update({"cate_id": bytes_fea(t[2].as_py())})
-            feature.update({"goods_id": bytes_fea(t[3].as_py())})
-            feature.update({"cate_level1_id": bytes_fea(t[4].as_py())})
-            feature.update({"cate_level2_id": bytes_fea(t[5].as_py())})
-            feature.update({"cate_level3_id": bytes_fea(t[6].as_py())})
-            feature.update({"cate_level4_id": bytes_fea(t[7].as_py())})
-            feature.update({"country": bytes_fea(t[8].as_py())})
-            feature.update({"show_7d": ints_fea(t[9].as_py())})
-            feature.update({"click_7d": ints_fea(t[10].as_py())})
-            feature.update({"cart_7d": ints_fea(t[11].as_py())})
-            feature.update({"ord_total": ints_fea(t[12].as_py())})
-            feature.update({"pay_total": ints_fea(t[13].as_py())})
-            feature.update({"ord_7d": ints_fea(t[14].as_py())})
-            feature.update({"pay_7d": ints_fea(t[15].as_py())})
-            feature.update({"is_clk": ints_fea(t[16].as_py())})
-            feature.update({"is_pay": ints_fea(t[17].as_py())})
-            feature.update({"seq_cate_id": bytes_fea(t[18].as_py(), n=20)})
-            feature.update({"seq_goods_id": bytes_fea(t[19].as_py(), n=20)})
-            feature.update({"sample_id": bytes_fea(t[20].as_py())})
-            feature.update(build_seq_on(t[21].as_py()))
+            try:
+                feature = build_feature(t)
+                sample = tf.train.Example(features=tf.train.Features(feature=feature))
+                record = sample.SerializeToString()
+                fout_ctr.write(record)
+            except Exception as e:
+                print(e)
+                print('data:',t)
             if debug:
                 print('features',feature)
-            sample = tf.train.Example(features=tf.train.Features(feature=feature))
-            record = sample.SerializeToString()
-            fout_ctr.write(record)
         ed = time.time()
         fout_ctr.close()
         print('gen trf done, cost %s' % str(ed - st))
