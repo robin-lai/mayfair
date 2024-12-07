@@ -400,6 +400,10 @@ def main(args):
                 "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
                 "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
                 "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id")
             }
             print('feature_spec placeholder', feature_spec)
             serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
