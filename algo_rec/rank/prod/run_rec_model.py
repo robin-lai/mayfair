@@ -411,6 +411,7 @@ def main(args):
             print('model_dir:', args.model_dir)
             # TODO why call model_fn with infer mode
             estimator.export_savedmodel(args.model_dir, serving_input_receiver_fn)
+            sys.exit(0)
     time.sleep(15 * 2)
     sys.exit(0)
 
