@@ -367,6 +367,7 @@ def main(args):
     print('num_host', host_num, 'host_rank', host_rank)
     feature_columns = build_feature_columns()
     if 'seq_off' in args.version:
+        print('fts version:', args.version)
         feature_spec.update({
             "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
             "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
@@ -376,6 +377,7 @@ def main(args):
             , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
         })
     if 'seq_on' in args.version:
+        print('fts version:', args.version)
         feature_spec.update({
             "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_goods_id"),
             "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_cate_id"),
