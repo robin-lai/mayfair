@@ -174,7 +174,6 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             id = idx[ID].tolist()
             id = [e[0] for e in id]
             score[thread_idx][ID].extend(id)
-            print('id_len', len(score[thread_idx][ID]))
 
             # is_clk
             clk = idx[CLK].tolist()
