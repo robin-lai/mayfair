@@ -12,6 +12,8 @@ item_features_string = {"goods_id":"", "cate_id": "", "cate_level1_id":"","cate_
 item_features_double = {"ctr_7d":0.0, "cvr_7d":0.0}
 item_features_int = {"show_7d":0, "click_7d":0, "cart_7d":0, "ord_total":0,"pay_total":0,"ord_7d":0,"pay_7d":0 }
 user_seq_string = {"seq_goods_id":[""] * 20, "seq_cate_id":[""] * 20}
+user_seq_on_string = {"highLevelSeqListGoods":[""] * 20, "highLevelSeqListCateId":[""] * 20,
+                      "lowerLevelSeqListGoods":[""] * 20, "lowerLevelSeqListCateId":[""] * 20}
 
 def get_infer_json():
     inputs_seq = {
@@ -85,17 +87,46 @@ def get_infer_json_from_request(d):
                         example[name] = [float(item_features_double[name])]
                 else:
                     example[name] = [float(item_features_double[name])]
-            for name in user_seq_string:
-                if name == 'seq_goods_id':
+            for name in user_seq_on_string:
+                if name == 'highLevelSeqListGoods':
                     seq = d['featureMap']['userFeatures']['high_level_seq']
                     if len(seq) == 20:
-                        example['seq_goods_id'] = seq
+                        example['highLevelSeqListGoods'] = seq
                     else:
-                        example['seq_goods_id'] = seq + [""] * (20-len(seq))
+                        example['highLevelSeqListGoods'] = seq + [""] * (20-len(seq))
 
-                if name == 'seq_cate_id':
-                    example['seq_cate_id'] = user_seq_string['seq_cate_id']
+                if name == 'lowerLevelSeqListGoods':
+                    seq = d['featureMap']['userFeatures']['high_level_seq']
+                    if len(seq) == 20:
+                        example['lowerLevelSeqListGoods'] = seq
+                    else:
+                        example['lowerLevelSeqListGoods'] = seq + [""] * (20-len(seq))
 
+                if name == 'highLevelSeqListCateId':
+                    cate_list = []
+                    for e in d['featureMap']['userFeatures']['high_level_seq']:
+                        if e in m:
+                            cate_list.append(m[e]['cate_id'])
+                        else:
+                            cate_list.append("")
+                            print('goods_id:%s not in item map'%e)
+                    if len(cate_list) == 20:
+                        example['highLevelSeqListCateId'] = cate_list
+                    else:
+                        example['highLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
+
+                if name == 'lowerLevelSeqListCateId':
+                    cate_list = []
+                    for e in d['featureMap']['userFeatures']['low_level_seq']:
+                        if e in m:
+                            cate_list.append(m[e]['cate_id'])
+                        else:
+                            cate_list.append("")
+                            print('goods_id:%s not in item map'%e)
+                    if len(cate_list) == 20:
+                        example['lowerLevelSeqListCateId'] = cate_list
+                    else:
+                        example['lowerLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
             ll.append(example)
         ipt["instances"] = ll
     return ipt
