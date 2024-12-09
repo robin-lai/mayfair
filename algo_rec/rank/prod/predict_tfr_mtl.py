@@ -112,6 +112,8 @@ pred_dir = 's3://warehouse-algo/rec/model_pred/'
 tmp_dir = '/home/sagemaker-user/tmp/'
 tmp_dir_data = tmp_dir + 'data/'
 
+debug = False
+
 def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
     score[thread_idx] = {}
 
@@ -199,8 +201,10 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
         for name in user_seq_string.keys():
             feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
+        print('feed_dict:', feed_dict)
         res = predictor(**feed_dict)
-        
+        print('red:', res)
+
         prob = res[CTR].numpy().tolist()
         prob = [e[0] for e in prob]
         if CTR not in score[thread_idx]:
@@ -221,6 +225,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             score[thread_idx][CTCVR] = ctcvr
         else:
             score[thread_idx][CTCVR].extend(ctcvr)
+        if debug:
+            break
 
 def main(args):
     s3_cli = boto3.client('s3')
@@ -256,6 +262,8 @@ def main(args):
 
     # merge multi thread score
     score = dict(score)
+    if debug:
+        print('score:', score)
     merge_score = dict()
     for thread_i, s in score.items():
         for k, v in s.items():
@@ -301,5 +309,7 @@ if __name__ == '__main__':
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_ctr/ds=20241206/')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=1)
+    parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
+    debug = args.debug
     main(args)
