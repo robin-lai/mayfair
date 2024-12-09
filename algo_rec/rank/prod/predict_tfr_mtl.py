@@ -176,26 +176,17 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             print('id', id)
             id = [e[0] for e in id]
             print('id2', id)
-            if ID not in score[thread_idx]:
-                score[thread_idx][ID] = id
-            else:
-                score[thread_idx][ID] = score[thread_idx][ID].extend(id)
-                print('id_len', len(score[thread_idx][ID]))
+            score[thread_idx][ID].extend(id)
+            print('id_len', len(score[thread_idx][ID]))
 
             # is_clk
             clk = idx[CLK].tolist()
             clk = [e[0] for e in clk]
-            if CLK not in score[thread_idx]:
-                score[thread_idx][CLK] = clk
-            else:
-                score[thread_idx][CLK].extend(clk)
+            score[thread_idx][CLK].extend(clk)
             # is_pay
             pay = idx[PAY].tolist()
             pay = [e[0] for e in pay]
-            if PAY not in score[thread_idx]:
-                score[thread_idx][PAY] = pay
-            else:
-                score[thread_idx][PAY].extend(pay)
+            score[thread_idx][PAY].extend(pay)
 
             for name in item_features_string.keys():
                 feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
@@ -213,26 +204,17 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
 
             prob = res[CTR].numpy().tolist()
             prob = [e[0] for e in prob]
-            if CTR not in score[thread_idx]:
-                score[thread_idx][CTR] = prob
-            else:
-                score[thread_idx][CTR].extend(prob)
+            score[thread_idx][CTR].extend(prob)
             # print('res', res)
             cvr = res[CVR].numpy().tolist()
             cvr = [e[0] for e in cvr]
-            if CVR not in score[thread_idx]:
-                score[thread_idx][CVR] = cvr
-            else:
-                score[thread_idx][CVR].extend(cvr)
+            score[thread_idx][CVR].extend(cvr)
             # ctcvr
             ctcvr = res[CTCVR].numpy().tolist()
             ctcvr = [e[0] for e in ctcvr]
-            if CTCVR not in score[thread_idx]:
-                score[thread_idx][CTCVR] = ctcvr
-            else:
-                score[thread_idx][CTCVR].extend(ctcvr)
+            score[thread_idx][CTCVR].extend(ctcvr)
             n += 1
-            if n == 2:
+            if n == 5:
                 break
         print('rm file:',file_suffix)
         os.system('rm %s'%file_suffix)
@@ -268,6 +250,12 @@ def main(args):
     jobs = []
     for thread_idx, tfr_list in enumerate(file_batch):
         score[thread_idx] = manager.dict()
+        score[thread_idx][ID] = manager.list()
+        score[thread_idx][CTR] = manager.list()
+        score[thread_idx][CVR] = manager.list()
+        score[thread_idx][CTCVR] = manager.list()
+        score[thread_idx][CLK] = manager.list()
+        score[thread_idx][PAY] = manager.list()
         p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local, score))
         jobs.append(p)
         p.start()
