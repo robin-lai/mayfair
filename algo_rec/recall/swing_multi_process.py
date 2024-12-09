@@ -87,7 +87,7 @@ def swing(*args):
         user = list(item_bhv_user_list[trig_itm])
         u_num = len(user)
         if u_num < 2:
-            return swing
+            continue
         # print('common user num:', u_num)
         n += 1
         for i in range(0, u_num-1):
