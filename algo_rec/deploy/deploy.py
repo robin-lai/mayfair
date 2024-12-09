@@ -351,6 +351,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
     parser.add_argument('--model_version', default='/ds=20241203/model/')
     parser.add_argument('--in_s3_tar_file', default='s3://algo-sg/rec/model_online/prod_mtl_seq_on_esmm_v0_v1.tar.gz')
+    parser.add_argument('--sg_s3_tar_file', default='s3://algo-rec/rec/model_online/prod_mtl_seq_on_esmm_v0_v1.tar.gz')
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.v
     print('endpoint:', args.endpoint)
