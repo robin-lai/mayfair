@@ -237,7 +237,11 @@ def main(args):
     paginator = s3_cli.get_paginator('list_objects_v2')
     page_iter = paginator.paginate(Bucket=BUCKET, Prefix=args.tfr_s3)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
-    file_list = ['s3://%s/%s'%(BUCKET, v) for v in file_list]
+    if args.sample_num is not None:
+        print('sample file num:', args.sample_num)
+        file_list = ['s3://%s/%s'%(BUCKET, v) for v in file_list][0:args.sample_num]
+    else:
+        file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list]
     print('file list in dir', file_list)
     shuffle(file_list)
     file_batch = list(chunks(file_list,  args.proc))
@@ -311,6 +315,7 @@ if __name__ == '__main__':
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_ctr/ds=20241206/')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=1)
+    parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
