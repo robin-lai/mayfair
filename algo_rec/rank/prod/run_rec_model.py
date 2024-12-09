@@ -70,6 +70,7 @@ feature_describe = {
 
 def _parse_fea(data):
 
+    print('feature_describe', feature_describe)
     features = tf.io.parse_single_example(data, features=feature_describe)
 
     is_clk = features.pop('is_clk')
@@ -283,14 +284,7 @@ class DIN(tf.estimator.Estimator):
                 seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'], tid_ids=features['cate_id'],
                                                    id_type='seq_off_cate_id', shape=[2000, 16])
                 input_layer.extend([seq_goodsid_input, seq_cateid_input])
-                feature_spec.update({
-                     "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
-                     "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-                })
-                feature_describe.update({
-                      "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                     , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                })
+
             if 'seq_on' in params['version']:
                 seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
                                                     id_type='seq_on_high_goods_id', shape=[40000, 32])
@@ -301,18 +295,6 @@ class DIN(tf.estimator.Estimator):
                 seq_low_on_cateid_input = attention_layer(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
                                                            id_type='seq_on_low_cate_id', shape=[2000, 16])
                 input_layer.extend([seq_high_on_cateid_input,seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input])
-                feature_spec.update({
-                     "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_goods_id"),
-                     "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_cate_id"),
-                     "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_goods_id"),
-                     "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_cate_id")
-                })
-                feature_describe.update({
-                     "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                     , "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                     , "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                     , "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-                })
 
             # input_layer = [numric_cols_emb_input, cate_cols_emb_input]
             for ele in input_layer:
@@ -384,6 +366,29 @@ def main(args):
     print('args.hosts', args.hosts, 'args.current_host', args.current_host)
     print('num_host', host_num, 'host_rank', host_rank)
     feature_columns = build_feature_columns()
+    if 'seq_off' in args.version:
+        feature_spec.update({
+            "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
+            "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+        })
+        feature_describe.update({
+            "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        })
+    if 'seq_on' in args.version:
+        feature_spec.update({
+            "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_goods_id"),
+            "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_cate_id"),
+            "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_goods_id"),
+            "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_cate_id")
+        })
+        feature_describe.update({
+            "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        })
+
     estimator = DIN(
         params={
             'feature_columns': feature_columns,
