@@ -170,12 +170,9 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         n = 0
         for idx in ds.as_numpy_iterator():
-            print('idx', idx)
             feed_dict = {}
             id = idx[ID].tolist()
-            print('id', id)
             id = [e[0] for e in id]
-            print('id2', id)
             score[thread_idx][ID].extend(id)
             print('id_len', len(score[thread_idx][ID]))
 
@@ -270,9 +267,9 @@ def main(args):
     for thread_i, s in score.items():
         for k, v in s.items():
             if k in merge_score:
-                merge_score[k].extend(v)
+                merge_score[k].extend(list(v))
             else:
-                merge_score[k] = v
+                merge_score[k] = list(v)
 
     # save
     tb = pa.table(merge_score)
