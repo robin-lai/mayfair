@@ -138,8 +138,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
 
            # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
            # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-           , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+           # , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+           # , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
            , "highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
            , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
            , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
@@ -163,7 +163,7 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
     item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
     item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
                          "pay_7d": 0}
-    user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20, "highLevelSeqListGoods": [""] * 20,
+    user_seq_string = {"highLevelSeqListGoods": [""] * 20,
                        "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
                        "lowerLevelSeqListCateId": [""] * 20
                        }
@@ -256,7 +256,7 @@ def main(args):
     jobs = []
     for thread_idx, tfr_list in enumerate(file_batch):
         score[thread_idx] = manager.dict()
-        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list[0:1], args.batch_size, model_local, score))
+        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local, score))
         jobs.append(p)
         p.start()
     for proc in jobs:
