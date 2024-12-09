@@ -168,7 +168,9 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
                            "lowerLevelSeqListCateId": [""] * 20
                            }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
+        n = 0
         for idx in ds.as_numpy_iterator():
+            print('idx', idx)
             feed_dict = {}
             id = idx[ID].tolist()
             id = [e[0] for e in id]
@@ -227,7 +229,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
                 score[thread_idx][CTCVR] = ctcvr
             else:
                 score[thread_idx][CTCVR].extend(ctcvr)
-            if debug:
+            n += 1
+            if n == 2:
                 break
         print('rm file:',file_suffix)
         os.system('rm %s'%file_suffix)
