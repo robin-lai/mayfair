@@ -19,7 +19,7 @@ if __name__ == "__main__":
     jobs = []
     for i in range(2):
         return_dict[i] = manager.dict()
-        return_dict[i]['ctr'] = manager.list()
+        return_dict[i]['ctr'] = manager.list([0,1,1,1])
         p = multiprocessing.Process(target=worker, args=(i, return_dict))
         jobs.append(p)
         p.start()
