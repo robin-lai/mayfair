@@ -277,7 +277,6 @@ def request_sagemaker(args):
   "signature_name": "serving_default",
   "instances": [
     {
-      "sample_id": "1",
       "goods_id": [
         ""
       ],
@@ -416,7 +415,6 @@ def request_sagemaker(args):
       ]
     },
     {
-      "sample_id": "1",
       "goods_id": [
         ""
       ],
