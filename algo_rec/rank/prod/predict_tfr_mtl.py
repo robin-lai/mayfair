@@ -179,7 +179,7 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             if ID not in score[thread_idx]:
                 score[thread_idx][ID] = id
             else:
-                score[thread_idx][ID].extend(id)
+                score[thread_idx][ID] = score[thread_idx][ID].extend(id)
                 print('id_len', len(score[thread_idx][ID]))
 
             # is_clk
