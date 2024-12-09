@@ -10,7 +10,7 @@ os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 from aws_auth_init import *
 
-feature_spec = {
+feature_spec_serve = {
                 "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
                 "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
                 "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
@@ -234,12 +234,8 @@ class DIN(tf.estimator.Estimator):
             prop = tf.sigmoid(logits, name="pred")
             if mode == tf.estimator.ModeKeys.PREDICT:
                 print('modekeys predict:', mode)
-                # if 'sample_id' not in features:
-                #     features['sample_id'] = tf.constant(1)  # export model will need the key #TODO
-                # features['sample_id'] = tf.identity(features['sample_id'])
                 predictions = {
                     'probabilities': prop,
-                    # 'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
                 }
                 export_outputs = {
                     'prediction': tf.estimator.export.PredictOutput(predictions)
@@ -315,14 +311,10 @@ class DIN(tf.estimator.Estimator):
             ctcvr = tf.multiply(prop, prop_cvr, name="CTCVR")
             if mode == tf.estimator.ModeKeys.PREDICT:
                 print('modekeys predict:', mode)
-                # if 'sample_id' not in features:
-                #     features['sample_id'] = tf.constant(1)  # export model will need the key #TODO
-                # features['sample_id'] = tf.identity(features['sample_id'])
                 predictions = {
                     'ctr': prop,
                     'cvr': prop_cvr,
                     'ctcvr': ctcvr
-                    # 'sample_id': features['sample_id'] # only train,eval mode not fit infer mode
                 }
                 export_outputs = {
                     'prediction': tf.estimator.export.PredictOutput(predictions)
@@ -368,7 +360,7 @@ def main(args):
     feature_columns = build_feature_columns()
     if 'seq_off' in args.version:
         print('fts version:', args.version)
-        feature_spec.update({
+        feature_spec_serve.update({
             "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
             "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
         })
@@ -378,7 +370,7 @@ def main(args):
         })
     if 'seq_on' in args.version:
         print('fts version:', args.version)
-        feature_spec.update({
+        feature_spec_serve.update({
             "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_goods_id"),
             "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_cate_id"),
             "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_goods_id"),
@@ -440,8 +432,8 @@ def main(args):
         print("after train and evaluate")
 
         if host_rank == 0:
-            print('feature_spec placeholder', feature_spec)
-            serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
+            print('feature_spec placeholder', feature_spec_serve)
+            serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec_serve)
             print('begin export_savemodel', '#' * 80)
             print('model_dir:', args.model_dir)
             # TODO why call model_fn with infer mode
