@@ -10,8 +10,32 @@ os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 from aws_auth_init import *
 
-def _parse_fea(data):
-    feature_describe = {
+feature_spec = {
+                "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
+                "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
+                "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
+                "click_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="click_7d"),
+                "cart_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="cart_7d"),
+                "ord_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_total"),
+                "pay_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_total"),
+                "ord_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_7d"),
+                "pay_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_7d"),
+                "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
+                "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
+                "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
+                "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
+                "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
+                "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
+                "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
+                # "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
+                # "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                # "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                # "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                # "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                # "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id")
+            }
+
+feature_describe = {
         "ctr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
         , "cvr_7d": tf.FixedLenFeature(1, tf.float32, 0.0)
         , "show_7d": tf.FixedLenFeature(1, tf.int64, 0)
@@ -32,17 +56,20 @@ def _parse_fea(data):
 
         # , "seq_cate_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
         # , "seq_goods_id": tf.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-        , "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-        , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-        , "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-        , "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-        , "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-        , "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+        # , "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
 
         , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
         , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
         , "sample_id": tf.FixedLenFeature(1, tf.string, "-1")
     }
+
+def _parse_fea(data):
+
     features = tf.io.parse_single_example(data, features=feature_describe)
 
     is_clk = features.pop('is_clk')
@@ -248,22 +275,45 @@ class DIN(tf.estimator.Estimator):
             for fc in numric_cols:
                 numric_cols_emb.append(tf.feature_column.embedding_column(fc, dimension=4))
             numric_cols_emb_input = tf.feature_column.input_layer(features, numric_cols_emb)
+            input_layer = [numric_cols_emb_input, cate_cols_emb_input]
 
-            seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
-                                                id_type='seq_off_goods_id', shape=[40000, 32])
-            seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'], tid_ids=features['cate_id'],
-                                               id_type='seq_off_cate_id', shape=[2000, 16])
-            seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
-                                                id_type='seq_on_high_goods_id', shape=[40000, 32])
-            seq_high_on_cateid_input = attention_layer(seq_ids=features['highLevelSeqListCateId'], tid_ids=features['cate_id'],
-                                               id_type='seq_on_high_cate_id', shape=[2000, 16])
-            seq_low_on_goodsid_input = attention_layer(seq_ids=features['lowerLevelSeqListGoods'], tid_ids=features['goods_id'],
-                                                        id_type='seq_on_low_goods_id', shape=[40000, 32])
-            seq_low_on_cateid_input = attention_layer(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
-                                                       id_type='seq_on_low_cate_id', shape=[2000, 16])
+            if 'seq_off' in params['version']:
+                seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
+                                                    id_type='seq_off_goods_id', shape=[40000, 32])
+                seq_cateid_input = attention_layer(seq_ids=features['seq_cate_id'], tid_ids=features['cate_id'],
+                                                   id_type='seq_off_cate_id', shape=[2000, 16])
+                input_layer.extend([seq_goodsid_input, seq_cateid_input])
+                feature_spec.update({
+                     "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
+                     "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
+                })
+                feature_describe.update({
+                      "seq_cate_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                     , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                })
+            if 'seq_on' in params['version']:
+                seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
+                                                    id_type='seq_on_high_goods_id', shape=[40000, 32])
+                seq_high_on_cateid_input = attention_layer(seq_ids=features['highLevelSeqListCateId'], tid_ids=features['cate_id'],
+                                                   id_type='seq_on_high_cate_id', shape=[2000, 16])
+                seq_low_on_goodsid_input = attention_layer(seq_ids=features['lowerLevelSeqListGoods'], tid_ids=features['goods_id'],
+                                                            id_type='seq_on_low_goods_id', shape=[40000, 32])
+                seq_low_on_cateid_input = attention_layer(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
+                                                           id_type='seq_on_low_cate_id', shape=[2000, 16])
+                input_layer.extend([seq_high_on_cateid_input,seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input])
+                feature_spec.update({
+                     "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_goods_id"),
+                     "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_hl_cate_id"),
+                     "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_goods_id"),
+                     "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_ll_cate_id")
+                })
+                feature_describe.update({
+                     "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                     , "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                     , "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                     , "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+                })
 
-            input_layer = [numric_cols_emb_input, cate_cols_emb_input, seq_goodsid_input, seq_cateid_input, seq_high_on_cateid_input,
-                           seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input]
             # input_layer = [numric_cols_emb_input, cate_cols_emb_input]
             for ele in input_layer:
                 print('blick layer shape:', ele.get_shape())
@@ -381,30 +431,6 @@ def main(args):
         print("after train and evaluate")
 
         if host_rank == 0:
-            feature_spec = {
-                "ctr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="ctr_7d"),
-                "cvr_7d": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="cvr_7d"),
-                "show_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="show_7d"),
-                "click_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="click_7d"),
-                "cart_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="cart_7d"),
-                "ord_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_total"),
-                "pay_total": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_total"),
-                "ord_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="ord_7d"),
-                "pay_7d": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="pay_7d"),
-                "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
-                "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
-                "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
-                "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
-                "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
-                "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
-                "country": tf.placeholder(dtype=tf.string, shape=[None, 1], name="country"),
-                "seq_cate_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_cate_id"),
-                "seq_goods_id": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-                "highLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-                "highLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-                "lowerLevelSeqListGoods": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id"),
-                "lowerLevelSeqListCateId": tf.placeholder(dtype=tf.string, shape=[None, 20], name="seq_goods_id")
-            }
             print('feature_spec placeholder', feature_spec)
             serving_input_receiver_fn = tf.estimator.export.build_raw_serving_input_receiver_fn(feature_spec)
             print('begin export_savemodel', '#' * 80)
