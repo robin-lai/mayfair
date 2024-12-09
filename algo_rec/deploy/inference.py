@@ -154,7 +154,7 @@ def input_handler(data, context):
             logging.info('debug=2 json_data',json_data)
             return json.dumps(json_data).encode('utf-8')
         ipt = get_infer_json_from_request(d)
-        logging.info('ipt data:', ipt)
+        logging.info('ipt data:%s', ipt)
         ipt_encode = json.dumps(ipt).encode('utf-8')
         return ipt_encode
 
