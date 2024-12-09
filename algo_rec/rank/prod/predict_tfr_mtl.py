@@ -228,8 +228,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
                 score[thread_idx][CTCVR].extend(ctcvr)
             if debug:
                 break
-            print('rm file:',file_suffix)
-            os.system('rm %s'%file_suffix)
+        print('rm file:',file_suffix)
+        os.system('rm %s'%file_suffix)
 
 def main(args):
     s3_cli = boto3.client('s3')
