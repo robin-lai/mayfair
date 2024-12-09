@@ -33,6 +33,8 @@ fts_item_pickle = deploy_pkg_dir + 'item_features.pkl'
 rec_buk = 's3://warehouse-algo/rec/'
 in_rec_buk = 's3://algo-rec/rec/model_online/'
 sg_rec_buk = 's3://algo-sg/rec/model_online/'
+in_s3_tar_file = ""
+
 
 def convert_text2pkl(text_dir):
     from os import listdir
@@ -103,12 +105,12 @@ def pkg(args):
     tar_file = deploy_dir + tar_name
     os.system('cd %s ; tar -czvf  %s  %s' % (deploy_pkg_dir, tar_file, './'))
     # upload
-    s3_model_online_tar_file = in_rec_buk + tar_name
-    print('upload %s to %s' % (tar_file, s3_model_online_tar_file))
-    os.system('aws s3 cp %s %s' % (tar_file, s3_model_online_tar_file))
-    sg_s3_model_online_tar_file = sg_rec_buk + tar_name
-    print('upload %s to %s' % (tar_file, sg_s3_model_online_tar_file))
-    os.system('aws s3 cp %s %s' % (tar_file, sg_s3_model_online_tar_file))
+    in_s3_tar_file = in_rec_buk + tar_name
+    print('upload %s to %s' % (tar_file, in_s3_tar_file))
+    os.system('aws s3 cp %s %s' % (tar_file, in_s3_tar_file))
+    sg_s3_tar_file = sg_rec_buk + tar_name
+    print('upload %s to %s' % (tar_file, sg_s3_tar_file))
+    os.system('aws s3 cp %s %s' % (tar_file, sg_s3_tar_file))
 
 def alert(msg):
     print(msg)
@@ -172,12 +174,13 @@ def create_edp(args):
         instance_type=instance_type
     )
 
+    print('in_s3_tar_file', in_s3_tar_file)
     sm_sess.create_model(
         name=args.endpoint,
         role=role,
         container_defs={
             "Image": img,
-            "ModelDataUrl": args.model_data,
+            "ModelDataUrl": in_s3_tar_file,
             'Environment': {
                 'TF_DISABLE_MKL': '1',
                 'TF_DISABLE_POOL_ALLOCATOR': '1',
