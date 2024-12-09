@@ -108,6 +108,7 @@ CTCVR = 'ctcvr'
 CLK = 'is_clk'
 PAY = 'is_pay'
 prod_model = 's3://warehouse-algo/rec/prod_model/'
+pred_dir = 's3://warehouse-algo/rec/model_pred/'
 tmp_dir = '/home/sagemaker-user/tmp/'
 tmp_dir_data = tmp_dir + 'data/'
 
@@ -265,7 +266,8 @@ def main(args):
 
     # save
     tb = pa.table(merge_score)
-    parquet.write_table(tb, args.tb)
+    save_file = pred_dir + args.model_name
+    parquet.write_table(tb, save_file)
 
     # auc
     pctr = merge_score[CTR]
