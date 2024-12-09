@@ -274,7 +274,7 @@ def request_sagemaker(args):
                 "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
     req1 = {
-  "signature_name": "prediction",
+  "signature_name": "serving_default",
   "instances": [
     {
       "sample_id": "1",
