@@ -8,6 +8,7 @@ import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3
 import os
+import time
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
@@ -168,7 +169,6 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
                            "lowerLevelSeqListCateId": [""] * 20
                            }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
-        n = 0
         for idx in ds.as_numpy_iterator():
             feed_dict = {}
             id = idx[ID].tolist()
@@ -209,9 +209,6 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             ctcvr = res[CTCVR].numpy().tolist()
             ctcvr = [e[0] for e in ctcvr]
             score[thread_idx][CTCVR].extend(ctcvr)
-            n += 1
-            if n == 5:
-                break
         print('rm file:',file_suffix)
         os.system('rm %s'%file_suffix)
 
@@ -239,6 +236,7 @@ def main(args):
     os.system("mkdir -p %s" % (model_local))
     os.system("aws s3 cp --recursive %s %s" % (s3_model, model_local))
 
+    st = time.time()
     manager = multiprocessing.Manager()
     score = manager.dict()
     # score[ID] = []
@@ -257,6 +255,9 @@ def main(args):
         p.start()
     for proc in jobs:
         proc.join()
+
+    ed = time.time()
+    print('multi predict done cost:', str(ed - st))
 
     # merge multi thread score
     score = dict(score)
@@ -294,6 +295,7 @@ def main(args):
     print('N:',len(pcvr), 'avg_pred_cvr:', avg_pred_cvr, 'avg_label_pay:', avg_label_pay)
     auc = roc_auc_score(is_pay, pcvr)
     print('cvr-auc:', auc)
+    print('compute auc cost:', str(time.time()-ed))
 
 
 if __name__ == '__main__':
