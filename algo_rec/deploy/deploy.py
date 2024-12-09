@@ -1,6 +1,7 @@
 # coding: utf-8
 import boto3
 import sagemaker
+from numba.cpython.listobj import in_seq
 from sagemaker import get_execution_role
 # import sh
 import time
@@ -34,6 +35,9 @@ rec_buk = 's3://warehouse-algo/rec/'
 in_rec_buk = 's3://algo-rec/rec/model_online/'
 sg_rec_buk = 's3://algo-sg/rec/model_online/'
 in_s3_tar_file = ""
+sg_s3_tar_file = ""
+
+# endpoint = 'ctr-model-debug1121'
 
 
 def convert_text2pkl(text_dir):
@@ -101,14 +105,13 @@ def pkg(args):
     #     pickle.dump(user_seq_off_dict, fout)
 
     # tar
-    tar_name = args.model_name + '_' + args.v + '.tar.gz'
-    tar_file = deploy_dir + tar_name
+    tar_file = deploy_dir + args.tar_name
     os.system('cd %s ; tar -czvf  %s  %s' % (deploy_pkg_dir, tar_file, './'))
     # upload
-    in_s3_tar_file = in_rec_buk + tar_name
+    in_s3_tar_file = in_rec_buk + args.tar_name
     print('upload %s to %s' % (tar_file, in_s3_tar_file))
     os.system('aws s3 cp %s %s' % (tar_file, in_s3_tar_file))
-    sg_s3_tar_file = sg_rec_buk + tar_name
+    sg_s3_tar_file = sg_rec_buk + args.tar_name
     print('upload %s to %s' % (tar_file, sg_s3_tar_file))
     os.system('aws s3 cp %s %s' % (tar_file, sg_s3_tar_file))
 
@@ -294,9 +297,9 @@ def main(args):
     if 'edp' in args.pipeline:
         print('start edp')
         if args.region == 'in':
-            args.s3_tar_file = args.in_s3_tar_file
+            args.s3_tar_file = in_rec_buk + args.tar_name
         if args.region == 'sg':
-            args.s3_tar_file = args.sg_s3_tar_file
+            args.s3_tar_file = sg_rec_buk + args.tar_name
         create_edp(args)
         print('end edp')
     if 'req_edp' in args.pipeline:
@@ -318,14 +321,13 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg')
     parser.add_argument('--endpoint', default='test-edp-model')
     parser.add_argument('--region', default='sg')
-    parser.add_argument('--v', default='v0')
+    parser.add_argument('--edp_version', default='v0')
     parser.add_argument('--model_dir', default='test_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
     parser.add_argument('--model_version', default='/ds=20241203/model/')
-    parser.add_argument('--in_s3_tar_file', default='s3://algo-rec/rec/model_online/prod_mtl_seq_on_esmm_v0_v1.tar.gz')
-    parser.add_argument('--sg_s3_tar_file', default='s3://algo-sg/rec/model_online/prod_mtl_seq_on_esmm_v0_v1.tar.gz')
+    parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v0_v1.tar.gz')
     args = parser.parse_args()
-    args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.v
+    args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
     print('endpoint:', args.endpoint)
     main(args)
 
