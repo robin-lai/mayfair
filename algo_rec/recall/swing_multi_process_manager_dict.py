@@ -109,7 +109,7 @@ def swing(proc, item_batch_dict, swing_ret):
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 # print('user a', user[i], 'user b', user[j])
-                common_items = user_bhv_item_list_m[user[i]] & user_bhv_item_list_m[user[j]]
+                common_items = set(user_bhv_item_list_m[user[i]]) & set(user_bhv_item_list_m[user[j]])
                 common_items = common_items - set(trig_itm)
                 for tgt_item in common_items:
                     if user_debias:
@@ -227,6 +227,8 @@ def main(args):
     st = time.time()
     for country, v in m.items():
         print('process country:', country)
+        if country != 'IN':
+            continue
         process(v, country)
         print('step 2 preprocess done cost:', str(time.time() - st))
         # swing
