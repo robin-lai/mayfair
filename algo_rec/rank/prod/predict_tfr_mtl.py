@@ -153,8 +153,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
     os.system('mkdir -p %s'%tmp_dir_data)
-    for file in tfr_list:
-        print('download file into tmp:',file)
+    for file_n, file in enumerate(tfr_list):
+        # print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
         file_suffix = tmp_dir_data + file.split('/')[-1]
         ds = tf.data.TFRecordDataset(file_suffix)
@@ -209,7 +209,8 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             ctcvr = res[CTCVR].numpy().tolist()
             ctcvr = [e[0] for e in ctcvr]
             score[thread_idx][CTCVR].extend(ctcvr)
-        print('rm file:',file_suffix)
+        # print('rm file:',file_suffix)
+        print('proc %s process file:%s / %s' % (str(thread_idx), str(file_n), str(len(tfr_list))))
         os.system('rm %s'%file_suffix)
 
 def main(args):
@@ -225,7 +226,7 @@ def main(args):
         file_list = ['s3://%s/%s'%(BUCKET, v) for v in file_list][0:args.sample_num]
     else:
         file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list]
-    print('file list in dir', file_list)
+    print('file list num in dir', len(file_list))
     shuffle(file_list)
     file_batch = list(chunks(file_list,  args.proc))
 
@@ -260,6 +261,7 @@ def main(args):
     print('multi predict done cost:', str(ed - st))
 
     # merge multi thread score
+    st = time.time()
     score = dict(score)
     if debug:
         print('score:', score)
@@ -270,21 +272,18 @@ def main(args):
                 merge_score[k].extend(list(v))
             else:
                 merge_score[k] = list(v)
+    ed = time.time()
+    print('end merge score cost:', str(ed - st))
 
     # save
+    st = time.time()
     tb = pa.table(merge_score)
     save_file = pred_dir + args.model_name
     parquet.write_table(tb, save_file)
+    ed = time.time()
+    print('end write2table cost:', str(ed - st))
 
-    # auc
-    pctr = merge_score[CTR]
-    is_clk = merge_score[CLK]
-    avg_pred_ctr = np.mean(pctr)
-    avg_label_clk = np.mean(is_clk)
-    print('N:',len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
-    auc = roc_auc_score(is_clk, pctr)
-    print('ctr-auc:', auc)
-
+    st = time.time()
     pcvr, is_pay = [], []
     for e1, e2, e3 in zip(merge_score[CLK], merge_score[PAY], merge_score[CVR]):
         if e1 == 1:
@@ -292,10 +291,25 @@ def main(args):
             pcvr.append(e3)
     avg_pred_cvr = np.mean(pcvr)
     avg_label_pay = np.mean(is_pay)
-    print('N:',len(pcvr), 'avg_pred_cvr:', avg_pred_cvr, 'avg_label_pay:', avg_label_pay)
+    print('N:', len(pcvr), 'avg_pred_cvr:', avg_pred_cvr, 'avg_label_pay:', avg_label_pay)
     auc = roc_auc_score(is_pay, pcvr)
     print('cvr-auc:', auc)
-    print('compute auc cost:', str(time.time()-ed))
+    ed = time.time()
+    print('compute cvr-auc cost:', str(ed - st))
+
+    # auc
+    st = time.time()
+    pctr = merge_score[CTR]
+    is_clk = merge_score[CLK]
+    avg_pred_ctr = np.mean(pctr)
+    avg_label_clk = np.mean(is_clk)
+    print('N:',len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
+    auc = roc_auc_score(is_clk, pctr)
+    print('ctr-auc:', auc)
+    ed = time.time()
+    print('compute ctr-auc cost:', str(ed - st))
+
+
 
 
 if __name__ == '__main__':
