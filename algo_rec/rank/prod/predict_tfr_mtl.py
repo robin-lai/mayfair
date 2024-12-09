@@ -115,7 +115,6 @@ tmp_dir_data = tmp_dir + 'data/'
 debug = False
 
 def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
-    score[thread_idx] = {}
 
     def _parse_fea(data):
        feature_describe = {
@@ -254,6 +253,7 @@ def main(args):
     # score[SCORE] = []
     jobs = []
     for thread_idx, tfr_list in enumerate(file_batch):
+        score[thread_idx] = {}
         p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list[0:1], args.batch_size, model_local, score))
         jobs.append(p)
         p.start()
