@@ -109,6 +109,7 @@ CLK = 'is_clk'
 PAY = 'is_pay'
 prod_model = 's3://warehouse-algo/rec/prod_model/'
 tmp_dir = '/home/sagemaker-user/tmp/'
+tmp_dir_data = tmp_dir + 'data/'
 
 def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
     score[thread_idx] = {}
@@ -148,12 +149,11 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
        }
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
-    os.system('rm -rf ./tmp')
-    os.system('mkdir tmp')
+    os.system('mkdir -p %s'%tmp_dir_data)
     for file in tfr_list:
         print('download file into tmp:',file)
-        os.system('aws s3 cp %s %s' % (file, './tmp/'))
-    file_suffix = ['./tmp/' + e.split('/')[-1] for e in tfr_list]
+        os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
+    file_suffix = [tmp_dir_data + e.split('/')[-1] for e in tfr_list]
     ds = tf.data.TFRecordDataset(file_suffix)
     ds = ds.map(_parse_fea).batch(batch_size)
     item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
@@ -247,7 +247,7 @@ def main(args):
     # score[SCORE] = []
     jobs = []
     for thread_idx, tfr_list in enumerate(file_batch):
-        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list[0:2], args.batch_size, model_local, score))
+        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list[0], args.batch_size, model_local, score))
         jobs.append(p)
         p.start()
     for proc in jobs:
