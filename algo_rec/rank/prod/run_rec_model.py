@@ -460,7 +460,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_integer("batch_size", 1024, "")
     tf.app.flags.DEFINE_string("hidden_units", "256,128,64", "")
     tf.app.flags.DEFINE_string("task", "ctr", "ctr")
-    tf.app.flags.DEFINE_list("version", ["seq_on"], "seq_version[seq_on|seq_off]")
+    tf.app.flags.DEFINE_string("version", "seq_on", "seq_version:seq_on|seq_off")
     tf.app.flags.DEFINE_string("pred_local", "./predict_result.pkl", "save_pred_result_local")
     tf.app.flags.DEFINE_string("pred_s3", "s3://warehouse-algo/rec/model_pred/predict_result.pkl", "save_pred_result_s3")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
