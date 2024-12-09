@@ -174,13 +174,13 @@ def create_edp(args):
         instance_type=instance_type
     )
 
-    print('in_s3_tar_file', in_s3_tar_file)
+    print('in_s3_tar_file', args.s3_tar_file)
     sm_sess.create_model(
         name=args.endpoint,
         role=role,
         container_defs={
             "Image": img,
-            "ModelDataUrl": in_s3_tar_file,
+            "ModelDataUrl": args.s3_tar_file,
             'Environment': {
                 'TF_DISABLE_MKL': '1',
                 'TF_DISABLE_POOL_ALLOCATOR': '1',
@@ -321,6 +321,10 @@ def main(args):
         print('end pkg')
     if 'edp' in args.pipeline:
         print('start edp')
+        if args.region == 'in':
+            args.s3_tar_file = args.in_s3_tar_file
+        if args.region == 'sg':
+            args.s3_tar_file = args.sg_s3_tar_file
         create_edp(args)
         print('end edp')
     if 'req_edp' in args.pipeline:
@@ -341,10 +345,12 @@ if __name__ == '__main__':
         epilog='deploy')
     parser.add_argument('--pipeline', default='pkg,edp,req_sg')
     parser.add_argument('--endpoint', default='test-edp-model')
+    parser.add_argument('--region', default='sg')
     parser.add_argument('--v', default='v0')
     parser.add_argument('--model_dir', default='test_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
     parser.add_argument('--model_version', default='/ds=20241203/model/')
+    parser.add_argument('--in_s3_tar_file', default='s3://algo-sg/rec/model_online/prod_mtl_seq_on_esmm_v0_v1.tar.gz')
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.v
     print('endpoint:', args.endpoint)
