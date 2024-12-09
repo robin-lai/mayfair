@@ -200,9 +200,11 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
         for name in user_seq_string.keys():
             feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
-        print('feed_dict:', feed_dict)
+        if debug:
+            print('feed_dict:', feed_dict)
         res = predictor(**feed_dict)
-        print('red:', res)
+        if debug:
+            print('red:', res)
 
         prob = res[CTR].numpy().tolist()
         prob = [e[0] for e in prob]
