@@ -55,7 +55,7 @@ def request_check(d):
 
 
 def get_infer_json_from_request(d):
-    ipt = {"signature_name": "prediction"}
+    ipt = {"signature_name": d["signature_name"]}
     ll = []
     if request_check(d):
         with open(item_fts_file, 'rb') as fin:
@@ -146,8 +146,8 @@ def input_handler(data, context):
         logging.info('[DEBUG] request_data1: %s', d)
         if d["debug"] == '1':
             print('debug=1 json_data', d)
-            logging.info('debug=1 json_data',d)
-            return data
+            logging.info('debug=1 json_data',d["ipt"])
+            return json.dumps(d['ipt']).encode('utf-8')
         elif d["debug"] == '2':
             json_data = get_infer_json()
             print('debug=2 json_data', json_data)

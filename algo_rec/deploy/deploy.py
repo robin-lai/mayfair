@@ -268,7 +268,7 @@ def request_edp(args):
     # res_json = json.loads(res["Body"].read())
 
 def request_sagemaker(args):
-    request2 = {"city": "Menbai", "country": "IN", "debug": "",
+    request = {"signature_name": "serving_default", "city": "Menbai", "country": "IN", "debug": "",
                 "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20}},
                 "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
                 "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
@@ -556,14 +556,15 @@ def request_sagemaker(args):
     }
   ]
 }
+    request['ipt'] = req1
+    request['debug'] = "1"
 
     sg_client = boto3.client("sagemaker-runtime")
 
-    print('inp-json-dump', json.dumps(request2))
-
+    print('inp-json-dump', json.dumps(request))
     res = sg_client.invoke_endpoint(
         EndpointName=args.endpoint,
-        Body=json.dumps(req1),
+        Body=json.dumps(request),
         # Body=json.dumps(ipt4).encode('utf-8'),
         # .encode('utf-8'),
         # Body=ipt4,
