@@ -155,79 +155,81 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
     for file in tfr_list:
         print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
-    file_suffix = [tmp_dir_data + e.split('/')[-1] for e in tfr_list]
-    ds = tf.data.TFRecordDataset(file_suffix)
-    ds = ds.map(_parse_fea).batch(batch_size)
-    item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
-                            "cate_level3_id": "", "cate_level4_id": "", "country": ""}
-    item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
-    item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
-                         "pay_7d": 0}
-    user_seq_string = {"highLevelSeqListGoods": [""] * 20,
-                       "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
-                       "lowerLevelSeqListCateId": [""] * 20
-                       }
-    predictor = tf.saved_model.load(dir).signatures["serving_default"]
-    for idx in ds.as_numpy_iterator():
-        feed_dict = {}
-        id = idx[ID].tolist()
-        id = [e[0] for e in id]
-        if ID not in score[thread_idx]:
-            score[thread_idx][ID] = id
-        else:
-            score[thread_idx][ID].extend(id)
-        
-        # is_clk
-        clk = idx[CLK].tolist()
-        clk = [e[0] for e in clk]
-        if CLK not in score[thread_idx]:
-            score[thread_idx][CLK] = clk
-        else:
-            score[thread_idx][CLK].extend(clk)
-        # is_pay
-        pay = idx[PAY].tolist()
-        pay = [e[0] for e in pay]
-        if PAY not in score[thread_idx]:
-            score[thread_idx][PAY] = pay
-        else:
-            score[thread_idx][PAY].extend(pay)
+        file_suffix = tmp_dir_data + file.split('/')[-1]
+        ds = tf.data.TFRecordDataset(file_suffix)
+        ds = ds.map(_parse_fea).batch(batch_size)
+        item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
+                                "cate_level3_id": "", "cate_level4_id": "", "country": ""}
+        item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
+        item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
+                             "pay_7d": 0}
+        user_seq_string = {"highLevelSeqListGoods": [""] * 20,
+                           "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
+                           "lowerLevelSeqListCateId": [""] * 20
+                           }
+        predictor = tf.saved_model.load(dir).signatures["serving_default"]
+        for idx in ds.as_numpy_iterator():
+            feed_dict = {}
+            id = idx[ID].tolist()
+            id = [e[0] for e in id]
+            if ID not in score[thread_idx]:
+                score[thread_idx][ID] = id
+            else:
+                score[thread_idx][ID].extend(id)
 
-        for name in item_features_string.keys():
-            feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
-        for name in item_features_int.keys():
-            feed_dict[name] = tf.constant(idx[name], dtype=tf.int64)
-        for name in item_features_double.keys():
-            feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
-        for name in user_seq_string.keys():
-            feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
-        if debug:
-            print('feed_dict:', feed_dict)
-        res = predictor(**feed_dict)
-        if debug:
-            print('red:', res)
+            # is_clk
+            clk = idx[CLK].tolist()
+            clk = [e[0] for e in clk]
+            if CLK not in score[thread_idx]:
+                score[thread_idx][CLK] = clk
+            else:
+                score[thread_idx][CLK].extend(clk)
+            # is_pay
+            pay = idx[PAY].tolist()
+            pay = [e[0] for e in pay]
+            if PAY not in score[thread_idx]:
+                score[thread_idx][PAY] = pay
+            else:
+                score[thread_idx][PAY].extend(pay)
 
-        prob = res[CTR].numpy().tolist()
-        prob = [e[0] for e in prob]
-        if CTR not in score[thread_idx]:
-            score[thread_idx][CTR] = prob
-        else:
-            score[thread_idx][CTR].extend(prob)
-        # print('res', res)
-        cvr = res[CVR].numpy().tolist()
-        cvr = [e[0] for e in cvr]
-        if CVR not in score[thread_idx]:
-            score[thread_idx][CVR] = cvr
-        else:
-            score[thread_idx][CVR].extend(cvr)
-        # ctcvr
-        ctcvr = res[CTCVR].numpy().tolist()
-        ctcvr = [e[0] for e in ctcvr]
-        if CTCVR not in score[thread_idx]:
-            score[thread_idx][CTCVR] = ctcvr
-        else:
-            score[thread_idx][CTCVR].extend(ctcvr)
-        if debug:
-            break
+            for name in item_features_string.keys():
+                feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
+            for name in item_features_int.keys():
+                feed_dict[name] = tf.constant(idx[name], dtype=tf.int64)
+            for name in item_features_double.keys():
+                feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
+            for name in user_seq_string.keys():
+                feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
+            if debug:
+                print('feed_dict:', feed_dict)
+            res = predictor(**feed_dict)
+            if debug:
+                print('red:', res)
+
+            prob = res[CTR].numpy().tolist()
+            prob = [e[0] for e in prob]
+            if CTR not in score[thread_idx]:
+                score[thread_idx][CTR] = prob
+            else:
+                score[thread_idx][CTR].extend(prob)
+            # print('res', res)
+            cvr = res[CVR].numpy().tolist()
+            cvr = [e[0] for e in cvr]
+            if CVR not in score[thread_idx]:
+                score[thread_idx][CVR] = cvr
+            else:
+                score[thread_idx][CVR].extend(cvr)
+            # ctcvr
+            ctcvr = res[CTCVR].numpy().tolist()
+            ctcvr = [e[0] for e in ctcvr]
+            if CTCVR not in score[thread_idx]:
+                score[thread_idx][CTCVR] = ctcvr
+            else:
+                score[thread_idx][CTCVR].extend(ctcvr)
+            if debug:
+                break
+            print('rm file:',file_suffix)
+            os.system('rm %s'%file_suffix)
 
 def main(args):
     s3_cli = boto3.client('s3')
