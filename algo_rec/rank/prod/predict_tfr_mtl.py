@@ -173,7 +173,9 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
             print('idx', idx)
             feed_dict = {}
             id = idx[ID].tolist()
+            print('id', id)
             id = [e[0] for e in id]
+            print('id2', id)
             if ID not in score[thread_idx]:
                 score[thread_idx][ID] = id
             else:
