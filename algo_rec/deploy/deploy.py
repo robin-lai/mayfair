@@ -99,7 +99,7 @@ def pkg(args):
     #     pickle.dump(user_seq_off_dict, fout)
 
     # tar
-    tar_name = args.model_name + '.tar.gz'
+    tar_name = args.model_name + '_' + args.v + '.tar.gz'
     tar_file = deploy_dir + tar_name
     os.system('cd %s ; tar -czvf  %s  %s' % (deploy_pkg_dir, tar_file, './'))
     # upload
