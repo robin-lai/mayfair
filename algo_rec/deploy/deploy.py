@@ -568,7 +568,14 @@ def request_sagemaker(args):
         # Body=ipt4,
         ContentType="application/json"
     )
-    print(res["Body"].read())
+    ret = json.loads(res["Body"].read())
+    print('ret score:', ret)
+    for i, goods_id in enumerate(request['goodsIdList']):
+        ret['predictions'][i]['goods_id'] = goods_id
+    print('final ret:', ret)
+
+
+
 
 def main(args):
     print('before pkg, need inference.py')
