@@ -247,7 +247,7 @@ def main(args):
     # score[SCORE] = []
     jobs = []
     for thread_idx, tfr_list in enumerate(file_batch):
-        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local, score))
+        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list[0:2], args.batch_size, model_local, score))
         jobs.append(p)
         p.start()
     for proc in jobs:
