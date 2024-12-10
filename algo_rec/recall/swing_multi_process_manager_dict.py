@@ -118,11 +118,13 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
                 st = time.time()
                 # print('user a num:', len(user_bhv_item_list_m[user[i]]), 'user b num:', len(user_bhv_item_list_m[user[j]]))
                 common_items = set(user_bhv_item_list_m[user[i]]) & set(user_bhv_item_list_m[user[j]])
-                common_items = common_items - set(trig_itm)
+                # common_items = common_items - set(trig_itm)
                 if len(common_items) < 1:
                     continue
                 # print('common user num:', len(common_items))
                 for tgt_item in common_items:
+                    if tgt_item == trig_itm:
+                        continue
                     if user_debias:
                         score = round((1 / user_bhv_num_m[user[i]]) * (1 / user_bhv_num_m[user[j]]) * (
                                     1 / (alph + (len(common_items)))), 4)
