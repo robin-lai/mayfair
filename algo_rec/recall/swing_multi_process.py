@@ -3,6 +3,7 @@ import multiprocessing
 import os
 from random import shuffle
 import pprint
+import random
 import argparse
 import time
 from pyarrow import parquet
@@ -88,16 +89,21 @@ def swing(*args):
         u_num = len(user)
         if u_num < 2:
             continue
+        if u_num >= 200:
+            user_sample = random.sample(user, 200)
+        else:
+            user_sample = user
+        u_num = len(user_sample)
         # print('common user num:', u_num)
         n += 1
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 # print('user a', user[i], 'user b', user[j])
-                common_items = user_bhv_item_list[user[i]] & user_bhv_item_list[user[j]]
+                common_items = user_bhv_item_list[user_sample[i]] & user_bhv_item_list[user_sample[j]]
                 common_items = common_items - set(trig_itm)
                 for tgt_item in common_items:
                     if user_debias:
-                        score = round((1 / user_bhv_num[user[i]]) * (1 / user_bhv_num[user[j]]) * (
+                        score = round((1 / user_bhv_num[user_sample[i]]) * (1 / user_bhv_num[user_sample[j]]) * (
                                     1 / (alph + (len(common_items)))), 4)
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
