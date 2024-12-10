@@ -81,7 +81,8 @@ def process(lines, c):
 
 alph = 1
 user_debias = True
-out_file = ''
+out_file = './swing_in_result_part_%s.txt'
+s3_file = 's3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/'
 def swing(proc, item_batch_dict, swing_ret):
     trig_itm_list = item_batch_dict[proc]
     print('O(n):', len(trig_itm_list))
@@ -98,6 +99,7 @@ def swing(proc, item_batch_dict, swing_ret):
     N = len(trig_itm_list)
     st0 = time.time()
     st = time.time()
+    lines = []
     for trig_itm in trig_itm_list:
         swing = {}
         user = list(item_bhv_user_list_m[trig_itm])
@@ -121,11 +123,27 @@ def swing(proc, item_batch_dict, swing_ret):
                         swing[tgt_item] = round(swing[tgt_item] +  score, 4)
                     else:
                         swing[tgt_item] = score
-        swing_ret[trig_itm].extend([(k, v) for k, v in swing.items()])
+        swing_ll = [(k, v) for k, v in swing.items()]
+        row_n = 30
+        swing_ll.sort(key=lambda x: x[1], reverse=True)
+        tmp_ll = []
+        for ele in swing_ll:
+            row_n -= 1
+            if row_n == 0:
+                break
+            tmp_ll.append(ele[0] + chr(4) + str(ele[1]))
+            line = ("in" + chr(4) + trig_itm + chr(1) + chr(2).join(tmp_ll) + '\n')
+            lines.append(line)
+        swing_ret[trig_itm].extend(tmp_ll)
         if n % 50 == 0:
             ed = time.time()
             print('process 50 / %s item cost:%s' % (str(N), str(ed - st)))
             st = time.time()
+    out_file_proc = out_file % proc
+    print('write swing result2file:', out_file_proc)
+    with open(out_file_proc, 'w') as fout:
+        fout.writelines(lines)
+    os.system('aws s3 cp %s %s' % (out_file_proc, s3_file + out_file_proc))
     print('swing process done, cost:', time.time() - st0)
 
     # print('write swing result to file:', out_file)
@@ -254,8 +272,6 @@ def main(args):
                 swing_ret[itm] = manager.list()
             print('batch size:', len(ele))
         print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
-        # outfile = './swing_rec_%s_part_%s'
-        # s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
         proc_list = []
         for k, v in item_batch_dict.items():
             proc_list.append(multiprocessing.Process(target=swing, args=(k,item_batch_dict, swing_ret)))
