@@ -34,40 +34,43 @@ item_bhv_user_list_m = manager.dict()
 item_bhv_num_m = manager.dict()
 
 def process(lines, c):
-    # user_bhv_item_list = {}
-    # user_bhv_num = {}
-    # item_bhv_user_list = {}
-    # item_bhv_num = {}
+    user_bhv_item_list = {}
+    user_bhv_num = {}
+    item_bhv_user_list = {}
+    item_bhv_num = {}
     for line in lines:
         u, itm, clk = line[0], line[1], line[2]
-        if u in user_bhv_item_list_m.keys():
-            user_bhv_item_list_m[u].append(itm)
+        if u in user_bhv_item_list.keys():
+            user_bhv_item_list[u].append(itm)
         else:
-            user_bhv_item_list_m[u] = manager.list(itm)
-        if itm in item_bhv_user_list_m.keys():
-            item_bhv_user_list_m[itm].append(u)
+            user_bhv_item_list[u] = manager.list(itm)
+        if itm in item_bhv_user_list.keys():
+            item_bhv_user_list[itm].append(u)
         else:
-            item_bhv_user_list_m[itm] = manager.list(u)
+            item_bhv_user_list[itm] = manager.list(u)
         # count
-        if u in user_bhv_num_m.keys():
-            user_bhv_num_m[u] += 1
+        if u in user_bhv_num.keys():
+            user_bhv_num[u] += 1
         else:
-            user_bhv_num_m[u] = 1
-        if itm in item_bhv_num_m.keys():
-            item_bhv_num_m[itm] += 1
+            user_bhv_num[u] = 1
+        if itm in item_bhv_num.keys():
+            item_bhv_num[itm] += 1
         else:
-            item_bhv_num_m[itm] = 1
-    print('data desc: user num %s, item num:%s'%(len(user_bhv_num_m.keys()), len(item_bhv_user_list_m.keys())))
+            item_bhv_num[itm] = 1
+    print('data desc: user num %s, item num:%s'%(len(user_bhv_num.keys()), len(item_bhv_user_list.keys())))
     print('dump data into file')
 
     # for k, v in user_bhv_item_list.items():
-    #     user_bhv_item_list_m[k] = manager.list(v)
+    st = time.time()
+    user_bhv_item_list_m.update(user_bhv_item_list)
     # for k, v in item_bhv_user_list.items():
-    #     item_bhv_user_list_m[k] = manager.list(v)
+    item_bhv_user_list_m.update(item_bhv_user_list)
     # for k, v in user_bhv_num.items():
-    #     user_bhv_num_m[k] = v
+    user_bhv_num_m.extend(user_bhv_num)
     # for k, v in item_bhv_num.items():
-    #     item_bhv_num_m[k] = v
+    item_bhv_num_m.extend(item_bhv_num)
+    ed = time.time()
+    print('parse manager cost:', str(ed-st))
 
     # with open(item_bhv_user_list_file%(c), 'wb') as fout:
     #     pickle.dump(item_bhv_user_list, fout)
@@ -83,8 +86,8 @@ alph = 1
 user_debias = True
 out_file = './tmp/swing_in_result_part_%s.txt'
 s3_file = 's3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/'
-def swing(proc, item_batch_dict, swing_ret):
-    trig_itm_list = item_batch_dict[proc]
+def swing(proc, item_batch_dict_m, swing_ret_m):
+    trig_itm_list = item_batch_dict_m[proc]
     print('O(n):', len(trig_itm_list))
     # out_file = args[1]
     # c = args[2]
@@ -100,6 +103,7 @@ def swing(proc, item_batch_dict, swing_ret):
     st0 = time.time()
     st = time.time()
     lines = []
+    ret = {}
     for trig_itm in trig_itm_list:
         swing = {}
         user = list(item_bhv_user_list_m[trig_itm])
@@ -134,11 +138,13 @@ def swing(proc, item_batch_dict, swing_ret):
             tmp_ll.append(ele[0] + chr(4) + str(ele[1]))
             line = ("in" + chr(4) + trig_itm + chr(1) + chr(2).join(tmp_ll) + '\n')
             lines.append(line)
-        swing_ret[trig_itm].extend(tmp_ll)
+        ret[trig_itm].extend(tmp_ll)
         if n % 50 == 0:
             ed = time.time()
             print('process 50 / %s item cost:%s' % (str(N), str(ed - st)))
             st = time.time()
+    swing_ret_m.update(ret)
+    print('swing_ret_m keys num:', len(swing_ret_m.keys()))
     out_file_proc = out_file % proc
     print('write swing result2file:', out_file_proc)
     with open(out_file_proc, 'w') as fout:
@@ -264,17 +270,18 @@ def main(args):
         print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num_m.keys()), len(item_list), hot_item_num))
         shuffle(item_list)
         item_batch = list(chunks(item_list, batch))
-        item_batch_dict = manager.dict()
-        swing_ret = manager.dict()
+        item_batch_dict = {}
+        item_batch_dict_m = manager.dict()
+        swing_ret_m = manager.dict()
         for proc, ele in enumerate(item_batch):
-            item_batch_dict[proc] = manager.list(ele)
-            for itm in ele:
-                swing_ret[itm] = manager.list()
-            print('batch size:', len(ele))
+            item_batch_dict[proc] = ele
+        item_batch_dict_m.update(item_batch_dict)
+
+        print('batch size:', len(ele))
         print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
         proc_list = []
         for k, v in item_batch_dict.items():
-            proc_list.append(multiprocessing.Process(target=swing, args=(k,item_batch_dict, swing_ret)))
+            proc_list.append(multiprocessing.Process(target=swing, args=(k,item_batch_dict_m, swing_ret_m)))
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
