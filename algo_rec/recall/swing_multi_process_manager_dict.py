@@ -34,40 +34,40 @@ item_bhv_user_list_m = manager.dict()
 item_bhv_num_m = manager.dict()
 
 def process(lines, c):
-    user_bhv_item_list = {}
-    user_bhv_num = {}
-    item_bhv_user_list = {}
-    item_bhv_num = {}
+    # user_bhv_item_list = {}
+    # user_bhv_num = {}
+    # item_bhv_user_list = {}
+    # item_bhv_num = {}
     for line in lines:
         u, itm, clk = line[0], line[1], line[2]
-        if u in user_bhv_item_list.keys():
-            user_bhv_item_list[u].add(itm)
+        if u in user_bhv_item_list_m.keys():
+            user_bhv_item_list_m[u].add(itm)
         else:
-            user_bhv_item_list[u] = set([itm])
-        if itm in item_bhv_user_list.keys():
-            item_bhv_user_list[itm].add(u)
+            user_bhv_item_list_m[u] = manager.list(itm)
+        if itm in item_bhv_user_list_m.keys():
+            item_bhv_user_list_m[itm].add(u)
         else:
-            item_bhv_user_list[itm] = set([u])
+            item_bhv_user_list_m[itm] = manager.list(u)
         # count
-        if u in user_bhv_num.keys():
-            user_bhv_num[u] += 1
+        if u in user_bhv_num_m.keys():
+            user_bhv_num_m[u] += 1
         else:
-            user_bhv_num[u] = 1
-        if itm in item_bhv_num.keys():
-            item_bhv_num[itm] += 1
+            user_bhv_num_m[u] = 1
+        if itm in item_bhv_num_m.keys():
+            item_bhv_num_m[itm] += 1
         else:
-            item_bhv_num[itm] = 1
-    print('data desc: user num %s, item num:%s'%(len(user_bhv_num.keys()), len(item_bhv_user_list.keys())))
+            item_bhv_num_m[itm] = 1
+    print('data desc: user num %s, item num:%s'%(len(user_bhv_num_m.keys()), len(item_bhv_user_list_m.keys())))
     print('dump data into file')
 
-    for k, v in user_bhv_item_list.items():
-        user_bhv_item_list_m[k] = manager.list(v)
-    for k, v in item_bhv_user_list.items():
-        item_bhv_user_list_m[k] = manager.list(v)
-    for k, v in user_bhv_num.items():
-        user_bhv_num_m[k] = v
-    for k, v in item_bhv_num.items():
-        item_bhv_num_m[k] = v
+    # for k, v in user_bhv_item_list.items():
+    #     user_bhv_item_list_m[k] = manager.list(v)
+    # for k, v in item_bhv_user_list.items():
+    #     item_bhv_user_list_m[k] = manager.list(v)
+    # for k, v in user_bhv_num.items():
+    #     user_bhv_num_m[k] = v
+    # for k, v in item_bhv_num.items():
+    #     item_bhv_num_m[k] = v
 
     # with open(item_bhv_user_list_file%(c), 'wb') as fout:
     #     pickle.dump(item_bhv_user_list, fout)
