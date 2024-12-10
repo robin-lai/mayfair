@@ -143,7 +143,7 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
             tmp_ll.append(ele[0] + chr(4) + str(ele[1]))
             line = ("in" + chr(4) + trig_itm + chr(1) + chr(2).join(tmp_ll) + '\n')
             lines.append(line)
-        ret[trig_itm].extend(tmp_ll)
+        ret[trig_itm] = tmp_ll
         if n % 50 == 0:
             ed = time.time()
             print('process 50 / %s item cost:%s' % (str(N), str(ed - st)))
