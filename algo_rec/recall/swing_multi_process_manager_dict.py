@@ -246,6 +246,7 @@ def main(args):
         print('unknown data:',args.data)
     ed = time.time()
     print('step 1 get_date done cost:', str(ed-st))
+    print("data", m)
 
     # preprocess
     st = time.time()
