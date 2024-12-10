@@ -41,11 +41,11 @@ def process(lines, c):
     for line in lines:
         u, itm, clk = line[0], line[1], line[2]
         if u in user_bhv_item_list_m.keys():
-            user_bhv_item_list_m[u].add(itm)
+            user_bhv_item_list_m[u].append(itm)
         else:
             user_bhv_item_list_m[u] = manager.list(itm)
         if itm in item_bhv_user_list_m.keys():
-            item_bhv_user_list_m[itm].add(u)
+            item_bhv_user_list_m[itm].append(u)
         else:
             item_bhv_user_list_m[itm] = manager.list(u)
         # count

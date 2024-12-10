@@ -9,6 +9,7 @@ def worker(procnum, return_dict):
     for i in range(10):
         if 'ctr' in return_dict[procnum]:
             return_dict[procnum]['ctr'].extend([1,2,3,4,5])
+            return_dict[procnum]['ctr'].append(1)
 
 
 
