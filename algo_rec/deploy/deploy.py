@@ -612,7 +612,7 @@ if __name__ == '__main__':
     parser.add_argument('--endpoint', default='test-edp-model')
     parser.add_argument('--region', default='sg')
     parser.add_argument('--edp_version', default='v0')
-    parser.add_argument('--model_dir', default='test_model/')
+    parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
     parser.add_argument('--model_version', default='/ds=20241203/model/')
     parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v0_v1.tar.gz')
