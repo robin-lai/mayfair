@@ -219,17 +219,17 @@ if __name__ == '__main__':
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_ctr/')
-    parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/ds=20241206/')
+    parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/%s/')
 
     args = parser.parse_args()
-    item_feature = get_item_feature(args.item)
     debug = args.debug
-    print('get item features:', len(item_feature.keys()))
     if args.range != '':
         for ds in args.range.split(','):
             st = time.time()
             args.ds = 'ds=' + ds
             print('args.ds:', args.ds)
+            item_feature = get_item_feature(args.item % args.ds)
+            print('get item features:', len(item_feature.keys()))
             main(args)
             print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
     else:
