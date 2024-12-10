@@ -86,8 +86,7 @@ alph = 1
 user_debias = True
 out_file = './tmp/swing_in_result_part_%s.txt'
 s3_file = 's3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/'
-def swing(proc, item_batch_dict_m, swing_ret_m):
-    trig_itm_list = item_batch_dict_m[proc]
+def swing(proc, trig_itm_list):
     print('O(n):', len(trig_itm_list))
     # out_file = args[1]
     # c = args[2]
@@ -111,8 +110,8 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
         if u_num < 2:
             continue
         print('common user num:', u_num)
-        if u_num >= 200:
-            user_sample = random.sample(user, 200)
+        if u_num >= 100:
+            user_sample = random.sample(user, 100)
         else:
             user_sample = user
         u_num = len(user_sample)
@@ -155,12 +154,12 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
             line = ("in" + chr(4) + trig_itm + chr(1) + chr(2).join(tmp_ll) + '\n')
             lines.append(line)
         ret[trig_itm] = tmp_ll
-        if n % 50 == 0:
+        if n % 5 == 0:
             ed = time.time()
             print('process %s / %s item cost:%s' % (str(n), str(N), str(ed - st)))
             st = time.time()
-    swing_ret_m.update(ret)
-    print('swing_ret_m keys num:', len(swing_ret_m.keys()))
+    # swing_ret_m.update(ret)
+    # print('swing_ret_m keys num:', len(swing_ret_m.keys()))
     out_file_proc = out_file % proc
     print('write swing result2file:', out_file_proc)
     with open(out_file_proc, 'w') as fout:
@@ -267,8 +266,8 @@ def main(args):
     st = time.time()
     for country, v in m.items():
         print('process country:', country)
-        # if country != 'IN':
-        #     continue
+        if country != 'IN':
+            continue
         process(v, country)
         print('step 2 preprocess done cost:', str(time.time() - st))
         # swing
@@ -278,25 +277,26 @@ def main(args):
         item_list = []
         hot_item_num = 0
         for k, v in item_bhv_num_m.items():
-            item_list.append(k)
             if v > 2000:
                 hot_item_num += 1
+            else:
+                item_list.append(k)
         batch = args.p
         print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num_m.keys()), len(item_list), hot_item_num))
         shuffle(item_list)
         item_batch = list(chunks(item_list, batch))
-        item_batch_dict = {}
-        item_batch_dict_m = manager.dict()
-        swing_ret_m = manager.dict()
-        for proc, ele in enumerate(item_batch):
-            item_batch_dict[proc] = ele
-        item_batch_dict_m.update(item_batch_dict)
+        # item_batch_dict = {}
+        # item_batch_dict_m = manager.dict()
+        # swing_ret_m = manager.dict()
+        # for proc, ele in enumerate(item_batch):
+        #     item_batch_dict[proc] = ele
+        # item_batch_dict_m.update(item_batch_dict)
 
-        print('batch size:', len(ele))
+        # print('batch size:', len(ele))
         print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
         proc_list = []
-        for k, v in item_batch_dict.items():
-            proc_list.append(multiprocessing.Process(target=swing, args=(k,item_batch_dict_m, swing_ret_m)))
+        for proc, ll in enumerate(item_batch):
+            proc_list.append(multiprocessing.Process(target=swing, args=(proc, ll.copy())))
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
