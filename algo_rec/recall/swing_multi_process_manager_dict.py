@@ -110,17 +110,16 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
         u_num = len(user)
         if u_num < 2:
             continue
-        # print('common user num:', u_num)
+        print('common user num:', u_num)
         n += 1
+        st0 = time.time()
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 st = time.time()
-                print('user a num:', len(user_bhv_item_list_m[user[i]]), 'user b num:', len(user_bhv_item_list_m[user[j]]))
+                # print('user a num:', len(user_bhv_item_list_m[user[i]]), 'user b num:', len(user_bhv_item_list_m[user[j]]))
                 common_items = set(user_bhv_item_list_m[user[i]]) & set(user_bhv_item_list_m[user[j]])
                 common_items = common_items - set(trig_itm)
-                print('common user num:', len(common_items))
-                ed = time.time()
-                print('cost:', str(ed-st))
+                # print('common user num:', len(common_items))
                 for tgt_item in common_items:
                     if user_debias:
                         score = round((1 / user_bhv_num_m[user[i]]) * (1 / user_bhv_num_m[user[j]]) * (
@@ -131,6 +130,10 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
                         swing[tgt_item] = round(swing[tgt_item] +  score, 4)
                     else:
                         swing[tgt_item] = score
+                ed = time.time()
+                # print('cost:', str(ed - st))
+        ed0 = time.time()
+        print('1 trig item cost:', str(ed0-st0))
         swing_ll = [(k, v) for k, v in swing.items()]
         row_n = 30
         swing_ll.sort(key=lambda x: x[1], reverse=True)
