@@ -55,7 +55,7 @@ def request_check(d):
 
 
 def get_infer_json_from_request(d):
-    ipt = {"signature_name": d["signature_name"]}
+    ipt = {"signature_name": "serving_default"}
     ll = []
     if request_check(d):
         with open(item_fts_file, 'rb') as fin:
@@ -143,6 +143,8 @@ def input_handler(data, context):
         logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
         d = json.loads(data.read())
         logging.info('[DEBUG] request_data1: %s', d)
+        if "debug" not in d:
+            d["debug"] = ""
         if d["debug"] == '1':
             print('debug=1 json_data', d)
             logging.info('debug=1 json_data',d["ipt"])
