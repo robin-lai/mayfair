@@ -66,9 +66,9 @@ def process(lines, c):
     # for k, v in item_bhv_user_list.items():
     item_bhv_user_list_m.update(item_bhv_user_list)
     # for k, v in user_bhv_num.items():
-    user_bhv_num_m.extend(user_bhv_num)
+    user_bhv_num_m.update(user_bhv_num)
     # for k, v in item_bhv_num.items():
-    item_bhv_num_m.extend(item_bhv_num)
+    item_bhv_num_m.update(item_bhv_num)
     ed = time.time()
     print('parse manager cost:', str(ed-st))
 
