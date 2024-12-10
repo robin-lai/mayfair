@@ -278,10 +278,9 @@ def main(args):
         item_list = []
         hot_item_num = 0
         for k, v in item_bhv_num_m.items():
-            if v > 500:
+            item_list.append(k)
+            if v > 2000:
                 hot_item_num += 1
-            else:
-                item_list.append(k)
         batch = args.p
         print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num_m.keys()), len(item_list), hot_item_num))
         shuffle(item_list)
