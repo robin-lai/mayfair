@@ -251,8 +251,8 @@ def main(args):
     st = time.time()
     for country, v in m.items():
         print('process country:', country)
-        if country != 'IN':
-            continue
+        # if country != 'IN':
+        #     continue
         process(v, country)
         print('step 2 preprocess done cost:', str(time.time() - st))
         # swing
