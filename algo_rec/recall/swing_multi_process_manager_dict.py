@@ -43,11 +43,11 @@ def process(lines, c):
         if u in user_bhv_item_list.keys():
             user_bhv_item_list[u].append(itm)
         else:
-            user_bhv_item_list[u] = manager.list(itm)
+            user_bhv_item_list[u] = list(itm)
         if itm in item_bhv_user_list.keys():
             item_bhv_user_list[itm].append(u)
         else:
-            item_bhv_user_list[itm] = manager.list(u)
+            item_bhv_user_list[itm] = list(u)
         # count
         if u in user_bhv_num.keys():
             user_bhv_num[u] += 1
