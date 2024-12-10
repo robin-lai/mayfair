@@ -146,7 +146,7 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
         ret[trig_itm] = tmp_ll
         if n % 50 == 0:
             ed = time.time()
-            print('process 50 / %s item cost:%s' % (str(N), str(ed - st)))
+            print('process %s / %s item cost:%s' % (str(n), str(N), str(ed - st)))
             st = time.time()
     swing_ret_m.update(ret)
     print('swing_ret_m keys num:', len(swing_ret_m.keys()))
