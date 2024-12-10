@@ -569,10 +569,18 @@ def request_sagemaker(args):
         ContentType="application/json"
     )
     ret = json.loads(res["Body"].read())
+    result = []
     print('ret score:', ret)
     for i, goods_id in enumerate(request['goodsIdList']):
-        ret['predictions'][i]['goods_id'] = goods_id
-    print('final ret:', ret)
+        # ret['predictions'][i]['goods_id'] = goods_id
+        tmp = {
+            'goods_id': goods_id,
+            'ctr': ret['predictions'][i]['ctr'],
+            'cvr': ret['predictions'][i]['cvr'],
+            'ctcvr': ret['predictions'][i]['ctcvr']
+        }
+        result.append(tmp)
+    print('final ret:', result)
 
 
 
