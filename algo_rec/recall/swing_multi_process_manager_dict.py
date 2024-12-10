@@ -236,14 +236,14 @@ def main(args):
     # get data
     st = time.time()
     in_file = args.in_file
-    if args.flag == 's3':
+    if args.data == 's3':
         m = get_data_from_s3(in_file)
-    elif args.flag == 'mock':
+    elif args.data == 'mock':
         m = get_mock_data()
-    elif args.flag == 'sample':
+    elif args.data == 'sample':
         m = get_test_data()
     else:
-        print('unknown flag:',args.flag)
+        print('unknown data:',args.data)
     ed = time.time()
     print('step 1 get_date done cost:', str(ed-st))
 
@@ -294,7 +294,7 @@ if __name__ == '__main__':
         prog='swing',
         description='swing-args',
         epilog='swing-help')
-    parser.add_argument('--flag',default='mock')
+    parser.add_argument('--data',default='mock')
     parser.add_argument('--p',type=int, default=1)
     parser.add_argument('--s3_dir', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/')
     parser.add_argument('--in_file', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118')
