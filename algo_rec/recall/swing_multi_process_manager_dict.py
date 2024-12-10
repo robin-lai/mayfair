@@ -114,9 +114,13 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
         n += 1
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
-                # print('user a', user[i], 'user b', user[j])
+                st = time.time()
+                print('user a num:', len(user_bhv_item_list_m[user[i]]), 'user b num:', len(user_bhv_item_list_m[user[j]]))
                 common_items = set(user_bhv_item_list_m[user[i]]) & set(user_bhv_item_list_m[user[j]])
                 common_items = common_items - set(trig_itm)
+                print('common user num:', len(common_items))
+                ed = time.time()
+                print('cost:', str(ed-st))
                 for tgt_item in common_items:
                     if user_debias:
                         score = round((1 / user_bhv_num_m[user[i]]) * (1 / user_bhv_num_m[user[j]]) * (
@@ -139,7 +143,7 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
             line = ("in" + chr(4) + trig_itm + chr(1) + chr(2).join(tmp_ll) + '\n')
             lines.append(line)
         ret[trig_itm] = tmp_ll
-        if n % 200 == 0:
+        if n % 2 == 0:
             ed = time.time()
             print('process %s / %s item cost:%s' % (str(n), str(N), str(ed - st)))
             st = time.time()
