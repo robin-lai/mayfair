@@ -1,0 +1,37 @@
+end read file,cost:39.259445905685425
+data describe: **************************************************
+country:IN lines:12648598
+country:IQ lines:81228
+country:MX lines:6107
+country:US lines:1113
+country:UK lines:47
+step 1 get_date done cost: 39.28169369697571
+process country: IN
+data desc: user num 842204, item num:29306
+dump data into file
+parse manager cost: 20.268003702163696
+step 2 preprocess done cost: 40.86415886878967
+item_list_raw:29306  item_list_filter:28420  hot_item_num:886
+batch size: 14210
+2 : 2 process deal data len:28420
+O(n): 14210
+common user num: 47
+O(n): 14210
+common user num: 14
+1 trig item cost: 0.06981658935546875
+common user num: 102
+1 trig item cost: 0.75502610206604
+common user num: 1971
+1 trig item cost: 4.993186712265015
+process 2 / 14210 item cost:0.0019397735595703125
+common user num: 544
+
+
+
+1 trig item cost: 128.06878232955933
+common user num: 15
+1 trig item cost: 0.08566617965698242
+process 4 / 14210 item cost:0.0015599727630615234
+common user num: 49
+1 trig item cost: 1.0468165874481201
+common user num: 227
