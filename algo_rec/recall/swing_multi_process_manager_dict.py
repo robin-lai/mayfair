@@ -72,6 +72,11 @@ def process(lines, c):
     ed = time.time()
     print('parse manager cost:', str(ed-st))
 
+    print('user_bhv_item_list', user_bhv_item_list)
+    print('user_bhv_item_list', user_bhv_item_list)
+    print('user_bhv_num', user_bhv_num)
+    print('item_bhv_num', item_bhv_num)
+
     # with open(item_bhv_user_list_file%(c), 'wb') as fout:
     #     pickle.dump(item_bhv_user_list, fout)
     # with open(user_bhv_item_list_file%(c), 'wb') as fout:
