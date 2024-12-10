@@ -81,7 +81,7 @@ def process(lines, c):
 
 alph = 1
 user_debias = True
-out_file = './swing_in_result_part_%s.txt'
+out_file = './tmp/swing_in_result_part_%s.txt'
 s3_file = 's3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/'
 def swing(proc, item_batch_dict, swing_ret):
     trig_itm_list = item_batch_dict[proc]
