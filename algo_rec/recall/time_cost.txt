@@ -35,3 +35,20 @@ process 4 / 14210 item cost:0.0015599727630615234
 common user num: 49
 1 trig item cost: 1.0468165874481201
 common user num: 227
+
+
+common user num: 6
+1 trig item cost: 0.00631260871887207
+process 6 / 28420 item cost:0.0007572174072265625
+common user num: 1839
+
+
+
+
+
+
+
+1 trig item cost: 641.2322006225586
+common user num: 385
+1 trig item cost: 32.03271007537842
+process 8 / 28420 item cost:0.004477739334106

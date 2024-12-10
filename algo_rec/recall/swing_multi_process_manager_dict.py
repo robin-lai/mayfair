@@ -14,7 +14,7 @@ import sys
 import math
 
 from tensorflow.python.distribute.multi_process_runner import manager
-
+import random
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -111,13 +111,18 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
         if u_num < 2:
             continue
         print('common user num:', u_num)
+        if u_num >= 200:
+            user_sample = random.sample(user, 200)
+        else:
+            user_sample = user
+        u_num = len(user_sample)
         n += 1
         st0 = time.time()
         for i in range(0, u_num-1):
             for j in range(i + 1, u_num):
                 st = time.time()
                 # print('user a num:', len(user_bhv_item_list_m[user[i]]), 'user b num:', len(user_bhv_item_list_m[user[j]]))
-                common_items = set(user_bhv_item_list_m[user[i]]) & set(user_bhv_item_list_m[user[j]])
+                common_items = set(user_bhv_item_list_m[user_sample[i]]) & set(user_bhv_item_list_m[user_sample[j]])
                 # common_items = common_items - set(trig_itm)
                 if len(common_items) < 1:
                     continue
@@ -126,7 +131,7 @@ def swing(proc, item_batch_dict_m, swing_ret_m):
                     if tgt_item == trig_itm:
                         continue
                     if user_debias:
-                        score = round((1 / user_bhv_num_m[user[i]]) * (1 / user_bhv_num_m[user[j]]) * (
+                        score = round((1 / user_bhv_num_m[user_sample[i]]) * (1 / user_bhv_num_m[user_sample[j]]) * (
                                     1 / (alph + (len(common_items)))), 4)
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
@@ -273,7 +278,7 @@ def main(args):
         item_list = []
         hot_item_num = 0
         for k, v in item_bhv_num_m.items():
-            if v > 3000:
+            if v > 500:
                 hot_item_num += 1
             else:
                 item_list.append(k)
