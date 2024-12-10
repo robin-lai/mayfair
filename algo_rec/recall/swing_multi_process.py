@@ -226,7 +226,7 @@ def main(args):
         item_list = []
         hot_item_num = 0
         for k, v in item_bhv_num.items():
-            if v > 3000:
+            if v > 1000:
                 hot_item_num += 1
             else:
                 item_list.append(k)
