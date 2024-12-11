@@ -36,7 +36,7 @@ def main(args):
         pred = res_json['predictions']
         for j in range(len(pred)):
             result.append(pred[j]["ctr"])
-        if j == 0:
+        if i == 0:
             print('result',result)
     print('req:', args.n)
     print('goods_id_num:', args.goods_num)
