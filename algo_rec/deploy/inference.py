@@ -4,6 +4,7 @@ import json
 import logging
 import pickle
 import os
+import time
 
 base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
@@ -58,8 +59,12 @@ def get_infer_json_from_request(d):
     ipt = {"signature_name": "serving_default"}
     ll = []
     if request_check(d):
+        st = time.time()
         with open(item_fts_file, 'rb') as fin:
             m = pickle.load(fin)
+        ed = time.time()
+        print('load item fts cost:', ed-st)
+        st = time.time()
         for goods_id in d['goodsIdList']:
             example = {}
             for name in item_features_string.keys():
@@ -128,6 +133,8 @@ def get_infer_json_from_request(d):
                         example['lowerLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
             ll.append(example)
         ipt["instances"] = ll
+        ed = time.time()
+        print('gen tensor dict:', ed-st)
     return ipt
 
 def input_handler(data, context):
@@ -140,28 +147,32 @@ def input_handler(data, context):
     """
 
     if context.request_content_type == "application/json":
-        logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
+        # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
         d = json.loads(data.read())
-        logging.info('[DEBUG] request_data1: %s', d)
+        # logging.info('[DEBUG] request_data1: %s', d)
         if "debug" not in d:
             d["debug"] = ""
         if d["debug"] == '1':
             print('debug=1 json_data', d)
-            logging.info('debug=1 json_data',d["ipt"])
+            # logging.info('debug=1 json_data',d["ipt"])
             return json.dumps(d['ipt']).encode('utf-8')
         elif d["debug"] == '2':
             json_data = get_infer_json()
             print('debug=2 json_data', json_data)
-            logging.info('debug=2 json_data',json_data)
+            # logging.info('debug=2 json_data',json_data)
             return json.dumps(json_data).encode('utf-8')
+        st = time.time()
         ipt = get_infer_json_from_request(d)
-        logging.info('ipt data:%s', ipt)
+        ed = time.time()
+        print('feature_process cost:', ed - st)
+
+        # logging.info('ipt data:%s', ipt)
         ipt_encode = json.dumps(ipt).encode('utf-8')
         return ipt_encode
 
 
 def output_handler(data, context):
-    logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
+    # logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
     response_content_type = context.accept_header
     prediction = data.content
     json.loads(prediction)
