@@ -10,6 +10,7 @@ import argparse
 import boto3
 from random import shuffle
 import numpy as np
+import traceback
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
@@ -156,8 +157,10 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
                 sample = tf.train.Example(features=tf.train.Features(feature=feature))
                 record = sample.SerializeToString()
                 fout_ctr.write(record)
-            except Exception as e:
-                print("exception",e)
+            except Exception:
+                print("-" * 60)
+                traceback.print_exc(file=sys.stdout)
+                print("-" * 60)
                 # print('data:',t)
             if debug:
                 print('features',feature)
