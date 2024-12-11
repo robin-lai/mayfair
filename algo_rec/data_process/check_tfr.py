@@ -68,6 +68,7 @@ if __name__ == '__main__':
         epilog='predict')
     parser.add_argument('--file', default='part-00000-17ebac5c-0e1d-4b33-98db-ebd48025b24b-c000')
     parser.add_argument('--ds', default='20241209')
+    parser.add_argument('--batch_size',type=int, default=64)
     parser.add_argument('--names', default='highLevelSeqListGoods,lowerLevelSeqListGoods,lowerLevelSeqListCateId')
     args = parser.parse_args()
     main(args)
