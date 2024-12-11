@@ -51,6 +51,35 @@ def cross_fea(v1_list, v2_list, n=1):
     v3_list = ['%s,,%s' % (v1, v2) for v1 in v1_list for v2 in v2_list]
     return bytes_fea(v3_list, n, True)
 
+item_features_string = {"goods_id":"", "cate_id": "", "cate_level1_id":""
+                        ,"cate_level2_id":"","cate_level2_name":"",
+                        "cate_level3_id":"", "cate_level3_name":"",
+                        "cate_level4_id":"", "cate_level4_name":"",
+                        "country":"",
+                        "main_goods_id":"",
+                        "main_cate_level2_id":"","main_cate_level2_name":"",
+                        "main_cate_level3_id":"","main_cate_level3_name":"",
+                        "main_cate_level4_id":"","main_cate_level4_name":"",
+                        "main_cate_id":"", "main_cate_name":"", "pic_id":"",
+                        "goods_name":"", "main_color":"",
+                        "prop_seaon":"", "prop_length":"",
+                        "prop_main_material":"","prop_pattern":"",
+                        "prop_style":"", "prop_quantity":"", "prop_fitness":""
+                        }
+item_features_double = {"ctr_7d":0.0, "cvr_7d":0.0}
+item_features_int = {"show_7d":0, "click_7d":0, "cart_7d":0, "ord_total":0,"pay_total":0,"ord_7d":0,"pay_7d":0 ,
+                     "is_rel_cate":0,"is_rel_cate2":0, "is_rel_cate3":0, "is_rel_cate4":0,"sales_price":0
+                     }
+user_int = {"age":-1,"seq_len":0}
+user_string = {"last_login_device":"","last_login_brand":"","register_brand":""}
+user_seq_string = {"seq_goods_id":[""] * 20, "seq_cate_id":[""] * 20}
+user_seq_on_string = {"highLevelSeqListGoods":[""] * 20, "highLevelSeqListCateId":[""] * 20,
+                      "lowerLevelSeqListGoods":[""] * 20, "lowerLevelSeqListCateId":[""] * 20}
+other_string = {"sample_id":"", "uuid":""}
+other_int = {"is_clk":0, "is_pay":0,"is_cart":0,"is_wish":0}
+
+
+
 def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_seq_on(seq_on):
         if debug:
@@ -93,46 +122,34 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
 
     def build_feature(t):
         feature = dict()
-        feature.update({"ctr_7d": floats_fea(t[0].as_py())})
-        feature.update({"cvr_7d": floats_fea(t[1].as_py())})
-        feature.update({"cate_id": bytes_fea(t[2].as_py())})
-        feature.update({"goods_id": bytes_fea(t[3].as_py())})
-        feature.update({"cate_level1_id": bytes_fea(t[4].as_py())})
-        feature.update({"cate_level2_id": bytes_fea(t[5].as_py())})
-        feature.update({"cate_level3_id": bytes_fea(t[6].as_py())})
-        feature.update({"cate_level4_id": bytes_fea(t[7].as_py())})
-        feature.update({"country": bytes_fea(t[8].as_py())})
-        feature.update({"show_7d": ints_fea(t[9].as_py())})
-        feature.update({"click_7d": ints_fea(t[10].as_py())})
-        feature.update({"cart_7d": ints_fea(t[11].as_py())})
-        feature.update({"ord_total": ints_fea(t[12].as_py())})
-        feature.update({"pay_total": ints_fea(t[13].as_py())})
-        feature.update({"ord_7d": ints_fea(t[14].as_py())})
-        feature.update({"pay_7d": ints_fea(t[15].as_py())})
-        feature.update({"is_clk": ints_fea(t[16].as_py())})
-        feature.update({"is_pay": ints_fea(t[17].as_py())})
-        feature.update({"seq_cate_id": bytes_fea(t[18].as_py(), n=20)})
-        feature.update({"seq_goods_id": bytes_fea(t[19].as_py(), n=20)})
-        feature.update({"sample_id": bytes_fea(t[20].as_py())})
-        feature.update(build_seq_on(t[21].as_py()))
+        for name in item_features_string.keys():
+            feature.update({name:bytes_fea(t[name].as_py())})
+        for name in user_string.keys():
+            feature.update({name:bytes_fea(t[name].as_py())})
+
+        for name in other_string.keys():
+            feature.update({name:bytes_fea(t[name].as_py())})
+        for name in item_features_double.keys():
+            feature.update({name:floats_fea(t[name].as_py())})
+        for name in item_features_int.keys():
+            feature.update({name: ints_fea(t[name].as_py())})
+        for name in user_int.keys():
+            feature.update({name: ints_fea(t[name].as_py())})
+        for name in other_int.keys():
+            feature.update({name: ints_fea(t[name].as_py())})
+        for name in user_seq_string.keys():
+            feature.update({name: bytes_fea(t[name].as_py(), n=20)})
+        feature.update(build_seq_on(t['seq_on'].as_py()))
         return feature
 
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         st = time.time()
-        pt = parquet.read_table(pt_file)
+        pt = parquet.read_table(pt_file).to_pylist()
         ed = time.time()
         print('read ptpath:%s data cost:%s' % (pt_file, str(ed - st)))
         st = time.time()
         fout_ctr = tf.io.TFRecordWriter(tfr_local_file)
-        for t in zip(
-                pt["ctr_7d"], pt["cvr_7d"]
-                , pt["cate_id"], pt["goods_id"], pt["cate_level1_id"], pt["cate_level2_id"], pt["cate_level3_id"],
-                pt["cate_level4_id"], pt["country"]
-                , pt["show_7d"], pt["click_7d"], pt["cart_7d"], pt["ord_total"], pt["pay_total"], pt["ord_7d"],
-                pt["pay_7d"], pt["is_clk"], pt["is_pay"]
-                , pt["seq_cate_id"], pt["seq_goods_id"]
-                , pt["sample_id"], pt['seq_on']
-        ):
+        for t in pt:
             feature = dict()
             try:
                 feature = build_feature(t)
