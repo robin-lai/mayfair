@@ -17,6 +17,10 @@ def main(args):
     result = []
     cost = []
     for i in range(args.n):
+        print('req idx:',i)
+        if i % 5 == 0:
+            print('sleep 1s')
+            time.sleep(1)
         st = time.time()
         res = sg_client.invoke_endpoint(
             EndpointName=args.endpoint,
