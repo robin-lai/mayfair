@@ -123,23 +123,23 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_feature(t):
         feature = dict()
         for name in item_features_string.keys():
-            feature.update({name:bytes_fea(t[name].as_py())})
+            feature.update({name:bytes_fea(t[name])})
         for name in user_string.keys():
-            feature.update({name:bytes_fea(t[name].as_py())})
+            feature.update({name:bytes_fea(t[name])})
 
         for name in other_string.keys():
-            feature.update({name:bytes_fea(t[name].as_py())})
+            feature.update({name:bytes_fea(t[name])})
         for name in item_features_double.keys():
-            feature.update({name:floats_fea(t[name].as_py())})
+            feature.update({name:floats_fea(t[name])})
         for name in item_features_int.keys():
-            feature.update({name: ints_fea(t[name].as_py())})
+            feature.update({name: ints_fea(t[name])})
         for name in user_int.keys():
-            feature.update({name: ints_fea(t[name].as_py())})
+            feature.update({name: ints_fea(t[name])})
         for name in other_int.keys():
-            feature.update({name: ints_fea(t[name].as_py())})
+            feature.update({name: ints_fea(t[name])})
         for name in user_seq_string.keys():
-            feature.update({name: bytes_fea(t[name].as_py(), n=20)})
-        feature.update(build_seq_on(t['seq_on'].as_py()))
+            feature.update({name: bytes_fea(t[name], n=20)})
+        feature.update(build_seq_on(t['seq_on']))
         return feature
 
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
