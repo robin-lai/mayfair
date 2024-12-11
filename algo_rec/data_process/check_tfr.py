@@ -45,7 +45,7 @@ def main(args):
     local_file = './' + args.file
     os.system('aws s3 cp %s %s' % (s3_file, local_file))
     ds = tf.data.TFRecordDataset(local_file)
-    ds2 = ds.map(parse).batch(args.batch_size)
+    ds2 = ds.map(parse).shuffle(args.batch_size * 10).batch(args.batch_size)
     ll = list(ds2.as_numpy_iterator())
     for it in ll:
         for name in args.names.split(','):
