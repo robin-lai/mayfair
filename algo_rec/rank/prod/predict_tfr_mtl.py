@@ -317,10 +317,10 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict')
-    parser.add_argument('--model_name', default='prod_mtl_seq_all_esmm_v0')
-    parser.add_argument('--model_version', default='/ds=20241203/model/1733722966')
+    parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
+    parser.add_argument('--model_version', default='/ds=20241206/model/1733804126')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
-    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_ctr/ds=20241203/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_ctr/ds=20241206/')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=1)
     parser.add_argument('--sample_num', type=int, default=None)
