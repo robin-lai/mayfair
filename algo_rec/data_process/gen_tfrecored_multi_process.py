@@ -235,7 +235,7 @@ if __name__ == '__main__':
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
-    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_ctr/')
+    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_tfr/')
     parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/%s/')
 
     args = parser.parse_args()
