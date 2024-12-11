@@ -42,6 +42,7 @@ if __name__ == '__main__':
         epilog='sg')
     parser.add_argument('--goods_num', type=int, default=600)
     parser.add_argument('--n', type=int, default=1000)
+    parser.add_argument('--endpoint', type=str, default='edp-prod-mtl-seq-on-esmm-v0-v6')
     args = parser.parse_args()
     main(args)
 
