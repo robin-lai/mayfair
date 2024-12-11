@@ -33,7 +33,11 @@ def main(args):
         ed = time.time()
         cost.append(ed-st)
         res_json = json.loads(res["Body"].read())
-        result.append(res_json['predictions']["ctr"])
+        pred = res_json['predictions']
+        for j in range(len(pred)):
+            result.append(pred[j]["ctr"])
+        if j == 1:
+            print('result',result)
     print('req:', args.n)
     print('goods_id_num:', args.goods_num)
     print('mean cost:', np.mean(cost), 'max cost:', np.max(cost), 'min cost:', np.min(cost))
