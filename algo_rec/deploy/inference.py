@@ -16,6 +16,9 @@ user_seq_string = {"seq_goods_id":[""] * 20, "seq_cate_id":[""] * 20}
 user_seq_on_string = {"highLevelSeqListGoods":[""] * 20, "highLevelSeqListCateId":[""] * 20,
                       "lowerLevelSeqListGoods":[""] * 20, "lowerLevelSeqListCateId":[""] * 20}
 
+with open(item_fts_file, 'rb') as fin:
+    item_dict = pickle.load(fin)
+    
 def get_infer_json():
     inputs_seq = {
         "cate_level1_id": ["1"],
@@ -60,33 +63,32 @@ def get_infer_json_from_request(d):
     ll = []
     if request_check(d):
         st = time.time()
-        with open(item_fts_file, 'rb') as fin:
-            m = pickle.load(fin)
+        
         ed = time.time()
         print('load item fts cost:', ed-st)
         st = time.time()
         for goods_id in d['goodsIdList']:
             example = {}
             for name in item_features_string.keys():
-                if goods_id in m:
-                    if name in m[goods_id]:
-                        example[name] = [str(m[goods_id][name])]
+                if goods_id in item_dict:
+                    if name in item_dict[goods_id]:
+                        example[name] = [str(item_dict[goods_id][name])]
                     else:
                         example[name] = [str(item_features_string[name])]
                 else:
                     example[name] = [str(item_features_string[name])]
             for name in item_features_int.keys():
-                if goods_id in m:
-                    if name in m[goods_id]:
-                        example[name] = [int(m[goods_id][name])]
+                if goods_id in item_dict:
+                    if name in item_dict[goods_id]:
+                        example[name] = [int(item_dict[goods_id][name])]
                     else:
                         example[name] = [int(item_features_int[name])]
                 else:
                     example[name] = [int(item_features_int[name])]
             for name in item_features_double.keys():
-                if goods_id in m:
-                    if name in m[goods_id]:
-                        example[name] = [float(m[goods_id][name])]
+                if goods_id in item_dict:
+                    if name in item_dict[goods_id]:
+                        example[name] = [float(item_dict[goods_id][name])]
                     else:
                         example[name] = [float(item_features_double[name])]
                 else:
@@ -109,8 +111,8 @@ def get_infer_json_from_request(d):
                 if name == 'highLevelSeqListCateId':
                     cate_list = []
                     for e in d['featureMap']['userFeatures']['high_level_seq']:
-                        if e in m:
-                            cate_list.append(m[e]['cate_id'])
+                        if e in item_dict:
+                            cate_list.append(item_dict[e]['cate_id'])
                         else:
                             cate_list.append("")
                             print('goods_id:%s not in item map'%e)
@@ -122,8 +124,8 @@ def get_infer_json_from_request(d):
                 if name == 'lowerLevelSeqListCateId':
                     cate_list = []
                     for e in d['featureMap']['userFeatures']['low_level_seq']:
-                        if e in m:
-                            cate_list.append(m[e]['cate_id'])
+                        if e in item_dict:
+                            cate_list.append(item_dict[e]['cate_id'])
                         else:
                             cate_list.append("")
                             print('goods_id:%s not in item map'%e)
