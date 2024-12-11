@@ -262,18 +262,22 @@ def main(args):
 
     # merge multi thread score
     st = time.time()
-    score = dict(score)
+    score_ret = dict()
+    score_ret.update(score)
+    ed  = time.time()
+    print('score_ret update cost:', str(ed - st) )
     if debug:
         print('score:', score)
     merge_score = dict()
-    for thread_i, s in score.items():
+    for thread_i, s in score_ret.items():
+        st = time.time()
         for k, v in s.items():
             if k in merge_score:
-                merge_score[k].extend(list(v))
+                merge_score[k].extend(v)
             else:
-                merge_score[k] = list(v)
-    ed = time.time()
-    print('end merge score cost:', str(ed - st))
+                merge_score[k] = v
+        ed = time.time()
+        print('end merge score proc:%s cost: %s'%(str(thread_i),str(ed - st)))
 
     # save
     st = time.time()
