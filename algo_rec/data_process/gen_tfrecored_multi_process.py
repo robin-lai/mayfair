@@ -242,7 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_tfr/')
-    parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/20241210/')
+    parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/ds=20241210/')
 
     args = parser.parse_args()
     debug = args.debug
