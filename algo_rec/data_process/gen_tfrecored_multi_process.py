@@ -190,6 +190,8 @@ def run_multi_process(func,args):
     print('key:', path_pt_suffix)
     page_iter = paginator.paginate(Bucket=BUCKET, Prefix=path_pt_suffix)
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
+    if args.sample_num is not None:
+        file_list = file_list[0:args.sample_num]
     file_suffix_list = [v.split('/')[-1] for v in file_list]
     print('file list in dir', file_list)
     print('file_suffix_list:', file_suffix_list)
@@ -234,6 +236,7 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
+    parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_tfr/')
     parser.add_argument('--item', default='s3://algo-sg/rec/cn_rec_detail_feature_item_base/%s/')
