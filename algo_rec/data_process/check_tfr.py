@@ -72,7 +72,7 @@ def main(args):
     ds2 = ds.map(parse).shuffle(args.batch_size * 10).batch(args.batch_size)
     ll = list(ds2.as_numpy_iterator())
     for idx, it in enumerate(ll):
-        if args.name != '':
+        if args.names != '':
             for name in args.names.split(','):
                 print('feature_name:', name)
                 print(it[name])
