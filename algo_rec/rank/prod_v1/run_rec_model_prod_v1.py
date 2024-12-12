@@ -211,11 +211,11 @@ def build_feature_columns():
                      ,last_login_device_emb,last_login_brand_emb, register_brand_emb]
 
     # int col
-    is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=-1)
-    is_rel_cate1_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate1", num_buckets=3, default_value=-1)
-    is_rel_cate2_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate2", num_buckets=3, default_value=-1)
-    is_rel_cate3_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate3", num_buckets=3, default_value=-1)
-    is_rel_cate4_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate4", num_buckets=3, default_value=-1)
+    is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=0)
+    is_rel_cate1_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate1", num_buckets=3, default_value=0)
+    is_rel_cate2_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate2", num_buckets=3, default_value=0)
+    is_rel_cate3_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate3", num_buckets=3, default_value=0)
+    is_rel_cate4_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate4", num_buckets=3, default_value=0)
     sales_price_fc = tf.feature_column.categorical_column_with_identity("sales_price", num_buckets=20, default_value=0)
 
     is_rel_cate_emb = tf.feature_column.embedding_column(is_rel_cate_fc, 8)
