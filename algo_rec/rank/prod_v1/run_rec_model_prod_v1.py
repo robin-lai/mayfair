@@ -6,8 +6,6 @@ import json, os,sys
 import argparse
 import pickle
 
-from sympy.codegen.fnodes import dimension
-
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
