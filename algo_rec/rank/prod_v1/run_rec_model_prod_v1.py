@@ -212,20 +212,18 @@ def build_feature_columns():
 
     # int col
     is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=0)
-    is_rel_cate1_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate1", num_buckets=3, default_value=0)
     is_rel_cate2_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate2", num_buckets=3, default_value=0)
     is_rel_cate3_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate3", num_buckets=3, default_value=0)
     is_rel_cate4_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate4", num_buckets=3, default_value=0)
     sales_price_fc = tf.feature_column.categorical_column_with_identity("sales_price", num_buckets=20, default_value=0)
 
     is_rel_cate_emb = tf.feature_column.embedding_column(is_rel_cate_fc, 8)
-    is_rel_cate1_emb = tf.feature_column.embedding_column(is_rel_cate1_fc, 8)
     is_rel_cate2_emb = tf.feature_column.embedding_column(is_rel_cate2_fc, 8)
     is_rel_cate3_emb = tf.feature_column.embedding_column(is_rel_cate3_fc, 8)
     is_rel_cate4_emb = tf.feature_column.embedding_column(is_rel_cate4_fc, 8)
     sales_price_emb = tf.feature_column.embedding_column(sales_price_fc, 8)
 
-    numric_cols_emb = [is_rel_cate_emb, is_rel_cate1_emb, is_rel_cate2_emb,is_rel_cate3_emb,is_rel_cate4_emb,sales_price_emb ]
+    numric_cols_emb = [is_rel_cate_emb, is_rel_cate2_emb,is_rel_cate3_emb,is_rel_cate4_emb,sales_price_emb ]
 
 
     #  numeric-cols
