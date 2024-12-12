@@ -158,7 +158,7 @@ def create_edp(args):
     #                         instance_count=1,
     #                         retry_times=0):
     # If an endpoint could describe, it exists, and can not be created by deploy.
-    instance_type='ml.r5.large'
+    instance_type=args.instance_type
     instance_count=1
     retry_times=0
     try:
@@ -624,6 +624,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
     parser.add_argument('--model_version', default='/ds=20241203/model/')
     parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v0_v1.tar.gz')
+    parser.add_argument('--instance_type', default='ml.r5.large')
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
     print('endpoint:', args.endpoint)
