@@ -94,7 +94,7 @@ if __name__ == '__main__':
     parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v10_tfr")
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)
-    parse.add_argument('--eval_ds', type=str, default='20241210test')
+    parse.add_argument('--eval_ds', type=str, default='20241210eval')
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
