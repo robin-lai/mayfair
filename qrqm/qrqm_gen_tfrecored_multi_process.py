@@ -54,8 +54,7 @@ def cross_fea(v1_list, v2_list, n=1):
 
 item_features_string ={ "uuid":"", "pgid":""
                         }
-
-
+int_features = {"is_clk": 0}
 
 
 def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
@@ -63,6 +62,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         feature = dict()
         for name in item_features_string.keys():
             feature.update({name:bytes_fea(t[name])})
+        for name in int_features.keys():
+            feature.update({name:ints_fea(t[name])})
         return feature
 
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
@@ -83,7 +84,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
                 print("-" * 60)
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
-                # print('data:',t)
+                print('data:',t)
             if debug:
                 print('features',feature)
         ed = time.time()
@@ -140,13 +141,6 @@ def run_multi_process(func,args):
     fail_cnt = sum([p.exitcode for p in proc_list])
     if fail_cnt:
         raise ValueError('Failed in %d process.' % fail_cnt)
-
-def get_item_feature(file):
-    ret = {}
-    pt = parquet.read_table(file).to_pylist()
-    for e in pt:
-        ret[int(e['goods_id'])] = e
-    return ret
 
 
 def main(args):
