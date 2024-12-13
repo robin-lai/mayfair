@@ -61,9 +61,9 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
     def build_feature(t):
         feature = dict()
         for name in item_features_string.keys():
-            feature.update({name:bytes_fea(t[name])})
+            feature.update({name:bytes_fea(str(t[name]))})
         for name in int_features.keys():
-            feature.update({name:ints_fea(t[name])})
+            feature.update({name:ints_fea(str(t[name]))})
         return feature
 
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
