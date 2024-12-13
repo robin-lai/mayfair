@@ -94,10 +94,8 @@ class DNN(tf.estimator.Estimator):
                                              initializer=tf.glorot_uniform_initializer())
                 pgid_emb = tf.nn.embedding_lookup(embeddings, pgid_hash)
 
-            uuid_shape = uuid_emb.get_shape()
-            uuid_emb = tf.reshape(uuid_emb, shape=[uuid_shape[0], uuid_shape[2]])
-            pgid_shape = pgid_emb.get_shape()
-            pgid_emb = tf.reshape(pgid_emb, shape=[pgid_shape[0], pgid_shape[2]])
+            uuid_emb = tf.reshape(uuid_emb, shape=[-1, 50])
+            pgid_emb = tf.reshape(pgid_emb, shape=[-1, 50])
             input_layer = [uuid_emb, pgid_emb]
             for ele in input_layer:
                 print('block layer shape:', ele.get_shape())
