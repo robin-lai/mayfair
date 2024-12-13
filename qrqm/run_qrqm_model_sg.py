@@ -29,7 +29,7 @@ sg_estimator = TensorFlow(
         dependencies=['aws_auth_init.py'],
         role=role,
         input_mode="Pipe",
-        instance_count=4,
+        instance_count=1,
         instance_type="ml.r5.xlarge",
         distribution={'parameter_server': {'enabled': True}},
         volume_size=250,
@@ -42,8 +42,7 @@ sg_estimator = TensorFlow(
         keep_alive_period_in_seconds=1800,
         hyperparameters={
             "mode": "train",
-            "hidden_units": "256,64,32",
-            "warm_start_from":None
+            "hidden_units": "256,64,32"
         },
         metric_definitions=[
            {'Name': 'auc:', 'Regex': 'auc=(.*?);'},
