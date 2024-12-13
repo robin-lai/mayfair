@@ -94,9 +94,13 @@ class DNN(tf.estimator.Estimator):
                                              initializer=tf.glorot_uniform_initializer())
                 pgid_emb = tf.nn.embedding_lookup(embeddings, pgid_hash)
 
+            uuid_shape = uuid_emb.get_shape()
+            uuid_emb = tf.reshape(uuid_emb, shape=[uuid_shape[0], uuid_shape[2]])
+            pgid_shape = pgid_emb.get_shape()
+            pgid_emb = tf.reshape(pgid_emb, shape=[pgid_shape[0], pgid_shape[2]])
             input_layer = [uuid_emb, pgid_emb]
             for ele in input_layer:
-                print('blick layer shape:', ele.get_shape())
+                print('block layer shape:', ele.get_shape())
             net = tf.concat(input_layer, axis=1)
             print('input net shape:', net.get_shape())
             for units in params['hidden_units']:
