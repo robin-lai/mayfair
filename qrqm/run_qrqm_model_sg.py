@@ -43,7 +43,7 @@ sg_estimator = TensorFlow(
         hyperparameters={
             "mode": "train",
             "hidden_units": "256,64,32",
-            "checkpoint":None
+            "warm_start_from":None
         },
         metric_definitions=[
            {'Name': 'auc:', 'Regex': 'auc=(.*?);'},
