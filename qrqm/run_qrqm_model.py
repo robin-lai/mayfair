@@ -2,28 +2,49 @@
 
 import time
 import tensorflow as tf
-import json, os,sys
+import json, os, sys
 import argparse
 import pickle
+
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
 from aws_auth_init import *
 
 feature_spec_serve = {
-                "uuid": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
-                "pgid": tf.placeholder(dtype=tf.string, shape=[None, 1], name="pgid"),
-            }
+    "uuid": tf.placeholder(dtype=tf.string, shape=[None, 1], name="uuid"),
+    "age": tf.placeholder(dtype=tf.string, shape=[None, 1], name="age"),
+    "site_code": tf.placeholder(dtype=tf.string, shape=[None, 1], name="site_code"),
+    "model_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="model_id"),
+    "bust": tf.placeholder(dtype=tf.string, shape=[None, 1], name="bust"),
+    "waistline": tf.placeholder(dtype=tf.string, shape=[None, 1], name="waistline"),
+    "hips": tf.placeholder(dtype=tf.string, shape=[None, 1], name="hips"),
+    "shoulder_width": tf.placeholder(dtype=tf.string, shape=[None, 1], name="shoulder_width"),
+    "arm_length": tf.placeholder(dtype=tf.string, shape=[None, 1], name="arm_length"),
+    "thigh_circumference": tf.placeholder(dtype=tf.string, shape=[None, 1], name="thigh_circumference"),
+    "calf_circumference": tf.placeholder(dtype=tf.string, shape=[None, 1], name="calf_circumference"),
+    "pgid": tf.placeholder(dtype=tf.string, shape=[None, 1], name="pgid"),
+}
 
 feature_describe = {
-        "uuid": tf.FixedLenFeature(1, tf.string, "-1")
-        , "pgid": tf.FixedLenFeature(1, tf.string, "-1")
-        , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
+    "uuid": tf.FixedLenFeature(1, tf.string, "-1")
+    , "age": tf.FixedLenFeature(1, tf.string, "-1")
+    , "site_code": tf.FixedLenFeature(1, tf.string, "-1")
+    , "model_id": tf.FixedLenFeature(1, tf.string, "-1")
+    , "bust": tf.FixedLenFeature(1, tf.string, "-1")
+    , "waistline": tf.FixedLenFeature(1, tf.string, "-1")
+    , "hips": tf.FixedLenFeature(1, tf.string, "-1")
+    , "shoulder_width": tf.FixedLenFeature(1, tf.string, "-1")
+    , "arm_length": tf.FixedLenFeature(1, tf.string, "-1")
+    , "thigh_circumference": tf.FixedLenFeature(1, tf.string, "-1")
+    , "calf_circumference": tf.FixedLenFeature(1, tf.string, "-1")
+    , "pgid": tf.FixedLenFeature(1, tf.string, "-1")
+    , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
 
-    }
+}
+
 
 def _parse_fea(data):
-
     print('feature_describe', feature_describe)
     features = tf.io.parse_single_example(data, features=feature_describe)
 
@@ -37,7 +58,6 @@ def _parse_fea(data):
 def input_fn(task='ctr', batch_size=256, channel='train',
              num_parallel_calls=8,
              shuffle_factor=10, prefetch_factor=20, host_num=1, host_rank=0):
-
     from sagemaker_tensorflow import PipeModeDataset
     dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
@@ -76,10 +96,14 @@ class DNN(tf.estimator.Estimator):
             print('mode', mode)
             print('params', params)
             # with tf.variable_scope("qrqm_uuid_emb"):
-            dd = {"uuid": [400000,32],"age": [100,8], "site_code": [10,10],"goods_id":[120,50], "pgid": [40000,8],  "model_id": [100,4], "height": [100,4],
-             "weight":  [100,4], "bust":  [100,4], "waistline":  [100,4], "hips":  [100,4], "shoulder_width":  [100,4], "arm_length":  [100,4],
-             "thigh_circumference":  [100,4], "calf_circumference":  [100,4], "style_id":  [100,4], "model_type":  [100,4], "brand_ids":  [100,4]
-             }
+            dd = {"uuid": [400000, 32], "age": [100, 8], "site_code": [10, 10], "goods_id": [120, 50],
+                  "pgid": [40000, 8], "model_id": [100, 4], "height": [100, 4],
+                  "weight": [100, 4], "bust": [100, 4], "waistline": [100, 4], "hips": [100, 4],
+                  "shoulder_width": [100, 4], "arm_length": [100, 4],
+                  "thigh_circumference": [100, 4], "calf_circumference": [100, 4],
+                  # "style_id": [100, 4],
+                  # "model_type": [100, 4], "brand_ids": [100, 4]
+                  }
             input_layer = []
             for fts, shape in dd.items():
                 fts_hash = tf.string_to_hash_bucket_fast(features[fts], shape[0])
@@ -109,9 +133,9 @@ class DNN(tf.estimator.Estimator):
                 return tf.estimator.EstimatorSpec(mode, predictions=predictions, export_outputs=export_outputs)
 
             loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels, logits=logits),
-                                     name="loss")
+                                 name="loss")
             accuracy = tf.metrics.accuracy(labels=labels,
-                                               predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
+                                           predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
             auc = tf.metrics.auc(labels, prop)
             metrics = {'accuracy': accuracy, 'auc': auc}
             tf.summary.scalar('accuracy', accuracy[1])
@@ -124,7 +148,6 @@ class DNN(tf.estimator.Estimator):
             optimizer = tf.train.AdagradOptimizer(learning_rate=params['learning_rate'])
             train_op = optimizer.minimize(loss, global_step=tf.train.get_global_step())
             return tf.estimator.EstimatorSpec(mode, loss=loss, train_op=train_op)
-
 
         if warm_start_from is None:
             super(DNN, self).__init__(
@@ -140,7 +163,6 @@ def main(args):
     print('args.hosts', args.hosts, 'args.current_host', args.current_host)
     print('num_host', host_num, 'host_rank', host_rank)
     feature_columns = {}
-
 
     estimator = DNN(
         params={
@@ -213,12 +235,13 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_string("task", "ctr", "ctr")
     tf.app.flags.DEFINE_string("version", "seq_on", "seq_version:seq_on|seq_off")
     tf.app.flags.DEFINE_string("pred_local", "./predict_result.pkl", "save_pred_result_local")
-    tf.app.flags.DEFINE_string("pred_s3", "s3://warehouse-algo/rec/model_pred/predict_result.pkl", "save_pred_result_s3")
+    tf.app.flags.DEFINE_string("pred_s3", "s3://warehouse-algo/rec/model_pred/predict_result.pkl",
+                               "save_pred_result_s3")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
-    tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
+    tf.app.flags.DEFINE_string("model_dir", os.environ["SM_MODEL_DIR"], "")
     print('start main', '#' * 80)
     st = time.time()
     main(FLAGS)
     ed = time.time()
-    print('end main cost:%s'%(str(ed-st)), '#' * 80)
+    print('end main cost:%s' % (str(ed - st)), '#' * 80)
