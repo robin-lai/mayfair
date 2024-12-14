@@ -6,6 +6,8 @@ import json, os, sys
 import argparse
 import pickle
 
+from tensorflow.python.keras.constraints import max_norm
+
 os.environ['TF_DISABLE_MKL'] = '1'
 os.environ['TF_DISABLE_POOL_ALLOCATOR'] = '1'
 print('os.environ:', os.environ)
@@ -116,7 +118,7 @@ class DNN(tf.estimator.Estimator):
                 embeddings = tf.get_variable(name="qrqm_emb_" + fts, dtype=tf.float32,
                                              shape=shape, trainable=True,
                                              initializer=tf.glorot_uniform_initializer())
-                fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash)
+                fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash, max_norm=2)
                 fts_emb = tf.reshape(fts_emb, shape=shape)
                 input_layer.append(fts_emb)
 
