@@ -119,7 +119,7 @@ class DNN(tf.estimator.Estimator):
                                              shape=shape, trainable=True,
                                              initializer=tf.glorot_uniform_initializer())
                 fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash, max_norm=2)
-                fts_emb = tf.reshape(fts_emb, shape=shape)
+                # fts_emb = tf.reshape(fts_emb, shape=shape)
                 input_layer.append(fts_emb)
 
             for ele in input_layer:
