@@ -118,8 +118,8 @@ class DNN(tf.estimator.Estimator):
                 embeddings = tf.get_variable(name="qrqm_emb_" + fts, dtype=tf.float32,
                                              shape=shape, trainable=True,
                                              initializer=tf.glorot_uniform_initializer())
-                fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash, max_norm=2)
-                # fts_emb = tf.reshape(fts_emb, shape=shape)
+                fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash)
+                fts_emb = tf.reshape(fts_emb, shape=[-1,shape[1]])
                 input_layer.append(fts_emb)
 
             for ele in input_layer:
