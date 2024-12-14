@@ -52,7 +52,9 @@ def cross_fea(v1_list, v2_list, n=1):
     v3_list = ['%s,,%s' % (v1, v2) for v1 in v1_list for v2 in v2_list]
     return bytes_fea(v3_list, n, True)
 
-item_features_string ={ "uuid":"", "pgid":""
+item_features_string ={ "uuid":"", "pgid":"","site_code":"","goods_id":"","model_id":"","age":"","height":"",
+                        "weight":"", "bust":"","waistline":"", "hips":"", "shoulder_width":"", "arm_length":"",
+                        "thigh_circumference":"","calf_circumference":"", "style_id":"","model_type":"","brand_ids":""
                         }
 int_features = {"is_clk": 0}
 
@@ -156,8 +158,8 @@ if __name__ == '__main__':
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=5)
     parser.add_argument('--sample_num', type=int, default=None)
-    parser.add_argument('--dir_pt', default='qrqm_uuid_pgid_bhv_sample_v2/')
-    parser.add_argument('--dir_tfr', default='qrqm_uuid_pgid_bhv_sample_v2_tfr/')
+    parser.add_argument('--dir_pt', default='qrqm_uuid_pgid_bhv_sample_v3/')
+    parser.add_argument('--dir_tfr', default='qrqm_uuid_pgid_bhv_sample_v3_tfr/')
 
     args = parser.parse_args()
     debug = args.debug

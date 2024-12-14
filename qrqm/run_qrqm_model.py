@@ -75,28 +75,21 @@ class DNN(tf.estimator.Estimator):
             print('labels', labels)
             print('mode', mode)
             print('params', params)
-            uuid = features['uuid']
-            pgid = features['pgid']
             # with tf.variable_scope("qrqm_uuid_emb"):
-            uuid_shape = [400000, 50]
-            pgid_shape = [40000, 50]
-            uuid_hash = tf.string_to_hash_bucket_fast(uuid, uuid_shape[0])
-            pgid_hash = tf.string_to_hash_bucket_fast(pgid, pgid_shape[0])
-            with tf.variable_scope("qrqm_emb_uuid", reuse=tf.AUTO_REUSE) as name:
-                embeddings = tf.get_variable(name="qrqm_emb_uuid_v", dtype=tf.float32,
-                                             shape=uuid_shape, trainable=True,
+            dd = {"uuid": [400000,32],"age": [100,8], "site_code": [10,10],"goods_id":[120,50], "pgid": [40000,8],  "model_id": [100,4], "height": [100,4],
+             "weight":  [100,4], "bust":  [100,4], "waistline":  [100,4], "hips":  [100,4], "shoulder_width":  [100,4], "arm_length":  [100,4],
+             "thigh_circumference":  [100,4], "calf_circumference":  [100,4], "style_id":  [100,4], "model_type":  [100,4], "brand_ids":  [100,4]
+             }
+            input_layer = []
+            for fts, shape in dd.items():
+                fts_hash = tf.string_to_hash_bucket_fast(features[fts], shape[0])
+                embeddings = tf.get_variable(name="qrqm_emb_" + fts, dtype=tf.float32,
+                                             shape=shape, trainable=True,
                                              initializer=tf.glorot_uniform_initializer())
-                uuid_emb = tf.nn.embedding_lookup(embeddings, uuid_hash)
+                fts_emb = tf.nn.embedding_lookup(embeddings, fts_hash)
+                fts_emb = tf.reshape(fts_emb, shape=shape)
+                input_layer.append(fts_emb)
 
-            with tf.variable_scope("qrqm_emb_pgid", reuse=tf.AUTO_REUSE) as name:
-                embeddings = tf.get_variable(name="qrqm_emb_pgid_v", dtype=tf.float32,
-                                             shape=uuid_shape, trainable=True,
-                                             initializer=tf.glorot_uniform_initializer())
-                pgid_emb = tf.nn.embedding_lookup(embeddings, pgid_hash)
-
-            uuid_emb = tf.reshape(uuid_emb, shape=[-1, 50])
-            pgid_emb = tf.reshape(pgid_emb, shape=[-1, 50])
-            input_layer = [uuid_emb, pgid_emb]
             for ele in input_layer:
                 print('block layer shape:', ele.get_shape())
             net = tf.concat(input_layer, axis=1)

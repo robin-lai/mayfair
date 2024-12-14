@@ -54,8 +54,8 @@ sg_estimator = TensorFlow(
 
 def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
     return time.strftime(fmt, time.localtime(ts + offset))
-train_params = {'inputs': {'train': 's3://algo-sg/qrqm_algo/qrqm_uuid_pgid_bhv_sample_v2/ds=20241211'
-                           ,'eval': 's3://algo-sg/qrqm_algo/qrqm_uuid_pgid_bhv_sample_v2/ds=20241211'
+train_params = {'inputs': {'train': 's3://algo-sg/qrqm_algo/qrqm_uuid_pgid_bhv_sample_v3_tfr/ds=20241207'
+                           ,'eval': 's3://algo-sg/qrqm_algo/qrqm_uuid_pgid_bhv_sample_v3_tfr/ds=20241207'
                               },
                     'job_name': 'Job-laidehe-test-%s-%s' % (model.replace('_', '-'),ts2date(time.time(), '%m-%d-%H-%M-%S'))}
 print('Train params: ', train_params)
