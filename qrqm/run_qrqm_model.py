@@ -23,6 +23,7 @@ feature_spec_serve = {
     "arm_length": tf.placeholder(dtype=tf.string, shape=[None, 1], name="arm_length"),
     "thigh_circumference": tf.placeholder(dtype=tf.string, shape=[None, 1], name="thigh_circumference"),
     "calf_circumference": tf.placeholder(dtype=tf.string, shape=[None, 1], name="calf_circumference"),
+    "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
     "pgid": tf.placeholder(dtype=tf.string, shape=[None, 1], name="pgid"),
 }
 
@@ -39,6 +40,7 @@ feature_describe = {
     , "thigh_circumference": tf.FixedLenFeature(1, tf.string, "-1")
     , "calf_circumference": tf.FixedLenFeature(1, tf.string, "-1")
     , "pgid": tf.FixedLenFeature(1, tf.string, "-1")
+    , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
 
 }
