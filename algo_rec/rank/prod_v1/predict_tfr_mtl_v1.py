@@ -129,6 +129,30 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
            , "ord_7d": v1.FixedLenFeature(1, tf.int64, 0)
            , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
 
+           , "is_rel_cate": tf.FixedLenFeature(1, tf.int64, 0)
+           , "is_rel_cate2": tf.FixedLenFeature(1, tf.int64, 0)
+           , "is_rel_cate3": tf.FixedLenFeature(1, tf.int64, 0)
+           , "is_rel_cate4": tf.FixedLenFeature(1, tf.int64, 0)
+           , "sales_price": tf.FixedLenFeature(1, tf.int64, 0)
+
+           , "main_goods_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "main_cate_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "main_cate_level2_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "main_cate_level3_id": tf.FixedLenFeature(1, tf.string, "-1")
+           , "main_cate_level4_id": tf.FixedLenFeature(1, tf.string, "-1")
+
+           , "prop_seaon": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_length": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_main_material": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_pattern": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_style": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_quantity": tf.FixedLenFeature(1, tf.string, "-1")
+           , "prop_fitness": tf.FixedLenFeature(1, tf.string, "-1")
+
+           , "last_login_device": tf.FixedLenFeature(1, tf.string, "-1")
+           , "last_login_brand": tf.FixedLenFeature(1, tf.string, "-1")
+           , "register_brand": tf.FixedLenFeature(1, tf.string, "-1")
+
            , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
            , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
            , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -160,13 +184,23 @@ def process_tfr(thread_idx, tfr_list, batch_size, dir, score):
         ds = tf.data.TFRecordDataset(file_suffix)
         ds = ds.map(_parse_fea).batch(batch_size)
         item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
-                                "cate_level3_id": "", "cate_level4_id": "", "country": ""}
+                                "cate_level3_id": "", "cate_level4_id": "", "country": ""
+            ,"prop_seaon":"-1","prop_length":"-1","prop_main_material":"-1", "prop_pattern":"-1","prop_style":"-1"
+                                ,"prop_quantity":"-1","prop_fitness":"-1",
+                                "main_goods_id":"-1", "main_cate_id":"-1","main_cate_level2_id":"-1","main_cate_level3_id":"-1"
+                                ,"main_cate_level4_id":"-1"
+                                }
         item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
         item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
-                             "pay_7d": 0}
+                             "pay_7d": 0,
+                             "is_rel_cate":0, "is_rel_cate2":0, "is_rel_cate3":0,"is_rel_cate4":0, "sales_price":0
+                             }
         user_seq_string = {"highLevelSeqListGoods": [""] * 20,
                            "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
-                           "lowerLevelSeqListCateId": [""] * 20
+                           "lowerLevelSeqListCateId": [""] * 20,
+                           "last_login_device":"-1",
+                           "last_login_brand":"-1",
+                           "register_brand":"-1",
                            }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
@@ -325,10 +359,10 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict')
-    parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
-    parser.add_argument('--model_version', default='/ds=20241206/model/1733804126')
+    parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v1')
+    parser.add_argument('--model_version', default='/ds=20241202-20241209/model/1734033700')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
-    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_ctr/ds=20241206/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v10_tfr/ds=20241210/')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=1)
     parser.add_argument('--sample_num', type=int, default=None)
