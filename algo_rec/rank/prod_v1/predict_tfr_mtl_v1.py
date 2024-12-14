@@ -346,7 +346,7 @@ def main(args):
     avg_pred_ctr = np.mean(pctr)
     avg_label_clk = np.mean(is_clk)
     print('N:',len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
-    auc = roc_auc_score(is_clk, pctr)
+    auc = roc_auc_score(list(is_clk), list(pctr))
     print('ctr-auc:', auc)
     ed = time.time()
     print('compute ctr-auc cost:', str(ed - st))
