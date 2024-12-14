@@ -16,6 +16,8 @@ feature_spec_serve = {
     "age": tf.placeholder(dtype=tf.string, shape=[None, 1], name="age"),
     "site_code": tf.placeholder(dtype=tf.string, shape=[None, 1], name="site_code"),
     "model_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="model_id"),
+    "height": tf.placeholder(dtype=tf.string, shape=[None, 1], name="height"),
+    "weight": tf.placeholder(dtype=tf.string, shape=[None, 1], name="weight"),
     "bust": tf.placeholder(dtype=tf.string, shape=[None, 1], name="bust"),
     "waistline": tf.placeholder(dtype=tf.string, shape=[None, 1], name="waistline"),
     "hips": tf.placeholder(dtype=tf.string, shape=[None, 1], name="hips"),
@@ -32,6 +34,8 @@ feature_describe = {
     , "age": tf.FixedLenFeature(1, tf.string, "-1")
     , "site_code": tf.FixedLenFeature(1, tf.string, "-1")
     , "model_id": tf.FixedLenFeature(1, tf.string, "-1")
+    , "height": tf.FixedLenFeature(1, tf.string, "-1")
+    , "weight": tf.FixedLenFeature(1, tf.string, "-1")
     , "bust": tf.FixedLenFeature(1, tf.string, "-1")
     , "waistline": tf.FixedLenFeature(1, tf.string, "-1")
     , "hips": tf.FixedLenFeature(1, tf.string, "-1")
