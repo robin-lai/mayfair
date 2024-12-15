@@ -347,6 +347,7 @@ def main(args):
     # merge multi thread score
     merge_score = dict()
     st = time.time()
+    print('d1', d1)
     for k, v in d1.items():
         print(k, v[0:10])
         if k in merge_score:
