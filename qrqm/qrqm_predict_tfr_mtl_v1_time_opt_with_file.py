@@ -183,7 +183,7 @@ if __name__ == '__main__':
         description='predict',
         epilog='predict')
     parser.add_argument('--model_name', default='qrqm_model_test')
-    parser.add_argument('--model_version', default='/model/1734183567/')
+    parser.add_argument('--model_version', default='/model/1734183567')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
     parser.add_argument('--tfr_s3', default='qrqm_algo/qrqm_uuid_pgid_bhv_sample_v3_tfr/ds=20241211')
     parser.add_argument('--batch_size', type=int, default=1024)
