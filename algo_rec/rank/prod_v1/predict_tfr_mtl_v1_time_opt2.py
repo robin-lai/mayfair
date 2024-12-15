@@ -348,6 +348,7 @@ def main(args):
     merge_score = dict()
     st = time.time()
     for k, v in d1.items():
+        print(k, v[0:10])
         if k in merge_score:
             merge_score[k].extend(v)
         else:
