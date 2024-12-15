@@ -177,7 +177,13 @@ def process_tfr(proc, tfr_list, batch_size, dir, score):
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
     os.system('mkdir -p %s'%tmp_dir_data)
-    
+
+    score[ID] = []
+    score[CTR] = []
+    score[CVR] = []
+    score[CTCVR] = []
+    score[CLK] = []
+    score[PAY] = []
     for file_n, file in enumerate(tfr_list):
         # print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
