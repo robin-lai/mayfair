@@ -70,6 +70,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file):
         item_features_string = {"uuid": "", "age": "", "site_code": "", "model_id": "","height":"",
                                 "weight":"", "bust":"", "waistline":"", "hips":"", "shoulder_width":"",
                                 "arm_length":"", "thigh_circumference":"", "calf_circumference":"", "pgid":"",
+                                "goods_id":""
                                 }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
