@@ -61,6 +61,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file):
     score = {}
     score[ID] = []
     score[CLK] = []
+    score[PROB] = []
     for file_n, file in enumerate(tfr_list):
         # print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
