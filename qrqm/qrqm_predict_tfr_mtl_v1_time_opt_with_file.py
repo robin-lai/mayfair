@@ -27,7 +27,7 @@ def chunks(lst, n):
 ID = 'uuid'
 PROB = 'probabilities'
 CLK = 'is_clk'
-prod_model = 's3://warehouse-algo/rec/qrqm_model_test/'
+prod_model = 's3://warehouse-algo/rec/'
 pred_dir = 's3://warehouse-algo/rec/qrqm_model_test/'
 tmp_dir = '/home/sagemaker-user/tmp/'
 tmp_dir_data = tmp_dir + 'data/'
