@@ -4,7 +4,6 @@ from heapq import merge
 import pyarrow as pa
 from random import shuffle
 
-from gensim.utils import pickle
 from pyarrow import parquet
 import tensorflow as tf
 print(tf.__version__)
