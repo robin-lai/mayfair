@@ -17,6 +17,18 @@ if __name__ == '__main__':
     ed = time.time()
     print('cost1:', str(ed-st))
 
+    # slower
+    # st = time.time()
+    # rgl = list(manager_list)
+    # ed = time.time()
+    # print('mgl-rl:cost', ed-st)
+
+    st = time.time()
+    rgl2 = [e for e in manager_list]
+    ed = time.time()
+    print('mgl-rl2:cost', ed-st)
+
+
     st = time.time()
     tmp_list = []
     for i in ll:
@@ -42,5 +54,18 @@ if __name__ == '__main__':
     manager_dict3.update(tmp_dict)
     ed = time.time()
     print('cost4:', str(ed - st))
+
+    st = time.time()
+    ll = []
+    print(type(manager_list3))
+    for i in manager_list3:
+        ll.append(i)
+    ed = time.time()
+    print('cost5:', ed - st)
+
+
+
+
+
 
 
