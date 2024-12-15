@@ -257,8 +257,8 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file):
         # print('rm file:',file_suffix)
         print('proc %s process file:%s / %s' % (str(proc), str(file_n), str(len(tfr_list))))
         os.system('rm %s'%file_suffix)
-        with open(pkl_file, 'wb') as fout:
-            pickle.dump(score, fout)
+    with open(pkl_file, 'wb') as fout:
+        pickle.dump(score, fout)
 
 def main(args):
     s3_cli = boto3.client('s3')
