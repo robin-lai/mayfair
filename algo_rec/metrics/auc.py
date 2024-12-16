@@ -5,21 +5,6 @@ import pickle
 import argparse
 import numpy as np
 
-
-pred_file = "s3://warehouse-algo/rec/model_pred/prod_mtl_seq_on_esmm_v1"
-pt_all = parquet.read_table(pred_file).to_pydict()
-n = 100000
-pt = {}
-for k in pt_all.keys():
-    pt[k] = pt_all[k][0:n]
-pt_file = './prod_mtl_seq_on_esmm_v1_pt_test.pkl'
-with open(pt_file, 'wb') as fout:
-    pickle.dump(pt, fout)
-
-with open(pt_file, 'rb') as fin:
-    pt = pickle.load(fin)
-
-
 # 方法1
 def auc(label, pre):
     pos = [i for i in range(len(label)) if label[i] == 1]
@@ -69,6 +54,20 @@ def gauc(pred,label_idx, pre_idx):
 
 
 def main(args):
+    pred_file = "s3://warehouse-algo/rec/model_pred/prod_mtl_seq_on_esmm_v1"
+    pt_file = './prod_mtl_seq_on_esmm_v1_pt_test.pkl'
+    if args.debug == True:
+        with open(pt_file, 'rb') as fin:
+            pt = pickle.load(fin)
+    else:
+        pt = parquet.read_table(pred_file).to_pydict()
+        n = 100000
+        pt_test = {}
+        for k in pt.keys():
+            pt_test[k] = pt[k][0:n]
+        with open(pt_file, 'wb') as fout:
+            pickle.dump(pt_test, fout)
+
     pred = []
     uuid_pred = {}
     req_pred = {}
@@ -102,11 +101,8 @@ if __name__ == '__main__':
         prog='auc',
         description='auc',
         epilog='auc')
-    parser.add_argument('--proc', type=int, default=1)
-    parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
-    debug = args.debug
     main(args)
 
 
