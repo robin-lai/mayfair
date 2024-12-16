@@ -6,8 +6,6 @@ import pickle
 import os
 import time
 
-from algo_rec.deploy.inference import base_data_dir
-
 debug=True
 if debug:
     base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/pkg/'
