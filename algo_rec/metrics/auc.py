@@ -8,7 +8,7 @@ import sys
 import traceback
 
 # 方法1
-def auc(label, pre):
+def auc1(label, pre):
     pos = [i for i in range(len(label)) if label[i] == 1]
     neg = [i for i in range(len(label)) if label[i] == 0]
     auc = 0
