@@ -47,7 +47,9 @@ def gauc(pred,label_idx, pre_idx):
     gauc_l = []
     try:
         for u, l in pred.items():
-            auc_score = auc(l[label_idx], l[pre_idx])
+            pred = [e[pre_idx] for e in l]
+            label = [e[label_idx] for e in l]
+            auc_score = auc(label, pred)
             if auc_score is not None:
                 gauc[u] = auc_score
                 gauc_l.append(auc_score)
