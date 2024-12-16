@@ -53,6 +53,8 @@ def gauc(pred,label_idx, pre_idx, type):
             if auc_score is not None:
                 gauc[u] = auc_score
                 gauc_l.append(auc_score)
+            else:
+                print('uid:%s auc is none'%(u), l)
     except Exception:
         print('data:', l)
         traceback.print_exc(file=sys.stdout)
