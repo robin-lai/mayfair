@@ -431,7 +431,7 @@ def request_sagemaker(args):
                "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
                "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
-    req1 = {
+    req_row = {
         "signature_name": "serving_default",
         "instances": [
             {
@@ -712,8 +712,204 @@ def request_sagemaker(args):
             }
         ]
     }
-    request['ipt'] = req1
-    request['debug'] = "1"
+    rec_col = {"signature_name": "serving_default", "inputs": {
+        "highLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "highLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "register_brand": "other",
+        "main_goods_id": "1402902",
+        "main_cate_id": [
+            "449"
+        ],
+        "main_cate_level2_id": [
+            "12"
+        ],
+        "main_cate_level3_id": [
+            "74"
+        ],
+        "main_cate_level4_id": [
+            "449"
+        ],
+        "goods_id": [
+            "1327692"
+        ],
+        "cate_id": [
+            "748"
+        ],
+        "is_rel_cate": [
+            0
+        ],
+        "cate_level1_id": [
+            "2"
+        ],
+        "cate_level2_id": [
+            "12"
+        ],
+        "is_rel_cate2": [
+            1
+        ],
+        "cate_level3_id": [
+            "79"
+        ],
+        "is_rel_cate3": [
+            0
+        ],
+        "cate_level4_id": [
+            "748"
+        ],
+        "is_rel_cate4": [
+            0
+        ],
+        "country": [
+            ""
+        ],
+        "prop_seaon": [
+            "Summer"
+        ],
+        "prop_length": [
+            "Maxi"
+        ],
+        "prop_main_material": [
+            "Polyester"
+        ],
+        "prop_pattern": [
+            "Solid"
+        ],
+        "prop_style": [
+            "Sexy | Extravagant | Elegant"
+        ],
+        "prop_quantity": [
+            "1"
+        ],
+        "prop_fitness": [
+            "Regular Fit"
+        ],
+        "show_7d": [
+            56152
+        ],
+        "click_7d": [
+            1960
+        ],
+        "cart_7d": [
+            51
+        ],
+        "ord_total": [
+            363
+        ],
+        "pay_total": [
+            320
+        ],
+        "ord_7d": [
+            5
+        ],
+        "pay_7d": [
+            5
+        ],
+        "sales_price": [
+            0
+        ],
+        "ctr_7d": [
+            0.03490525715913948
+        ],
+        "cvr_7d": [
+            0.002551020408163265
+        ]
+    }}
+
+    if args.debug=='1':
+        request['debug'] = "1"
+    else:
+        request['debug'] = ""
+
+    if args.format == 'row':
+        request['ipt'] = req_row
+    elif args.format == 'col':
+        request['ipt'] = rec_col
 
     sg_client = boto3.client("sagemaker-runtime")
 
@@ -775,12 +971,13 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg')
     parser.add_argument('--endpoint', default='prod-edp-model')
     parser.add_argument('--region', default='in')
-    parser.add_argument('--format', default='col')
     parser.add_argument('--edp_version', default='v1')
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v1')
     parser.add_argument('--model_version', default='/ds=20241202-20241209/model/')
     parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v1_v1.tar.gz')
+    parser.add_argument('--debug', default='1')
+    parser.add_argument('--format', default='col')
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
