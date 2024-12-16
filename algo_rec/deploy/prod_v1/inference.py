@@ -120,29 +120,29 @@ def get_infer_json_from_request(d):
                         fts_v = str(item_dict[goods_id][name])
                         example[name] = [fts_v]
                         if name == 'cate_id' and fts_v == example_base['main_cate_id'][0]:
-                            example['is_rel_cate'] = 1
+                            example['is_rel_cate'] = [1]
                         else:
-                            example['is_rel_cate'] = 0
+                            example['is_rel_cate'] = [0]
                         if name == 'cate_level2_id' and fts_v == example_base['main_cate_level2_id'][0]:
-                            example['is_rel_cate2'] = 1
+                            example['is_rel_cate2'] = [1]
                         else:
-                            example['is_rel_cate2'] = 0
+                            example['is_rel_cate2'] = [0]
                         if name == 'cate_level3_id' and fts_v == example_base['main_cate_level3_id'][0]:
-                            example['is_rel_cate3'] = 1
+                            example['is_rel_cate3'] = [1]
                         else:
-                            example['is_rel_cate3'] = 0
+                            example['is_rel_cate3'] = [0]
                         if name == 'cate_level4_id' and fts_v == example_base['main_cate_level4_id'][0]:
-                            example['is_rel_cate4'] = 1
+                            example['is_rel_cate4'] = [1]
                         else:
-                            example['is_rel_cate4'] = 0
+                            example['is_rel_cate4'] = [0]
                     else:
                         example[name] = [str(item_features_string[name])]
                 else:
                     example[name] = [str(item_features_string[name])]
-                    example['is_rel_cate'] = 0
-                    example['is_rel_cate2'] = 0
-                    example['is_rel_cate3'] = 0
-                    example['is_rel_cate4'] = 0
+                    example['is_rel_cate'] = [0]
+                    example['is_rel_cate2'] = [0]
+                    example['is_rel_cate3'] = [0]
+                    example['is_rel_cate4'] = [0]
             for name in item_features_int.keys():
                 if goods_id in item_dict:
                     if name in item_dict[goods_id]:
