@@ -42,12 +42,12 @@ def auc(label, pre):
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
 
-def gauc(pred,label_idx, pre_idx, type):
+def gauc(pred_d,label_idx, pre_idx, type):
     gauc = {}
     gauc_l = []
     none_auc = 0
     try:
-        for u, l in pred.items():
+        for u, l in pred_d.items():
             pred = [e[pre_idx] for e in l]
             label = [e[label_idx] for e in l]
             auc_score = auc(label, pred)
@@ -60,7 +60,7 @@ def gauc(pred,label_idx, pre_idx, type):
     except Exception:
         print('data:', l)
         traceback.print_exc(file=sys.stdout)
-    print('none_auc num %s of all uuid:%s'%(str(none_auc),str(len(pred.keys()))))
+    print('none_auc num %s of all uuid:%s'%(str(none_auc),str(len(pred_d.keys()))))
     print('uuid num:%s have auc'%(str(len(gauc_l))))
     print('type:%s'%type, np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
