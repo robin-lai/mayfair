@@ -199,7 +199,6 @@ def input_handler(data, context):
         ipt_encode = json.dumps(ipt).encode('utf-8')
         return ipt_encode
 
-
 def output_handler(data, context):
     # logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
     response_content_type = context.accept_header
