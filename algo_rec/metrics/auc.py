@@ -45,6 +45,7 @@ def auc(label, pre):
 def gauc(pred,label_idx, pre_idx, type):
     gauc = {}
     gauc_l = []
+    none_auc = 0
     try:
         for u, l in pred.items():
             pred = [e[pre_idx] for e in l]
@@ -54,10 +55,13 @@ def gauc(pred,label_idx, pre_idx, type):
                 gauc[u] = auc_score
                 gauc_l.append(auc_score)
             else:
-                print('uid:%s auc is none'%(u), l)
+                none_auc += 1
+                # print('uid:%s auc is none'%(u), l)
     except Exception:
         print('data:', l)
         traceback.print_exc(file=sys.stdout)
+    print('none_auc num:', none_auc)
+    print('uuid num:%s have auc'%(str(len(gauc_l))))
     print('type:%s'%type, np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
     print('type:%s percentle:'%type, np.percentile(gauc_l, pp))
