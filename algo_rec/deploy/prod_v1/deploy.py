@@ -37,6 +37,7 @@ sg_rec_buk = 's3://algo-sg/rec/model_online/'
 in_s3_tar_file = ""
 sg_s3_tar_file = ""
 
+
 # endpoint = 'ctr-model-debug1121'
 
 
@@ -67,9 +68,10 @@ def convert_text2pkl(text_dir):
 def convert_user_seq2pkl(pt_file):
     pt = parquet.read_table(pt_file)
     m = {}
-    for t in zip(pt['uuid'],pt['seq_goods_id'], pt['seq_cate_id']):
-        m[t[0]] = {'seq_goods_id': t[1], 'seq_cate_id':t[2]}
+    for t in zip(pt['uuid'], pt['seq_goods_id'], pt['seq_cate_id']):
+        m[t[0]] = {'seq_goods_id': t[1], 'seq_cate_id': t[2]}
     return m
+
 
 def pkg(args):
     print('init dir')
@@ -115,6 +117,7 @@ def pkg(args):
     print('upload %s to %s' % (tar_file, sg_s3_tar_file))
     os.system('aws s3 cp %s %s' % (tar_file, sg_s3_tar_file))
 
+
 def alert(msg):
     print(msg)
     return
@@ -125,6 +128,7 @@ def alert(msg):
     sns_cli = boto3.client('sns')
     for phone_number in [13521039521, ]:
         sns_cli.publish(PhoneNumber='+86%s' % phone_number, Message=msg)
+
 
 def wait_edp_inservice(edp_name, wait_window=3600, wait_interval=10):
     begin = time.time()
@@ -145,6 +149,7 @@ def wait_edp_inservice(edp_name, wait_window=3600, wait_interval=10):
         print('Endpoint %s inservice now, finished.' % edp_name)
         break
 
+
 def create_edp(args):
     s3_cli = boto3.client('s3')
     sm_sess = sagemaker.Session()
@@ -158,9 +163,9 @@ def create_edp(args):
     #                         instance_count=1,
     #                         retry_times=0):
     # If an endpoint could describe, it exists, and can not be created by deploy.
-    instance_type=args.instance_type
-    instance_count=1
-    retry_times=0
+    instance_type = args.instance_type
+    instance_count = 1
+    retry_times = 0
     try:
         print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
         return
@@ -208,50 +213,202 @@ def create_edp(args):
     print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
     wait_edp_inservice(args.endpoint)
 
+
 def request_edp(args):
     inputs_seq = {
-        "cate_level1_id": ["1"],
-        "cate_level2_id": ["1"],
-        "cate_level3_id": ["1"],
-        "cate_level4_id": ["1"],
-        "country": ["IN"],
-        "ctr_7d": [0.1],
-        "cvr_7d": [0.1],
-        "show_7d": [100],
-        "click_7d": [100],
-        "cart_7d": [100],
-        "ord_total": [100],
-        "pay_total": [100],
-        "ord_7d": [100],
-        "pay_7d": [100],
-        "seq_goods_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18",
-                         "19", "20"],
-        "goods_id": ["1"],
-        "seq_cate_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                        "18",
-                        "19", "20"],
-        "cate_id": ["1"],
+        "highLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "highLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "register_brand": "other",
+        "main_goods_id": "1402902",
+        "main_cate_id": [
+            "449"
+        ],
+        "main_cate_level2_id": [
+            "12"
+        ],
+        "main_cate_level3_id": [
+            "74"
+        ],
+        "main_cate_level4_id": [
+            "449"
+        ],
+        "goods_id": [
+            "1327692"
+        ],
+        "cate_id": [
+            "748"
+        ],
+        "is_rel_cate": [
+            0
+        ],
+        "cate_level1_id": [
+            "2"
+        ],
+        "cate_level2_id": [
+            "12"
+        ],
+        "is_rel_cate2": [
+            1
+        ],
+        "cate_level3_id": [
+            "79"
+        ],
+        "is_rel_cate3": [
+            0
+        ],
+        "cate_level4_id": [
+            "748"
+        ],
+        "is_rel_cate4": [
+            0
+        ],
+        "country": [
+            ""
+        ],
+        "prop_seaon": [
+            "Summer"
+        ],
+        "prop_length": [
+            "Maxi"
+        ],
+        "prop_main_material": [
+            "Polyester"
+        ],
+        "prop_pattern": [
+            "Solid"
+        ],
+        "prop_style": [
+            "Sexy | Extravagant | Elegant"
+        ],
+        "prop_quantity": [
+            "1"
+        ],
+        "prop_fitness": [
+            "Regular Fit"
+        ],
+        "show_7d": [
+            56152
+        ],
+        "click_7d": [
+            1960
+        ],
+        "cart_7d": [
+            51
+        ],
+        "ord_total": [
+            363
+        ],
+        "pay_total": [
+            320
+        ],
+        "ord_7d": [
+            5
+        ],
+        "pay_7d": [
+            5
+        ],
+        "sales_price": [
+            0
+        ],
+        "ctr_7d": [
+            0.03490525715913948
+        ],
+        "cvr_7d": [
+            0.002551020408163265
+        ]
     }
 
-    inputs_no_seq = {
-        "cate_level1_id": ["1"],
-        "cate_level2_id": ["1"],
-        "cate_level3_id": ["1"],
-        "cate_level4_id": ["1"],
-        "country": ["IN"],
-        "ctr_7d": [0.1],
-        "cvr_7d": [0.1],
-        "show_7d": [100],
-        "click_7d": [100],
-        "cart_7d": [100],
-        "ord_total": [100],
-        "pay_total": [100],
-        "ord_7d": [100],
-        "pay_7d": [100]
-    }
+    if args.format == 'row':
+        ipt4 = {"signature_name": "serving_default", "instances": [inputs_seq, inputs_seq]}
+    elif args.format == 'col':
+        ipt4 = {"signature_name": "serving_default", "inputs": [inputs_seq]}
 
-    ipt4 = {"signature_name": "serving_default", "instances": [inputs_seq, inputs_seq]}
     sg_client = boto3.client("sagemaker-runtime")
     print('inp-json-dump', json.dumps(ipt4))
     # endpoint = 'ctr-model-debug1121'
@@ -267,293 +424,294 @@ def request_edp(args):
     print(res["Body"].read())
     # res_json = json.loads(res["Body"].read())
 
+
 def request_sagemaker(args):
     request = {"signature_name": "serving_default", "city": "Menbai", "country": "IN", "debug": "",
-                "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20}},
-                "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
-                "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
+               "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20}},
+               "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
+               "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
     req1 = {
-  "signature_name": "serving_default",
-  "instances": [
-    {
-      "goods_id": [
-        ""
-      ],
-      "cate_id": [
-        "748"
-      ],
-      "cate_level1_id": [
-        "2"
-      ],
-      "cate_level2_id": [
-        "12"
-      ],
-      "cate_level3_id": [
-        "79"
-      ],
-      "cate_level4_id": [
-        "748"
-      ],
-      "country": [
-        ""
-      ],
-      "show_7d": [
-        106063
-      ],
-      "click_7d": [
-        3594
-      ],
-      "cart_7d": [
-        104
-      ],
-      "ord_total": [
-        357
-      ],
-      "pay_total": [
-        314
-      ],
-      "ord_7d": [
-        6
-      ],
-      "pay_7d": [
-        5
-      ],
-      "ctr_7d": [
-        0.0338855208696718
-      ],
-      "cvr_7d": [
-        0.001669449081803005
-      ],
-      "highLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "highLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ],
-      "lowerLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "lowerLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ]
-    },
-    {
-      "goods_id": [
-        ""
-      ],
-      "cate_id": [
-        "449"
-      ],
-      "cate_level1_id": [
-        "2"
-      ],
-      "cate_level2_id": [
-        "12"
-      ],
-      "cate_level3_id": [
-        "74"
-      ],
-      "cate_level4_id": [
-        "449"
-      ],
-      "country": [
-        ""
-      ],
-      "show_7d": [
-        84521
-      ],
-      "click_7d": [
-        2124
-      ],
-      "cart_7d": [
-        211
-      ],
-      "ord_total": [
-        272
-      ],
-      "pay_total": [
-        247
-      ],
-      "ord_7d": [
-        29
-      ],
-      "pay_7d": [
-        28
-      ],
-      "ctr_7d": [
-        0.025129849386542988
-      ],
-      "cvr_7d": [
-        0.013653483992467044
-      ],
-      "highLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "highLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ],
-      "lowerLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "lowerLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ]
+        "signature_name": "serving_default",
+        "instances": [
+            {
+                "goods_id": [
+                    ""
+                ],
+                "cate_id": [
+                    "748"
+                ],
+                "cate_level1_id": [
+                    "2"
+                ],
+                "cate_level2_id": [
+                    "12"
+                ],
+                "cate_level3_id": [
+                    "79"
+                ],
+                "cate_level4_id": [
+                    "748"
+                ],
+                "country": [
+                    ""
+                ],
+                "show_7d": [
+                    106063
+                ],
+                "click_7d": [
+                    3594
+                ],
+                "cart_7d": [
+                    104
+                ],
+                "ord_total": [
+                    357
+                ],
+                "pay_total": [
+                    314
+                ],
+                "ord_7d": [
+                    6
+                ],
+                "pay_7d": [
+                    5
+                ],
+                "ctr_7d": [
+                    0.0338855208696718
+                ],
+                "cvr_7d": [
+                    0.001669449081803005
+                ],
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692"
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748"
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692"
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748"
+                ]
+            },
+            {
+                "goods_id": [
+                    ""
+                ],
+                "cate_id": [
+                    "449"
+                ],
+                "cate_level1_id": [
+                    "2"
+                ],
+                "cate_level2_id": [
+                    "12"
+                ],
+                "cate_level3_id": [
+                    "74"
+                ],
+                "cate_level4_id": [
+                    "449"
+                ],
+                "country": [
+                    ""
+                ],
+                "show_7d": [
+                    84521
+                ],
+                "click_7d": [
+                    2124
+                ],
+                "cart_7d": [
+                    211
+                ],
+                "ord_total": [
+                    272
+                ],
+                "pay_total": [
+                    247
+                ],
+                "ord_7d": [
+                    29
+                ],
+                "pay_7d": [
+                    28
+                ],
+                "ctr_7d": [
+                    0.025129849386542988
+                ],
+                "cvr_7d": [
+                    0.013653483992467044
+                ],
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692"
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748"
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692",
+                    "1327692"
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748",
+                    "748"
+                ]
+            }
+        ]
     }
-  ]
-}
     request['ipt'] = req1
     request['debug'] = "1"
 
@@ -581,8 +739,6 @@ def request_sagemaker(args):
         }
         result.append(tmp)
     print('final ret:', result)
-
-
 
 
 def main(args):
@@ -619,6 +775,7 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg')
     parser.add_argument('--endpoint', default='prod-edp-model')
     parser.add_argument('--region', default='in')
+    parser.add_argument('--format', default='col')
     parser.add_argument('--edp_version', default='v1')
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v1')
@@ -629,5 +786,3 @@ if __name__ == '__main__':
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
     print('endpoint:', args.endpoint)
     main(args)
-
-
