@@ -60,7 +60,7 @@ def gauc(pred,label_idx, pre_idx, type):
     except Exception:
         print('data:', l)
         traceback.print_exc(file=sys.stdout)
-    print('none_auc num %s of all uuid:%s'%(str(none_auc),str(len(pred))))
+    print('none_auc num %s of all uuid:%s'%(str(none_auc),str(len(pred.keys()))))
     print('uuid num:%s have auc'%(str(len(gauc_l))))
     print('type:%s'%type, np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
@@ -70,7 +70,7 @@ def gauc(pred,label_idx, pre_idx, type):
 def main(args):
     pred_file = "s3://warehouse-algo/rec/model_pred/prod_mtl_seq_on_esmm_v1"
     pt_file = './prod_mtl_seq_on_esmm_v1_pt_test.pkl'
-    if args.debug == True:
+    if args.debug:
         with open(pt_file, 'rb') as fin:
             pt = pickle.load(fin)
     else:
