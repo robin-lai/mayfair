@@ -42,7 +42,7 @@ def auc(label, pre):
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
 
-def gauc(pred,label_idx, pre_idx):
+def gauc(pred,label_idx, pre_idx, type):
     gauc = {}
     gauc_l = []
     try:
@@ -56,9 +56,9 @@ def gauc(pred,label_idx, pre_idx):
     except Exception:
         print('data:', l)
         traceback.print_exc(file=sys.stdout)
-    print('u-gauc:', np.mean(gauc_l))
+    print('type:%s'%type, np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
-    print('u-gauc percentle:', np.percentile(gauc_l, pp))
+    print('type:%s percentle:'%type, np.percentile(gauc_l, pp))
 
 
 def main(args):
@@ -94,8 +94,8 @@ def main(args):
 
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
-    gauc(uuid_pred, 0,3)
-    gauc(req_pred, 0,3)
+    gauc(uuid_pred, 0,3, 'u-gauc')
+    gauc(req_pred, 0,3, 'q-gauc')
 
 
 # label = [0, 0, 1, 1, 1, 0]
