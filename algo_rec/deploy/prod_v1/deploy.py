@@ -16,7 +16,7 @@ from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
 
 todell_dir = '/home/sagemaker-user/todell/tmp'
-deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/'
+deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/'
 deploy_pkg_dir = deploy_dir + 'pkg/'
 deploy_tmp_dir = deploy_dir + 'tmp/'
 deploy_code_dir = deploy_pkg_dir + 'code/'
