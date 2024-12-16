@@ -98,6 +98,14 @@ def main(args):
         else:
             req_pred[token[2]] = [tt]
 
+    label = [e[2] for e in pred]
+    pre = [e[4] for e in pred]
+    auc_all = auc(label, pre)
+    print('N:', len(pred), 'label_mean:', np.mean(label), 'pred_mean:', np.mean(pre), 'auc-all-ctr:',auc_all)
+    label_cvr = [e[3] for e in pred if e[2] == 1]
+    pre_cvr = [e[5] for e in pred if e[2] == 1]
+    auc_all_cvr = auc(label_cvr, pre_cvr)
+    print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
     gauc(uuid_pred, 0,3, 'u-gauc')
