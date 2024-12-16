@@ -119,6 +119,8 @@ def get_infer_json_from_request(d):
                     if name in item_dict[goods_id]:
                         fts_v = str(item_dict[goods_id][name])
                         example[name] = [fts_v]
+                        print(name)
+                        print(fts_v)
                         if name == 'cate_id' and fts_v == example_base['main_cate_id']:
                             example['is_rel_cate'] = 1
                         else:
