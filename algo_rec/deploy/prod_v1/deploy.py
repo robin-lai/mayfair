@@ -215,11 +215,78 @@ def create_edp(args):
 
 
 def request_sagemaker(args):
-    request = {"signature_name": "serving_default", "city": "Menbai", "country": "IN", "debug": "","parentGoodsId":"1327692",
-               "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20},
-                              "user_feature_context":{"register_brand":"other","last_login_device":"huawei","last_login_brand":"huawei"}},
-               "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
-               "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
+    request = {
+        "signature_name": "serving_default",
+        "city": "Menbai",
+        "country": "IN",
+        "debug": "",
+        "parentGoodsId": "1327692",
+        "featureMap": {
+            "userFeatures": {
+                "high_level_seq": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "low_level_seq": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "user_feature_context": {
+                    "register_brand": "other",
+                    "last_login_device": "huawei",
+                    "last_login_brand": "huawei"
+                }
+            }
+        },
+        "goodsIdList": [
+            "1327692",
+            "1402902"
+        ],
+        "ip": "127.0.0.1",
+        "platform": "H5",
+        "province": "Menbai",
+        "scene": "detail_rec",
+        "userId": "23221",
+        "userNo": "2321",
+        "uuid": "fxleyu",
+        "version": "8.2.2"
+    }
 
     req_row = {
         "signature_name": "serving_default",
