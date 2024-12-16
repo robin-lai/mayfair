@@ -119,22 +119,26 @@ def get_infer_json_from_request(d):
                     if name in item_dict[goods_id]:
                         fts_v = str(item_dict[goods_id][name])
                         example[name] = [fts_v]
-                        if name == 'cate_id' and fts_v == example_base['main_cate_id'][0]:
-                            example['is_rel_cate'] = [1]
-                        else:
-                            example['is_rel_cate'] = [0]
-                        if name == 'cate_level2_id' and fts_v == example_base['main_cate_level2_id'][0]:
-                            example['is_rel_cate2'] = [1]
-                        else:
-                            example['is_rel_cate2'] = [0]
-                        if name == 'cate_level3_id' and fts_v == example_base['main_cate_level3_id'][0]:
-                            example['is_rel_cate3'] = [1]
-                        else:
-                            example['is_rel_cate3'] = [0]
-                        if name == 'cate_level4_id' and fts_v == example_base['main_cate_level4_id'][0]:
-                            example['is_rel_cate4'] = [1]
-                        else:
-                            example['is_rel_cate4'] = [0]
+                        if name == 'cate_id':
+                            if fts_v == example_base['main_cate_id'][0]:
+                                example['is_rel_cate'] = [1]
+                            else:
+                                example['is_rel_cate'] = [0]
+                        elif name == 'cate_level2_id':
+                            if fts_v == example_base['main_cate_level2_id'][0]:
+                                example['is_rel_cate2'] = [1]
+                            else:
+                                example['is_rel_cate2'] = [0]
+                        elif name == 'cate_level3_id':
+                            if fts_v == example_base['main_cate_level3_id'][0]:
+                                example['is_rel_cate3'] = [1]
+                            else:
+                                example['is_rel_cate3'] = [0]
+                        elif name == 'cate_level4_id':
+                            if fts_v == example_base['main_cate_level4_id'][0]:
+                                example['is_rel_cate4'] = [1]
+                            else:
+                                example['is_rel_cate4'] = [0]
                     else:
                         example[name] = [str(item_features_string[name])]
                 else:
