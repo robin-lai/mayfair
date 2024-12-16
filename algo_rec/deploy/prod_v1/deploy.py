@@ -503,6 +503,8 @@ def request_sagemaker(args):
                     ""
                 ],
                 "register_brand": ["other"],
+                "last_login_device": ["huawei"],
+                "last_login_brand": ["huawei"],
                 "main_goods_id": ["1402902"],
                 "main_cate_id": [
                     "449"
