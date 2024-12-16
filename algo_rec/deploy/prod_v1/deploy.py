@@ -801,8 +801,8 @@ def request_sagemaker(args):
             "",
             ""
         ]],
-        "register_brand": "other",
-        "main_goods_id": "1402902",
+        "register_brand": ["other"],
+        "main_goods_id": ["1402902"],
         "main_cate_id": [
             "449"
         ],
