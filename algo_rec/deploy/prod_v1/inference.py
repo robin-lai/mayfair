@@ -6,7 +6,7 @@ import pickle
 import os
 import time
 
-debug=True
+debug=False
 if debug:
     base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/pkg/'
 else:
