@@ -6,7 +6,13 @@ import pickle
 import os
 import time
 
-base_data_dir = '/opt/ml/model/'
+from algo_rec.deploy.inference import base_data_dir
+
+debug=True
+if debug:
+    base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/pkg/'
+else:
+    base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
 logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
 item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "", "cate_level3_id": "",
