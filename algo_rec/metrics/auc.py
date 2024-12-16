@@ -4,6 +4,8 @@ from sklearn.metrics import roc_auc_score
 import pickle
 import argparse
 import numpy as np
+import sys
+import traceback
 
 # 方法1
 def auc(label, pre):
@@ -43,11 +45,15 @@ def auc(label, pre):
 def gauc(pred,label_idx, pre_idx):
     gauc = {}
     gauc_l = []
-    for u, l in pred.items():
-        auc_score = auc(l[label_idx], l[pre_idx])
-        if auc_score is not None:
-            gauc[u] = auc_score
-            gauc_l.append(auc_score)
+    try:
+        for u, l in pred.items():
+            auc_score = auc(l[label_idx], l[pre_idx])
+            if auc_score is not None:
+                gauc[u] = auc_score
+                gauc_l.append(auc_score)
+    except Exception:
+        print('data:', l)
+        traceback.print_exc(file=sys.stdout)
     print('u-gauc:', np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
     print('u-gauc percentle:', np.percentile(gauc_l, pp))
