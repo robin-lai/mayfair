@@ -779,7 +779,7 @@ def request_sagemaker(args):
             "449"
         ],
         "goods_id": [
-            "1327692"
+            ["1327692"]
         ],
         "cate_id": [
             "748"
