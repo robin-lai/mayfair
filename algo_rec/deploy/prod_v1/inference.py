@@ -204,7 +204,8 @@ def output_handler(data, context):
     # logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
     response_content_type = context.accept_header
     prediction = data.content
-    json.loads(prediction)
+    # json.loads(prediction)
+    print('prediction', prediction)
     return prediction, response_content_type
 
 
