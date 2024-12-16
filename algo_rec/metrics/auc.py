@@ -2,6 +2,8 @@ import pyarrow as pa
 from pyarrow import parquet
 from sklearn.metrics import roc_auc_score
 import pickle
+import argparse
+import numpy as np
 
 
 pred_file = "s3://warehouse-algo/rec/model_pred/prod_mtl_seq_on_esmm_v1"
@@ -14,12 +16,12 @@ pt_file = './prod_mtl_seq_on_esmm_v1_pt_test.pkl'
 with open(pt_file, 'wb') as fout:
     pickle.dump(pt, fout)
 
-# with open(pt_file, 'rb') as fin:
-#     pt = pickle.load(fin)
+with open(pt_file, 'rb') as fin:
+    pt = pickle.load(fin)
 
 
 # 方法1
-def AUC1(label, pre):
+def auc(label, pre):
     pos = [i for i in range(len(label)) if label[i] == 1]
     neg = [i for i in range(len(label)) if label[i] == 0]
     auc = 0
@@ -35,7 +37,7 @@ def AUC1(label, pre):
 
 
 # 方法2
-def AUC2(label, pre):
+def auc(label, pre):
     new_data = [[p, l] for p, l in zip(pre, label)]
     new_data.sort(key=lambda x: x[0])
     score_index = {}
@@ -53,9 +55,58 @@ def AUC2(label, pre):
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
 
+def gauc(pred,label_idx, pre_idx):
+    gauc = {}
+    gauc_l = []
+    for u, l in pred.items():
+        auc = auc(l[label_idx], l[pre_idx])
+        if auc is not None:
+            gauc[u] = auc
+            gauc_l.append(auc)
+    print('u-gauc:', np.mean(gauc_l))
+    pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
+    print('u-gauc percentle:', np.percentile(gauc_l, pp))
+
+
+def main(args):
+    pred = []
+    uuid_pred = {}
+    req_pred = {}
+    for id, clk, pay, ctr, cvr in zip(pt['sample_id'], pt['is_clk'], pt['is_pay'], pt['ctr'], pt['cvr']):
+        token = str(id).split('|')
+        pred.append((token[0], token[2], clk, pay, ctr, cvr))
+        tt = (clk, pay, ctr, cvr)
+        if token[0] in uuid_pred:
+            uuid_pred[token[0]].append(tt)
+        else:
+            uuid_pred[token[0]] = [tt]
+        if token[2] in req_pred:
+            req_pred[token[2]].append(tt)
+        else:
+            req_pred[token[2]] = [tt]
+
+    print('uuid num:', len(uuid_pred.keys()))
+    print('recid num:', len(req_pred.keys()))
+    gauc(uuid_pred, 0,3)
+    gauc(req_pred, 0,3)
+
 
 # label = [0, 0, 1, 1, 1, 0]
 # score = [0.1, 0.4, 0.35, 0.8, 0.8, 0.9]
 
 # print(AUC1(label, score))
 # print(AUC2(label, score))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='auc',
+        description='auc',
+        epilog='auc')
+    parser.add_argument('--proc', type=int, default=1)
+    parser.add_argument('--sample_num', type=int, default=None)
+    parser.add_argument('--debug', type=bool, default=False)
+    args = parser.parse_args()
+    debug = args.debug
+    main(args)
+
+
