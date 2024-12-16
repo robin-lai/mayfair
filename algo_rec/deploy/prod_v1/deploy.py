@@ -863,6 +863,280 @@ def request_sagemaker(args):
             0.002551020408163265
         ]
     }}
+    rec_col2 = {"signature_name": "serving_default", "inputs": {
+        "highLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "highLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "register_brand": ["other","other"],
+        "last_login_device": ["huawei","huawei"],
+        "last_login_brand": ["huawei","huawei"],
+        "main_goods_id": ["1402902","1402902"],
+        "main_cate_id": [
+            "449",  "449"
+        ],
+        "main_cate_level2_id": [
+            "12", "12"
+        ],
+        "main_cate_level3_id": [
+            "74" ,"74"
+        ],
+        "main_cate_level4_id": [
+            "449" ,"449"
+        ],
+        "goods_id": [
+            "1327692", "1327692"
+        ],
+        "cate_id": [
+            "748", "748"
+        ],
+        "is_rel_cate": [
+            0,0
+        ],
+        "cate_level1_id": [
+            "2","2"
+        ],
+        "cate_level2_id": [
+            "12", "12"
+        ],
+        "is_rel_cate2": [
+            1,1
+        ],
+        "cate_level3_id": [
+            "79","79"
+        ],
+        "is_rel_cate3": [
+            0,0
+        ],
+        "cate_level4_id": [
+            "748","748"
+        ],
+        "is_rel_cate4": [
+            0,0
+        ],
+        "country": [
+            "",""
+        ],
+        "prop_seaon": [
+            "Summer", "Summer"
+        ],
+        "prop_length": [
+            "Maxi", "Maxi"
+        ],
+        "prop_main_material": [
+            "Polyester", "Polyester"
+        ],
+        "prop_pattern": [
+            "Solid", "Solid"
+        ],
+        "prop_style": [
+            "Sexy",  "Sexy"
+        ],
+        "prop_quantity": [
+            "1", "1"
+        ],
+        "prop_fitness": [
+            "Regular Fit", "Regular Fit"
+        ],
+        "show_7d": [
+            56152, 56152
+        ],
+        "click_7d": [
+            1960,1960
+        ],
+        "cart_7d": [
+            51, 51
+        ],
+        "ord_total": [
+            363, 363
+        ],
+        "pay_total": [
+            320,320
+        ],
+        "ord_7d": [
+            5,5
+        ],
+        "pay_7d": [
+            5,5
+        ],
+        "sales_price": [
+            0,0
+        ],
+        "ctr_7d": [
+            0.03490525715913948, 0.03490525715913948
+        ],
+        "cvr_7d": [
+            0.002551020408163265, 0.002551020408163265
+        ]
+    }}
 
     if args.debug=='1':
         request['debug'] = "1"
@@ -872,7 +1146,10 @@ def request_sagemaker(args):
     if args.format == 'row':
         request['ipt'] = req_row
     elif args.format == 'col':
-        request['ipt'] = rec_col
+        if args.col_num == 2:
+            request['ipt'] = rec_col2
+        else:
+            request['ipt'] = rec_col
 
     sg_client = boto3.client("sagemaker-runtime")
 
@@ -941,6 +1218,7 @@ if __name__ == '__main__':
     parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v1_v1.tar.gz')
     parser.add_argument('--debug', default='1')
     parser.add_argument('--format', default='col')
+    parser.add_argument('--col_num',type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
