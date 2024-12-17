@@ -248,7 +248,6 @@ def main(args):
         "uuid": "fxleyu",
         "version": "8.2.2"
     }
-    debug = args.debug
     print(get_infer_json_from_request(d))
 
 
@@ -259,4 +258,5 @@ if __name__ == '__main__':
         epilog='inference')
     parser.add_argument('--debug',type=bool, default=False)
     args = parser.parse_args()
+    debug = args.debug
     main(args)
