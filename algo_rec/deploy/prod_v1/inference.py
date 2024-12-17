@@ -7,8 +7,8 @@ import os
 import time
 import argparse
 
-# base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
-base_data_dir = '/opt/ml/model/'
+base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
+# base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
 item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
@@ -243,7 +243,7 @@ def main(args):
             "1402902", "1327692"
         ],
         "ip": "127.0.0.1",
-        "parentGoodsId": "1402902",
+        "parentGoodsId": "1490152",
         "platform": "H5",
         "province": "Menbai",
         "scene": "detail_rec",
