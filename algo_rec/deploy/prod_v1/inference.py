@@ -95,7 +95,7 @@ def get_infer_json_from_request(d):
                     example_base['lowerLevelSeqListCateId'] = cate_list
                 else:
                     example_base['lowerLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
-        for name in user_profile_string:
+        for name in user_profile_string.keys():
             user_d = d['featureMap']['userFeatures']['user_feature_context']
             if name in user_d:
                 example_base[name] = [user_d[name]]
