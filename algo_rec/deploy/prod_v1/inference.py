@@ -7,7 +7,7 @@ import os
 import time
 import argparse
 
-debug=False
+debug=True
 if debug:
     base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/pkg/'
 else:
