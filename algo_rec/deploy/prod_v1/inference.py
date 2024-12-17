@@ -109,6 +109,9 @@ def get_infer_json_from_request(d):
                     example_base[name] = [str(item_dict[main_goods_id][name_suf])]
                 else:
                     example_base[name] = [str(main_item[name])]
+            else:
+                print('main_goods_id:%s not in item_dict'%(str(main_goods_id)))
+                example_base[name] = [str(main_item[name])]
 
         for goods_id in d['goodsIdList']:
             example = example_base
