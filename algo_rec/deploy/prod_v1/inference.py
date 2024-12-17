@@ -107,8 +107,8 @@ def get_infer_json_from_request(d):
                 example_base[name] = [user_profile_string[name]]
 
         # main item
-        main_goods_id = d['parentGoodsId']
-        example_base["main_goods_id"] = [str(main_goods_id)]
+        main_goods_id = str(d['parentGoodsId'])
+        example_base["main_goods_id"] = [main_goods_id]
         for name in main_item.keys():
             name_suf = name.lstrip('main_')
             if main_goods_id in item_dict:
