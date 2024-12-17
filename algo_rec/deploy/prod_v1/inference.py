@@ -98,13 +98,13 @@ def get_infer_json_from_request(d):
                     example_base['lowerLevelSeqListCateId'] = cate_list
                 else:
                     example_base['lowerLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
-        for name in user_profile_string:  # TODO
+        for name in user_profile_string:
             user_d = d['featureMap']['userFeatures']['user_feature_context']
             if name in user_d:
-                example_base[name] = user_d[name]
+                example_base[name] = [user_d[name]]
         # main item
         main_goods_id = d['parentGoodsId']
-        example_base["main_goods_id"] = str(main_goods_id)
+        example_base["main_goods_id"] = [str(main_goods_id)]
         for name in main_item.keys():
             name_suf = name.lstrip('main_')
             if main_goods_id in item_dict:
@@ -223,7 +223,7 @@ def main(args):
                     "1327692",
                     "1402902"
                 ],
-                "user_feature_context": {"register_brand": "other", "age": "40"}
+                "user_feature_context": {"register_brand": "other", "age": "40","last_login_device":"huawei", "last_login_brand":"huawei"}
             },
             "itemContextFeature": {
 
