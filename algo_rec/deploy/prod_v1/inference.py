@@ -5,6 +5,7 @@ import logging
 import pickle
 import os
 import time
+import argparse
 
 debug=False
 if debug:
@@ -207,8 +208,7 @@ def output_handler(data, context):
     print('prediction', prediction)
     return prediction, response_content_type
 
-
-if __name__ == '__main__':
+def main(args):
     d = {
         "city": "Menbai",
         "country": "IN",
@@ -236,7 +236,7 @@ if __name__ == '__main__':
             }
         },
         "goodsIdList": [
-            "1402902","1327692"
+            "1402902", "1327692"
         ],
         "ip": "127.0.0.1",
         "parentGoodsId": "1402902",
@@ -248,4 +248,15 @@ if __name__ == '__main__':
         "uuid": "fxleyu",
         "version": "8.2.2"
     }
+    debug = args.debug
     print(get_infer_json_from_request(d))
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='inference',
+        description='inference',
+        epilog='inference')
+    parser.add_argument('--debug',type=bool, default=False)
+    args = parser.parse_args()
+    main(args)
