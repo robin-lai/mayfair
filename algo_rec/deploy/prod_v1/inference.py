@@ -68,7 +68,7 @@ def get_infer_json_from_request(d):
                     example_base['highLevelSeqListGoods'] = seq + [""] * (20 - len(seq))
 
             if name == 'lowerLevelSeqListGoods':
-                seq = d['featureMap']['userFeatures']['high_level_seq']
+                seq = d['featureMap']['userFeatures']['low_level_seq']
                 if len(seq) == 20:
                     example_base['lowerLevelSeqListGoods'] = seq
                 else:
