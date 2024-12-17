@@ -99,6 +99,9 @@ def get_infer_json_from_request(d):
             user_d = d['featureMap']['userFeatures']['user_feature_context']
             if name in user_d:
                 example_base[name] = [user_d[name]]
+            else:
+                example_base[name] = [user_profile_string[name]]
+
         # main item
         main_goods_id = d['parentGoodsId']
         example_base["main_goods_id"] = [str(main_goods_id)]
