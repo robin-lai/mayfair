@@ -7,8 +7,8 @@ import os
 import time
 import argparse
 
-base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
-# base_data_dir = '/opt/ml/model/'
+# base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
+base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
 item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
@@ -28,6 +28,10 @@ main_item = {"main_cate_id": "", "main_cate_level2_id": "", "main_cate_level3_id
 
 with open(item_fts_file, 'rb') as fin:
     item_dict = pickle.load(fin)
+    print('item_dict num:', len(item_dict.keys()))
+    for k, v in item_dict.items():
+        print('goods_id:', k, v)
+        break
 
 def request_check(d):
     if 'goodsIdList' not in d:
