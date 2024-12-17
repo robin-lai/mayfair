@@ -7,6 +7,28 @@ import os
 import time
 import argparse
 
+# base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
+base_data_dir = '/opt/ml/model/'
+item_fts_file = base_data_dir + 'item_features.pkl'
+# logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
+item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
+                        "cate_level3_id": "",
+                        "cate_level4_id": "", "country": "",
+                        "prop_seaon": "", "prop_length": "", "prop_main_material": "", "prop_pattern": "",
+                        "prop_style": "", "prop_quantity": "", "prop_fitness": ""}
+item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
+item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
+                     "pay_7d": 0, "sales_price": 0}
+user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
+user_seq_on_string = {"highLevelSeqListGoods": [""] * 20, "highLevelSeqListCateId": [""] * 20,
+                      "lowerLevelSeqListGoods": [""] * 20, "lowerLevelSeqListCateId": [""] * 20}
+user_profile_string = {"last_login_device": "", "last_login_brand": "", "register_brand": ""}
+context_related = {"is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0}
+main_item = {"main_cate_id": "", "main_cate_level2_id": "", "main_cate_level3_id": "", "main_cate_level4_id": ""}
+
+with open(item_fts_file, 'rb') as fin:
+    item_dict = pickle.load(fin)
+
 def request_check(d):
     if 'goodsIdList' not in d:
         msg = '[E] goodsIdList need'
@@ -170,6 +192,7 @@ def input_handler(data, context):
         ipt = get_infer_json_from_request(d)
         ed = time.time()
         print('feature_process cost:', ed - st)
+        print('req_input', ipt)
 
         # logging.info('ipt data:%s', ipt)
         ipt_encode = json.dumps(ipt).encode('utf-8')
@@ -234,28 +257,4 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
-    if debug:
-        base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
-    else:
-        base_data_dir = '/opt/ml/model/'
-    item_fts_file = base_data_dir + 'item_features.pkl'
-    # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
-    item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
-                            "cate_level3_id": "",
-                            "cate_level4_id": "", "country": "",
-                            "prop_seaon": "", "prop_length": "", "prop_main_material": "", "prop_pattern": "",
-                            "prop_style": "", "prop_quantity": "", "prop_fitness": ""}
-    item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
-    item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
-                         "pay_7d": 0, "sales_price": 0}
-    user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
-    user_seq_on_string = {"highLevelSeqListGoods": [""] * 20, "highLevelSeqListCateId": [""] * 20,
-                          "lowerLevelSeqListGoods": [""] * 20, "lowerLevelSeqListCateId": [""] * 20}
-    user_profile_string = {"last_login_device": "", "last_login_brand": "", "register_brand": ""}
-    context_related = {"is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0}
-    main_item = {"main_cate_id": "", "main_cate_level2_id": "", "main_cate_level3_id": "", "main_cate_level4_id": ""}
-
-    with open(item_fts_file, 'rb') as fin:
-        item_dict = pickle.load(fin)
-
     main(args)
