@@ -104,7 +104,6 @@ def swing(*args):
             for j in range(i + 1, u_num):
                 # print('user a', user[i], 'user b', user[j])
                 common_items = user_bhv_item_list[user_sample[i]] & user_bhv_item_list[user_sample[j]]
-                common_items = common_items - set(trig_itm)
                 for tgt_item in common_items:
                     if trig_itm == tgt_item:
                         continue
