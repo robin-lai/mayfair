@@ -52,5 +52,6 @@ if __name__ == '__main__':
     parser.add_argument('--pattern', type=str, default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--file_num', type=int, default=10)
     args = parser.parse_args()
+    print(args.sync)
     main(args)
 
