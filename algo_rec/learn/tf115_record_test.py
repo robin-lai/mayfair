@@ -56,8 +56,8 @@ def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, 
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
     if fn_mode == 'MultiWorkerShard':
         dataset = dataset.shard(num_host, host_rank)
-    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls).take(100)
-    dataset = dataset.filter(lambda feature, labels: tf.constant(tf.math.equal(feature['country'],'IN')))
+    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
+    dataset = dataset.filter(lambda x, y: tf.math.equal(x['country'],'IN'))
 
     dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
     dataset = dataset.batch(batch_size)
