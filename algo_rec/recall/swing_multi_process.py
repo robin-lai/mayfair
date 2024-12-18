@@ -116,6 +116,8 @@ def swing(*args):
                         swing[tgt_item] = round(swing[tgt_item] +  score, 4)
                     else:
                         swing[tgt_item] = score
+        if len(swing.keys()) < 1:
+            continue
         ret[trig_itm] = [(k, v) for k, v in swing.items()]
         if n % 50 == 0:
             ed = time.time()
