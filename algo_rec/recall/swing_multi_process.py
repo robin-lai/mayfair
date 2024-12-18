@@ -217,8 +217,8 @@ def main(args):
     st = time.time()
     for country, v in m.items():
         print('process country:', country)
-        # if country != 'IN':
-        #     continue
+        if country != 'Savana_IN':
+            continue
         process(v, country)
         print('step 2 preprocess done cost:', str(time.time() - st))
         # swing
@@ -257,6 +257,6 @@ if __name__ == '__main__':
     parser.add_argument('--flag',default='mock')
     parser.add_argument('--p',type=int, default=1)
     parser.add_argument('--s3_dir', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/')
-    parser.add_argument('--in_file', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241118')
+    parser.add_argument('--in_file', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241217')
     args = parser.parse_args()
     main(args)
