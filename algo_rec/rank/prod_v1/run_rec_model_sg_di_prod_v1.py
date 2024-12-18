@@ -40,6 +40,9 @@ def main(args):
     if args.mode == 'infer':
         hps['pred_local'] = args.model_name + '_' + args.eval_ds + '.pkl'
         hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s.pkl'%(args.model_name, args.eval_ds)
+    if args.site_code is not None:
+        hps['site_code'] = args.site_code
+        print('set site_code to:', args.site_code)
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model_prod_v1.py',
@@ -92,7 +95,7 @@ if __name__ == '__main__':
     parse.add_argument('--task', type=str, default='mtl')
     parse.add_argument('--mode', type=str, default='train')
     parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v10_tfr")
-    parse.add_argument('--site_code', type=str, default="all")
+    parse.add_argument('--site_code', type=str, default=None)
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)
     parse.add_argument('--eval_ds', type=str, default='20241210eval')

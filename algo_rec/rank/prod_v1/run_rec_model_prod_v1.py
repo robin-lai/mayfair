@@ -560,6 +560,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_string("pred_local", "./predict_result.pkl", "save_pred_result_local")
     tf.app.flags.DEFINE_string("pred_s3", "s3://warehouse-algo/rec/model_pred/predict_result.pkl", "save_pred_result_s3")
     tf.app.flags.DEFINE_string("warm_start_from", None, None)
+    tf.app.flags.DEFINE_string("site_code", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
     print('start main', '#' * 80)
