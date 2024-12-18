@@ -13,6 +13,10 @@ import sys
 
 
 import math
+
+from sagemaker.jumpstart.utils import tag_key_in_array
+
+
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     c = math.ceil(len(lst) / n)
@@ -102,6 +106,8 @@ def swing(*args):
                 common_items = user_bhv_item_list[user_sample[i]] & user_bhv_item_list[user_sample[j]]
                 common_items = common_items - set(trig_itm)
                 for tgt_item in common_items:
+                    if trig_itm == tgt_item:
+                        continue
                     if user_debias:
                         score = round((1 / user_bhv_num[user_sample[i]]) * (1 / user_bhv_num[user_sample[j]]) * (
                                     1 / (alph + (len(common_items)))), 4)
