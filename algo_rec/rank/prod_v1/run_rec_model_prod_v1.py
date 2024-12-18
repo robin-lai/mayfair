@@ -504,10 +504,10 @@ def main(args):
 
     train_input_fn = lambda: input_fn(task=args.task, batch_size=args.batch_size,
                                       channel='train', num_parallel_calls=args.num_parallel_calls,
-                                      host_num=host_num, host_rank=host_rank)
+                                      host_num=host_num, host_rank=host_rank,site_code=args.site_code)
     eval_input_fn = lambda: input_fn(task=args.task, batch_size=args.batch_size,
                                      channel='eval', num_parallel_calls=args.num_parallel_calls,
-                                     host_num=host_num, host_rank=host_rank)
+                                     host_num=host_num, host_rank=host_rank,site_code=args.site_code)
     if host_rank == 0:
         time.sleep(15 * 2)
     train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn)
