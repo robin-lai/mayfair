@@ -119,12 +119,12 @@ def swing(*args):
     print('swing process done, cost:', time.time() - st0)
 
     print('write swing result to file:', out_file)
-    row_n = 30
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
+            row_n = 30
             for ele in tgt:
                 row_n -= 1
                 if row_n == 0:
