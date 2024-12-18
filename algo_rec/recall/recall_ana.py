@@ -17,8 +17,8 @@ def recall_i2i(args):
                     tk = line.split(chr(1))
                     tt = tk[0].split(chr(4))
                     tmp = {}
-                    for fts in tk[1].split(chr(4)):
-                        kk = fts.split(chr(2))
+                    for fts in tk[1].split(chr(2)):
+                        kk = fts.split(chr(4))
                         tmp.update({kk[0]:kk[1]})
                     i2i[tt[1]] = tmp
         with open(args.pkl_file, 'wb') as fout:
