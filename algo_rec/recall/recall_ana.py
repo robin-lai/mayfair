@@ -15,7 +15,7 @@ def recall_i2i(args):
                 lines = fin.readlines()
                 for line in lines:
                     tk = line.split(chr(1))
-                    tt = tk.split(chr(4))
+                    tt = tk[0].split(chr(4))
                     tmp = {}
                     for fts in tk[1].split(chr(4)):
                         kk = fts.split(chr(2))
