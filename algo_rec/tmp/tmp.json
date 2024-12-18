@@ -1,24 +1,401 @@
 {
-  "cartSeqList": [
-    "1733129966\u00011341152\u0001bag\u000110$##$1001$##100401"
-  ],
-  "clickSeqList": [
-    "1733130029\u00011396022\u0001detail\u000110$##$1001$##$100002$##$15",
-    "1733130005\u00011399252\u0001detail\u000110$##$1001$##$100002$##$44",
-    "1733129983\u00011469392\u0001detail\u000110$##$1001$##$100002$##$25",
-    "1733129946\u00011341152\u0001detail\u000110$##$1001$##$100002$##$11",
-    "1733024541\u00011493802\u0001detail\u000110$##$1001$##$100002$##$3",
-    "1733024546\u00011497192\u0001detail\u000110$##$1001$##$100002$##$2"
-  ],
-  "highLevelSeqList": [
-    "1733129966\u00011341152\u0001bag\u000110$##$1001$##100401"
-  ],
-  "lowerLevelSeqList": [
-    "1733130029\u00011396022\u0001detail\u000110$##$1001$##$100002$##$15",
-    "1733130005\u00011399252\u0001detail\u000110$##$1001$##$100002$##$44",
-    "1733129983\u00011469392\u0001detail\u000110$##$1001$##$100002$##$25",
-    "1733129946\u00011341152\u0001detail\u000110$##$1001$##$100002$##$11",
-    "1733024541\u00011493802\u0001detail\u000110$##$1001$##$100002$##$3",
-    "1733024546\u00011497192\u0001detail\u000110$##$1001$##$100002$##$2"
+  "signature_name": "serving_default",
+  "instances": [
+    {
+      "highLevelSeqListGoods": [
+        "1327692",
+        "1402902",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "highLevelSeqListCateId": [
+        "748",
+        "449",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "lowerLevelSeqListGoods": [
+        "1327692",
+        "1402902",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "lowerLevelSeqListCateId": [
+        "748",
+        "449",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "last_login_device": [
+        "huawei"
+      ],
+      "last_login_brand": [
+        "huawei"
+      ],
+      "register_brand": [
+        "other"
+      ],
+      "main_goods_id": [
+        "1402902"
+      ],
+      "main_cate_id": [
+        "449"
+      ],
+      "main_cate_level2_id": [
+        "12"
+      ],
+      "main_cate_level3_id": [
+        "74"
+      ],
+      "main_cate_level4_id": [
+        "449"
+      ],
+      "goods_id": [
+        "1327692"
+      ],
+      "cate_id": [
+        "748"
+      ],
+      "is_rel_cate": [
+        0
+      ],
+      "cate_level1_id": [
+        "2"
+      ],
+      "cate_level2_id": [
+        "12"
+      ],
+      "is_rel_cate2": [
+        1
+      ],
+      "cate_level3_id": [
+        "79"
+      ],
+      "is_rel_cate3": [
+        0
+      ],
+      "cate_level4_id": [
+        "748"
+      ],
+      "is_rel_cate4": [
+        0
+      ],
+      "country": [
+        ""
+      ],
+      "prop_seaon": [
+        "Summer"
+      ],
+      "prop_length": [
+        "Maxi"
+      ],
+      "prop_main_material": [
+        "Polyester"
+      ],
+      "prop_pattern": [
+        "Solid"
+      ],
+      "prop_style": [
+        "Sexy | Extravagant | Elegant"
+      ],
+      "prop_quantity": [
+        "1"
+      ],
+      "prop_fitness": [
+        "Regular Fit"
+      ],
+      "show_7d": [
+        56152
+      ],
+      "click_7d": [
+        1960
+      ],
+      "cart_7d": [
+        51
+      ],
+      "ord_total": [
+        363
+      ],
+      "pay_total": [
+        320
+      ],
+      "ord_7d": [
+        5
+      ],
+      "pay_7d": [
+        5
+      ],
+      "sales_price": [
+        0
+      ],
+      "ctr_7d": [
+        0.03490525715913948
+      ],
+      "cvr_7d": [
+        0.002551020408163265
+      ]
+    },
+    {
+      "highLevelSeqListGoods": [
+        "1327692",
+        "1402902",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "highLevelSeqListCateId": [
+        "748",
+        "449",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "lowerLevelSeqListGoods": [
+        "1327692",
+        "1402902",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "lowerLevelSeqListCateId": [
+        "748",
+        "449",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "last_login_device": [
+        "huawei"
+      ],
+      "last_login_brand": [
+        "huawei"
+      ],
+      "register_brand": [
+        "other"
+      ],
+      "main_goods_id": [
+        "1402902"
+      ],
+      "main_cate_id": [
+        "449"
+      ],
+      "main_cate_level2_id": [
+        "12"
+      ],
+      "main_cate_level3_id": [
+        "74"
+      ],
+      "main_cate_level4_id": [
+        "449"
+      ],
+      "goods_id": [
+        "1327692"
+      ],
+      "cate_id": [
+        "748"
+      ],
+      "is_rel_cate": [
+        0
+      ],
+      "cate_level1_id": [
+        "2"
+      ],
+      "cate_level2_id": [
+        "12"
+      ],
+      "is_rel_cate2": [
+        1
+      ],
+      "cate_level3_id": [
+        "79"
+      ],
+      "is_rel_cate3": [
+        0
+      ],
+      "cate_level4_id": [
+        "748"
+      ],
+      "is_rel_cate4": [
+        0
+      ],
+      "country": [
+        ""
+      ],
+      "prop_seaon": [
+        "Summer"
+      ],
+      "prop_length": [
+        "Maxi"
+      ],
+      "prop_main_material": [
+        "Polyester"
+      ],
+      "prop_pattern": [
+        "Solid"
+      ],
+      "prop_style": [
+        "Sexy | Extravagant | Elegant"
+      ],
+      "prop_quantity": [
+        "1"
+      ],
+      "prop_fitness": [
+        "Regular Fit"
+      ],
+      "show_7d": [
+        56152
+      ],
+      "click_7d": [
+        1960
+      ],
+      "cart_7d": [
+        51
+      ],
+      "ord_total": [
+        363
+      ],
+      "pay_total": [
+        320
+      ],
+      "ord_7d": [
+        5
+      ],
+      "pay_7d": [
+        5
+      ],
+      "sales_price": [
+        0
+      ],
+      "ctr_7d": [
+        0.03490525715913948
+      ],
+      "cvr_7d": [
+        0.002551020408163265
+      ]
+    }
   ]
 }

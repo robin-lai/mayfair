@@ -133,13 +133,16 @@ def _parse_fea(data):
 
 def input_fn(task='ctr', batch_size=256, channel='train',
              num_parallel_calls=8,
-             shuffle_factor=10, prefetch_factor=20, host_num=1, host_rank=0):
+             shuffle_factor=10, prefetch_factor=20, host_num=1, host_rank=0,site_code=None):
 
     from sagemaker_tensorflow import PipeModeDataset
     dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
     dataset = dataset.shard(host_num, host_rank)
     dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
+    if site_code is not None:
+        print('only site_code:%s data use'%(str(site_code)))
+        dataset = dataset.filter(lambda feature, labels: feature['country'] == site_code)
     dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
     dataset = dataset.prefetch(buffer_size=batch_size * prefetch_factor)
     dataset = dataset.batch(batch_size)

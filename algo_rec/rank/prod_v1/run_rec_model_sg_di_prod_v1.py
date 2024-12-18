@@ -92,6 +92,7 @@ if __name__ == '__main__':
     parse.add_argument('--task', type=str, default='mtl')
     parse.add_argument('--mode', type=str, default='train')
     parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v10_tfr")
+    parse.add_argument('--site_code', type=str, default="all")
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)
     parse.add_argument('--eval_ds', type=str, default='20241210eval')

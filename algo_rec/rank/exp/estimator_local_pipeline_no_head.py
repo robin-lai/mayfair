@@ -203,6 +203,18 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
     # att_emb = tf.reduce_sum(tf.multiply(wgt_emb, masks), 1, name="weighted_embedding")
     # return att_emb, tid_emb
 
+def variable_summaries(var):
+  """将大量摘要附加到 Tensor 上（为了 TensorBoard 可视化）"""
+  with tf.name_scope('summaries'):
+    mean = tf.reduce_mean(var)
+    tf.summary.scalar('mean', mean)
+    with tf.name_scope('stddev'):
+      stddev = tf.sqrt(tf.reduce_mean(tf.square(var - mean)))
+    tf.summary.scalar('stddev', stddev)
+    tf.summary.scalar('max', tf.reduce_max(var))
+    tf.summary.scalar('min', tf.reduce_min(var))
+    tf.summary.histogram('histogram', var)
+
 class DIN(tf.estimator.Estimator):
     def __init__(self,
                  params,
@@ -252,6 +264,9 @@ class DIN(tf.estimator.Estimator):
 
             loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels=labels['is_clk'], logits=logits),
                                      name="loss")
+
+            with tf.name_scope("model_din_loss"):
+                variable_summaries(loss)
             accuracy = tf.metrics.accuracy(labels=labels['is_clk'],
                                                predictions=tf.to_float(tf.greater_equal(prop, 0.5)))
             auc = tf.metrics.auc(labels['is_clk'], prop)
@@ -320,7 +335,8 @@ def main(args):
     print('pred_head 100 element:', pred_list[0:100])
     print('save pred result to file:')
 
-
+    merged = tf.summary.merge_all()
+    train_writer = tf.summary.FileWriter(FLAGS.log_dir + '/train')
 
     def make_serving_input_receiver_fn():
         feature_columns_list = []
