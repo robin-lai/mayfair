@@ -81,4 +81,4 @@ def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, 
 if __name__ == '__main__':
     features, click = input_fn_from_local_tfrecords(mode='train')
     with tf.Session() as sess:
-        print(sess.run([features['country'], click]))
+        print(sess.run([features, click]))
