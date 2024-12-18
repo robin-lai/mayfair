@@ -142,7 +142,7 @@ def input_fn(task='ctr', batch_size=256, channel='train',
     dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
     if site_code is not None:
         print('only site_code:%s data use'%(str(site_code)))
-        dataset = dataset.filter(lambda feature, labels: feature['country'] == site_code)
+        dataset = dataset.filter(lambda x, y: tf.math.equal(x['country'][0],site_code))
     dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
     dataset = dataset.prefetch(buffer_size=batch_size * prefetch_factor)
     dataset = dataset.batch(batch_size)
