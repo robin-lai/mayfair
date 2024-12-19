@@ -215,7 +215,7 @@ def request_sagemaker(args):
         "city": "Menbai",
         "country": "IN",
         "debug": "",
-        "parentGoodsId": "1327692",
+        "parentGoodsId": "111307",
         "featureMap": {
             "userFeatures": {
                 "high_level_seq": [
@@ -271,7 +271,10 @@ def request_sagemaker(args):
         },
         "goodsIdList": [
             "1327692",
-            "1402902"
+            "1402902",
+            "1459992",
+            "1477842",
+            "1481022"
         ],
         "ip": "127.0.0.1",
         "platform": "H5",
@@ -1135,16 +1138,15 @@ def request_sagemaker(args):
 
     if args.debug=='1':
         request['debug'] = "1"
+        if args.format == 'row':
+            request['ipt'] = req_row
+        elif args.format == 'col':
+            if args.col_num == 2:
+                request['ipt'] = rec_col2
+            else:
+                request['ipt'] = rec_col
     else:
         request['debug'] = ""
-
-    if args.format == 'row':
-        request['ipt'] = req_row
-    elif args.format == 'col':
-        if args.col_num == 2:
-            request['ipt'] = rec_col2
-        else:
-            request['ipt'] = rec_col
 
     sg_client = boto3.client("sagemaker-runtime")
 
