@@ -157,8 +157,8 @@ def swing(*args):
                 row_n -= 1
                 if row_n == 0:
                     break
-                vs.append(ele[0] + chr(4) + str(ele[1]))
-            line = (c + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
+                vs.append(str(ele[0]) + chr(4) + str(ele[1]))
+            line = (c + chr(4) + str(trig) + chr(1) + chr(2).join(vs) + '\n')
             lines.append(line)
         fout.writelines(lines)
     os.system('aws s3 cp %s %s' % (out_file, s3_file))
