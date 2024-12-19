@@ -1,9 +1,4 @@
 # coding: utf-8
-import boto3
-import sagemaker
-from numba.cpython.listobj import in_seq
-from sagemaker import get_execution_role
-# import sh
 import time
 import argparse
 import json
