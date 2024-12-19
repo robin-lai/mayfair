@@ -150,7 +150,7 @@ def swing(*args):
         for trig, tgt in ret.items():
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
-            row_n = 30
+            row_n = 100
             for ele in tgt:
                 row_n -= 1
                 if row_n == 0:
