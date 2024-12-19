@@ -16,7 +16,6 @@ nohup python run_rec_model_sg_di.py  --model_dir=test_model --mode=train --warm_
 nohup python run_rec_model_sg_di.py    --range=20241203,20241204,20241205,20241206  --instance_count=4  > esmm_train.log 2>&1 &
 
 
-nohup python run_rec_model_sg_di_prod_v1.py --model_name=prod_mtl_seq_on_esmm_v2_savana_in  --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4 --site_code=Savana_IN  > run_savana_in.log 2>&1 &
 
 
 
@@ -31,3 +30,7 @@ nohup python predict_tfr_mtl.py --model_name=prod_mtl_seq_on_esmm_v1 --model_ver
 # deploy
 python deploy.py --pipeline=pkg --edp_version=v7 --tar_name=prod_mtl_seq_on_esmm_v0_v7.tar.gz --region=in
 python deploy.py --pipeline=edp --edp_version=v7 --tar_name=prod_mtl_seq_on_esmm_v0_v7.tar.gz --region=in
+
+# v2_savana_in
+nohup python run_rec_model_sg_di_prod_v1.py --model_name=prod_mtl_seq_on_esmm_v2_savana_in  --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4 --site_code=Savana_IN  > run_savana_in.log 2>&1 &
+nohup python predict_tfr_mtl_v1_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v2_savana_in  --site_code=Savana_IN  --model_version=/ds=20241202-20241209/model/1734534246 > runv2_savana_in.log 2>&1 &

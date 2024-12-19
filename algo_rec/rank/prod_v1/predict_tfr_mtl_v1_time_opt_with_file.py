@@ -196,7 +196,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
         ds = ds.map(_parse_fea)
         if site_code is not None:
             print('only site_code:%s data use' % (str(site_code)))
-            ds = ds.filter(lambda x, y: tf.math.equal(x['country'][0], site_code))
+            ds = ds.filter(lambda x: tf.math.equal(x['country'][0], site_code))
         ds = ds.batch(batch_size)
         item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                                 "cate_level3_id": "", "cate_level4_id": "", "country": ""
