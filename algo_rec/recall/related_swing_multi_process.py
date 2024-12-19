@@ -46,7 +46,7 @@ def process(lines, c):
             if cat3 in user_bhv_item_list[u]:
                 user_bhv_item_list[u][cat3].add(itm)
             else:
-                user_bhv_item_list[u][cat3] = set(itm)
+                user_bhv_item_list[u][cat3] = set([itm])
         else:
             user_bhv_item_list[u] = {}
             user_bhv_item_list[u][cat3] = set([itm])
@@ -285,6 +285,6 @@ if __name__ == '__main__':
     parser.add_argument('--flag',default='mock')
     parser.add_argument('--p',type=int, default=1)
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec_test/cn_rec_detail_recall_i2i_for_redis/')
-    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20241218')
+    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20241216')
     args = parser.parse_args()
     main(args)
