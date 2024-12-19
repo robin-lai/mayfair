@@ -129,7 +129,7 @@ def swing(*args):
                     if trig_itm == tgt_item:
                         continue
                     if user_debias:
-                        score = round((1 / user_bhv_num[user_sample[i]]) * (1 / user_bhv_num[user_sample[j]]) * (
+                        score = round((1 / user_bhv_num[user_sample[i]][cat3]) * (1 / user_bhv_num[user_sample[j]][cat3]) * (
                                     1 / (alph + (len(common_items)))), 4)
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
