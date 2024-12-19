@@ -119,7 +119,7 @@ tmp_dir_data = tmp_dir + 'data/'
 
 debug = False
 
-def process_tfr(proc, tfr_list, batch_size, dir, pkl_file):
+def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
 
     def _parse_fea(data):
        feature_describe = {
@@ -193,7 +193,11 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file):
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
         file_suffix = tmp_dir_data + file.split('/')[-1]
         ds = tf.data.TFRecordDataset(file_suffix)
-        ds = ds.map(_parse_fea).batch(batch_size)
+        ds = ds.map(_parse_fea)
+        if site_code is not None:
+            print('only site_code:%s data use' % (str(site_code)))
+            ds = ds.filter(lambda x, y: tf.math.equal(x['country'][0], site_code))
+        ds = ds.batch(batch_size)
         item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                                 "cate_level3_id": "", "cate_level4_id": "", "country": ""
             ,"prop_seaon":"-1","prop_length":"-1","prop_main_material":"-1", "prop_pattern":"-1","prop_style":"-1"
@@ -290,7 +294,7 @@ def main(args):
     for thread_idx, tfr_list in enumerate(file_batch):
         pkl_file = './predict_part_%s.pkl'%(str(thread_idx))
         predict_files.append(pkl_file)
-        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local,pkl_file ))
+        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local,pkl_file,args.site_code ))
         jobs.append(p)
         p.start()
     for proc in jobs:
@@ -366,6 +370,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
     parser.add_argument('--sample_num', type=int, default=None)
+    parser.add_argument('--site_code', type=str, default=None)
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
