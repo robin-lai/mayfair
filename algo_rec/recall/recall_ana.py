@@ -46,6 +46,7 @@ if __name__ == '__main__':
         description='recall_ana',
         epilog='recall_ana')
     parser.add_argument('--goods', type=str, default='')
+    parser.add_argument('--tgt_goods', type=str, default='')
     parser.add_argument('--sync', type=bool, default=False)
     parser.add_argument('--s3_dir', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/')
     parser.add_argument('--pkl_file', type=str, default='./swing_rec_savana_in_i2i.pkl')
