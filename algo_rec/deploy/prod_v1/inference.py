@@ -121,7 +121,8 @@ def get_infer_json_from_request(d):
                 example_base[name] = [str(main_item[name])]
 
         for goods_id in d['goodsIdList']:
-            example = example_base
+            example = {}
+            example.update(example_base)
             for name in item_features_string.keys():
                 if goods_id in item_dict:
                     if name in item_dict[goods_id]:
