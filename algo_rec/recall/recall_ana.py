@@ -19,7 +19,7 @@ def recall_i2i(args):
                     tmp = {}
                     for fts in tk[1].split(chr(2)):
                         kk = fts.split(chr(4))
-                        tmp.update({kk[0]:kk[1]})
+                        tmp.update({kk[0]:kk[1].rstrip('\n')})
                     i2i[tt[1]] = tmp
         with open(args.pkl_file, 'wb') as fout:
             pickle.dump(i2i, fout)
