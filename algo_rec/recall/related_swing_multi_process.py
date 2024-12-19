@@ -48,6 +48,7 @@ def process(lines, c):
             else:
                 user_bhv_item_list[u][cat3] = set(itm)
         else:
+            user_bhv_item_list[u] = {}
             user_bhv_item_list[u][cat3] = set([itm])
         if itm in item_bhv_user_list.keys():
             item_bhv_user_list[itm].add(u)
@@ -60,6 +61,7 @@ def process(lines, c):
             else:
                 user_bhv_num[u][cat3] = 1
         else:
+            user_bhv_num[u] = {}
             user_bhv_num[u][cat3] = 1
         if itm in item_bhv_num.keys():
             item_bhv_num[itm] += 1
