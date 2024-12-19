@@ -108,7 +108,7 @@ def swing(*args):
         if trig_itm not in item_info:
             print('trig_itm not in item_info', trig_itm)
             continue
-        cat3 = item_info[trig_itm]
+        cat3 = item_info[trig_itm]['cat3']
         swing = {}
         user = list(item_bhv_user_list[trig_itm])
         u_num = len(user)
