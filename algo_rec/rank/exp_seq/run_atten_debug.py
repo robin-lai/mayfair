@@ -27,7 +27,9 @@ def attention_layer(seq_ids, tid_ids, id_type, shape, att_type):
             score = tf.reshape(net, [-1, 1,  seq_len])
         elif att_type == 'dot':
             score = seq_emb * tid_emb_tile
-            score = tf.reduce_mean(score, axis=0)
+            score = tf.reduce_mean(score, axis=2)
+
+        print('score_shape', score.get_shape())
         print('score:', score.numpy().tolist())
         # mask = tf.sequence_mask(seq_len, 30)
         # paddings = tf.zeros_like(score)
