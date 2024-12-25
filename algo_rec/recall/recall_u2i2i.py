@@ -59,10 +59,10 @@ def main(args):
     # fin1 = open(args.u2i2i_file % 1, 'w')
     # fin2 = open(args.u2i2i_file % 2, 'w')
     # fin3 = open(args.u2i2i_file % 3, 'w')
-    for k, v in u2i2i_d.items():
-        v = chr(2).join([str(e) + chr(4) + "1" for e in v])
+    for idx,k in enumerate(u2i2i_d.keys()):
+        v = chr(2).join([str(e) + chr(4) + "1" for e in u2i2i_d[k]])
         line = (k + chr(1) + v + '\n')
-        lines[i%args.part].append(line)
+        lines[idx%args.part].append(line)
         # if i%4 == 0: line0.append(line)
         # if i%4 == 1: line1.append(line)
         # if i%4 == 2: line2.append(line)
