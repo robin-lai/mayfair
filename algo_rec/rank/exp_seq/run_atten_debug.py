@@ -49,7 +49,7 @@ def main(args):
     features = {}
     features['seq_goods_id'] = tf.constant([["1", "1", "3", "", "", ""], ["1", "1", "3", "4", "5", ""]])
     features['goods_id'] = tf.constant([["1"], ["2"]])
-    features['seq_len'] = tf.constant([[3], [5]])
+    features['seq_len'] = tf.constant([3, 5])
 
 
     if args.seq_len is not None:
