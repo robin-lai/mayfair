@@ -1,4 +1,7 @@
 import argparse
+import os
+import time
+
 from pyarrow import parquet
 
 def main(args):
@@ -16,7 +19,7 @@ def main(args):
     print('read i2i end, num:', len(i2i_d.keys()))
 
     if args.debug:
-        pt = parquet.read_table(args.u2i_s3).to_pylist()[0:100]
+        pt = parquet.read_table(args.u2i_s3).to_pylist()[0:1000]
     else:
         pt = parquet.read_table(args.u2i_s3).to_pylist()
     for idx, d in enumerate(pt):
@@ -37,6 +40,8 @@ def main(args):
         if len(tl) < 1:
             continue
         tl.sort(key=lambda x: x[1], reverse=True)
+        tl_set = set([str(e[0]) for e in tl])
+        tl = list(tl_set)
         if args.debug:
             print(tl)
         kk = 'Savana_IN' + '|' + str(d['uuid'])
@@ -45,26 +50,42 @@ def main(args):
         else:
             u2i2i_d[kk] = tl[0:100] if len(tl) > 100 else tl
     line0, line1, line2 , line3 = [], [], [], []
-    fin0 = open(args.u2i2i_file % 0, 'w')
-    fin1 = open(args.u2i2i_file % 1, 'w')
-    fin2 = open(args.u2i2i_file % 2, 'w')
-    fin3 = open(args.u2i2i_file % 3, 'w')
+    lines, fins = [[] for _ in range(args.part)], []
+    for i in range(args.part):
+        fin = open(args.u2i2i_file % i, 'w')
+        fins.append(fin)
+
+    # fin0 = open(args.u2i2i_file % 0, 'w')
+    # fin1 = open(args.u2i2i_file % 1, 'w')
+    # fin2 = open(args.u2i2i_file % 2, 'w')
+    # fin3 = open(args.u2i2i_file % 3, 'w')
     for i, kv in enumerate(u2i2i_d.items()):
         k = kv[0]
-        v = chr(2).join([str(e[0]) + chr(4) + str(e[1]) for e in kv[1]])
+        v = chr(2).join([str(e[0]) + chr(4) + "1" for e in kv[1]])
         line = (k + chr(1) + v + '\n')
-        if i%4 == 0: line0.append(line)
-        if i%4 == 1: line1.append(line)
-        if i%4 == 2: line2.append(line)
-        if i%4 == 3: line3.append(line)
-    fin0.writelines(line0)
-    fin1.writelines(line1)
-    fin2.writelines(line2)
-    fin3.writelines(line3)
-    fin0.close()
-    fin1.close()
-    fin2.close()
-    fin3.close()
+        lines[i%args.part].append(line)
+        # if i%4 == 0: line0.append(line)
+        # if i%4 == 1: line1.append(line)
+        # if i%4 == 2: line2.append(line)
+        # if i%4 == 3: line3.append(line)
+    for i in range(args.part):
+        fins[i].writelines(lines[i])
+    # fin0.writelines(line0)
+    # fin1.writelines(line1)
+    # fin2.writelines(line2)
+    # fin3.writelines(line3)
+    for i in range(args.part):
+        fins[i].close()
+    # fin0.close()
+    # fin1.close()
+    # fin2.close()
+    # fin3.close()
+    for i in range(args.part):
+        os.system("aws s3 cp %s %s" % (args.u2i2i_file % i, args.u2i2i_s3))
+    # os.system("aws s3 cp %s %s" % (args.u2i2i_file % 1, args.u2i2i_s3))
+    # os.system("aws s3 cp %s %s" % (args.u2i2i_file % 2, args.u2i2i_s3))
+    # os.system("aws s3 cp %s %s" % (args.u2i2i_file % 3, args.u2i2i_s3))
+
 
 
 if __name__ == '__main__':
@@ -75,7 +96,11 @@ if __name__ == '__main__':
     parser.add_argument('--i2i_file', default='./swing_rec_Savana_IN_part_0_online,./swing_rec_Savana_IN_part_1_online')
     parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=20241224/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
-    parser.add_argument('--part',type=int, default=4)
+    parser.add_argument('--u2i2i_s3', default='s3://algo-sg/rec/recall_u2i2i/')
+    parser.add_argument('--part',type=int, default=10)
     parser.add_argument('--debug', type=bool,  default=False)
     args = parser.parse_args()
+    st = time.time()
     main(args)
+    ed = time.time()
+    print('cost:', ed-st)
