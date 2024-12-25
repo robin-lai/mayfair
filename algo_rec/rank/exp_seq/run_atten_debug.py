@@ -3,7 +3,7 @@ import tensorflow as tf
 tf.compat.v1.enable_eager_execution()
 
 
-def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len=None, max_len=6):
+def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actual=None, max_len=6):
     with tf.variable_scope("attention_" + id_type):
         print('raw seq_ipt tensor shape:', seq_ids.get_shape())
         print('raw tid_ipt tensor shape:', tid_ids.get_shape())
@@ -31,8 +31,8 @@ def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len=None, max_
         print('score_shape', score.get_shape())
         print('score:', score.numpy().tolist())
 
-        if seq_len is not None:
-            mask = tf.sequence_mask(seq_len, max_len)
+        if seq_len_actual is not None:
+            mask = tf.sequence_mask(seq_len_actual, max_len)
             paddings = tf.zeros_like(score)
             score = tf.where(mask, score, paddings)
         print('score_pad_shape', score.get_shape())
@@ -55,7 +55,7 @@ def main(args):
     if args.mask:
         seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
                                         id_type='seq_off_goods_id', shape=[40000, 8], att_type=args.att_type
-                                        ,seq_len=features['seq_len'],max_len=args.max_len)
+                                        ,seq_len_actual=features['seq_len'],max_len=args.max_len)
     else:
         seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
                                         id_type='seq_off_goods_id', shape=[40000, 8], att_type=args.att_type)
