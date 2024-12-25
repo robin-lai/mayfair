@@ -3,7 +3,7 @@ import tensorflow as tf
 tf.compat.v1.enable_eager_execution()
 
 
-def attention_layer(seq_ids, tid_ids, id_type, shape, att_type):
+def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len=None, max_len=6):
     with tf.variable_scope("attention_" + id_type):
         print('raw seq_ipt tensor shape:', seq_ids.get_shape())
         print('raw tid_ipt tensor shape:', tid_ids.get_shape())
@@ -29,11 +29,12 @@ def attention_layer(seq_ids, tid_ids, id_type, shape, att_type):
             score = seq_emb * tid_emb_tile
             score = tf.reduce_mean(score, axis=2)
 
+        if seq_len is not None:
+            mask = tf.sequence_mask(seq_len, max_len)
+            paddings = tf.zeros_like(score)
+            score = tf.where(mask, score, paddings)
         print('score_shape', score.get_shape())
         print('score:', score.numpy().tolist())
-        # mask = tf.sequence_mask(seq_len, 30)
-        # paddings = tf.zeros_like(score)
-        # score_pad = tf.where(mask, score, paddings)
         score_softmax = tf.nn.softmax(score)
         print('score_softmax:', score_softmax.numpy().tolist())
         output = tf.matmul(score_softmax, seq_emb)
@@ -44,9 +45,17 @@ def attention_layer(seq_ids, tid_ids, id_type, shape, att_type):
 
 def main(args):
     features = {}
-    features['seq_goods_id'] = tf.constant([["1", "1", "3", "4", "5", "6"], ["1", "1", "3", "4", "5", "6"]])
+    features['seq_goods_id'] = tf.constant([["1", "1", "3", "", "", ""], ["1", "1", "3", "4", "5", ""]])
     features['goods_id'] = tf.constant([["1"], ["2"]])
-    seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
+    features['seq_len'] = tf.constant([[3], [5]])
+
+
+    if args.seq_len is not None:
+        seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
+                                        id_type='seq_off_goods_id', shape=[40000, 8], att_type=args.att_type
+                                        ,seq_len=features['seq_len'],max_len=args.max_len)
+    else:
+        seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
                                         id_type='seq_off_goods_id', shape=[40000, 8], att_type=args.att_type)
     print('seq_goodsid_input', seq_goodsid_input.numpy().tolist())
 
@@ -55,7 +64,9 @@ if __name__ == '__main__':
         prog='swing',
         description='swing-args',
         epilog='swing-help')
-    parser.add_argument('--att_type',default='din')
+    parser.add_argument('--att_type',type=str, default='din')
+    parser.add_argument('--seq_len',type=int, default=None)
+    parser.add_argument('--max_len',type=int, default=6)
     args = parser.parse_args()
     main(args)
 
