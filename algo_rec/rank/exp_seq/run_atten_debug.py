@@ -52,7 +52,7 @@ def main(args):
     features['seq_len'] = tf.constant([3, 5])
 
 
-    if args.seq_len is not None:
+    if args.mask:
         seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
                                         id_type='seq_off_goods_id', shape=[40000, 8], att_type=args.att_type
                                         ,seq_len=features['seq_len'],max_len=args.max_len)
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--att_type',type=str, default='din')
-    parser.add_argument('--seq_len',type=int, default=None)
+    parser.add_argument('--mask',type=bool, default=False)
     parser.add_argument('--max_len',type=int, default=6)
     args = parser.parse_args()
     main(args)
