@@ -37,8 +37,8 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
 
 if __name__ == '__main__':
     features = {}
-    features['seq_goods_id'] = tf.constant([[1,1,3,4,5,6],[1,1,3,4,5,6]])
-    features['goods_id'] = tf.constant([[1],[2]])
+    features['seq_goods_id'] = tf.constant([["1","1","3","4","5","6"],["1","1","3","4","5","6"]])
+    features['goods_id'] = tf.constant([["1"],["2"]])
     seq_goodsid_input = attention_layer(seq_ids=features['seq_goods_id'], tid_ids=features['goods_id'],
                                         id_type='seq_off_goods_id', shape=[40000, 32])
     print('seq_goodsid_input', seq_goodsid_input.numpy().tolist())
