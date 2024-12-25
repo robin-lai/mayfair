@@ -96,7 +96,7 @@ if __name__ == '__main__':
     parser.add_argument('--i2i_file', default='./swing_rec_Savana_IN_part_0_online,./swing_rec_Savana_IN_part_1_online')
     parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=20241224/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
-    parser.add_argument('--u2i2i_s3', default='s3://algo-sg/rec/recall_u2i2i/')
+    parser.add_argument('--u2i2i_s3', default='s3://algo-sg/rec_test/recall_u2i2i/')
     parser.add_argument('--part',type=int, default=10)
     parser.add_argument('--debug', type=bool,  default=False)
     args = parser.parse_args()
