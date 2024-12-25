@@ -28,13 +28,15 @@ def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len=None, max_
         elif att_type == 'dot':
             score = seq_emb * tid_emb_tile
             score = tf.reduce_mean(score, axis=2)
+        print('score_shape', score.get_shape())
+        print('score:', score.numpy().tolist())
 
         if seq_len is not None:
             mask = tf.sequence_mask(seq_len, max_len)
             paddings = tf.zeros_like(score)
             score = tf.where(mask, score, paddings)
-        print('score_shape', score.get_shape())
-        print('score:', score.numpy().tolist())
+        print('score_pad_shape', score.get_shape())
+        print('score_pad:', score.numpy().tolist())
         score_softmax = tf.nn.softmax(score)
         print('score_softmax:', score_softmax.numpy().tolist())
         output = tf.matmul(score_softmax, seq_emb)
