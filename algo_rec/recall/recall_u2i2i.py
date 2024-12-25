@@ -19,7 +19,9 @@ def main(args):
         pt = parquet.read_table(args.u2i_s3).to_pylist()[0:100]
     else:
         pt = parquet.read_table(args.u2i_s3).to_pylist()
-    for d in pt:
+    for idx, d in enumerate(pt):
+        if idx % 1000 == 0:
+            print('process 1000')
         tl = []
         for id in d['goods_list']:
             i2i_k = 'Savana_IN' + chr(4) + str(id)
