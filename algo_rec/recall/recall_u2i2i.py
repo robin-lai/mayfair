@@ -1,9 +1,6 @@
 import argparse
 from pyarrow import parquet
 
-from algo_rec.rank.prod.predict_tfr_mtl import debug
-
-
 def main(args):
     # u2i_d = {}
     i2i_d = {}
