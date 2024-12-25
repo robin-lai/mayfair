@@ -14,10 +14,12 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
             embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
                                          shape=shape, trainable=True, initializer=tf.random_normal_initializer(seed=10))
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
+        print('seq_emb_shape',seq_emb.get_shape())
+        print('seq_emb', seq_emb.numpy().tolist())
         seq_len = seq_emb.get_shape()[1]
-        print('seq_emb',seq_emb.get_shape())
         tid_emb = tf.nn.embedding_lookup(embeddings, tid_ids_hash)
-        print('tid_emb', tid_emb.get_shape())
+        print('tid_emb_shape', tid_emb.get_shape())
+        print('tid_emb', tid_emb.numpy().tolist())
         tid_emb_tile = tf.tile(tid_emb, [1, seq_len, 1])
         net = tf.concat([seq_emb, tid_emb_tile, seq_emb - tid_emb_tile, seq_emb * tid_emb_tile], axis=-1)
         for layer_id, units in enumerate([4*shape[1], 2*shape[1], 8, 1]):
