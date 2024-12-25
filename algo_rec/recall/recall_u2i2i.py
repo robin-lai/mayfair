@@ -22,7 +22,7 @@ def main(args):
     for d in pt:
         tl = []
         for id in d['goods_list']:
-            i2i_k = 'Savana_IN' + chr(1) + str(id)
+            i2i_k = 'Savana_IN' + chr(4) + str(id)
             if i2i_k in i2i_d:
                 tgt_pair = i2i_d[i2i_k]
             else:
