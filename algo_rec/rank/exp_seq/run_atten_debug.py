@@ -31,14 +31,17 @@ def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actual=Non
         print('score_shape', score.get_shape())
         print('score:', score.numpy().tolist())
 
+        paddings = tf.zeros_like(score)
         if seq_len_actual is not None:
             mask = tf.sequence_mask(seq_len_actual, max_len)
-            paddings = tf.zeros_like(score)
             score = tf.where(mask, score, paddings)
         print('score_pad_shape', score.get_shape())
         print('score_pad:', score.numpy().tolist())
         score_softmax = tf.nn.softmax(score)
         print('score_softmax:', score_softmax.numpy().tolist())
+        if seq_len_actual is not None:
+            score_softmax = tf.where(mask, score_softmax, paddings)
+        print('score_softmax_pad:', score_softmax.numpy().tolist())
         output = tf.matmul(score_softmax, seq_emb)
         print('output:', output.numpy().tolist())
         output_2d = tf.reduce_mean(output, axis=1)
