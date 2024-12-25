@@ -49,7 +49,7 @@ def main(args):
             u2i2i_d[kk].extend(tl[0:100] if len(tl) > 100 else tl)
         else:
             u2i2i_d[kk] = tl[0:100] if len(tl) > 100 else tl
-    line0, line1, line2 , line3 = [], [], [], []
+    # line0, line1, line2 , line3 = [], [], [], []
     lines, fins = [[] for _ in range(args.part)], []
     for i in range(args.part):
         fin = open(args.u2i2i_file % i, 'w')
@@ -59,9 +59,8 @@ def main(args):
     # fin1 = open(args.u2i2i_file % 1, 'w')
     # fin2 = open(args.u2i2i_file % 2, 'w')
     # fin3 = open(args.u2i2i_file % 3, 'w')
-    for i, kv in enumerate(u2i2i_d.items()):
-        k = kv[0]
-        v = chr(2).join([str(e[0]) + chr(4) + "1" for e in kv[1]])
+    for k, v in u2i2i_d.items():
+        v = chr(2).join([str(e) + chr(4) + "1" for e in v])
         line = (k + chr(1) + v + '\n')
         lines[i%args.part].append(line)
         # if i%4 == 0: line0.append(line)
