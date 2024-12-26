@@ -46,5 +46,17 @@ compute ctr-auc cost: 26.226640462875366
 
 # v1_mask
 nohup python run_rec_model_sg_di_prod_v1_mask.py --model_name=prod_mtl_seq_on_esmm_v1_mask  --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4   > run_seq_on_mask.log 2>&1 &
+nd merge score cost: -6.437301635742188e-05
+end write2table cost: 22.61893892288208
+****************************************
+model_name: prod_mtl_seq_on_esmm_v1_mask
+model_version: /ds=20241202-20241209/model/1735200130
+tfr_s3: rec/cn_rec_detail_sample_v10_tfr/ds=20241210/
+N: 2697072 avg_pred_cvr: 0.005452963238471872 avg_label_pay: 0.006023940035712803
+cvr-auc: 0.6692640859822552
+compute cvr-auc cost: 3.975188970565796
+N: 23885532 avg_pred_ctr: 0.11377832367715975 avg_label_clk: 0.11291655551151215
+ctr-auc: 0.5839594195351057
+compute ctr-auc cost: 28.422733068466187
 
                                             
