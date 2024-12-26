@@ -444,10 +444,10 @@ class DIN(tf.estimator.Estimator):
 
                 seq_low_on_goodsid_input = attention_layer_mask(seq_ids=features['lowerLevelSeqListGoods'], tid_ids=features['goods_id'],
                                                             id_type='seq_on_low_goods_id', shape=[40000, 32], att_type='dot'
-                                                                 , seq_len_actual=features['lowLevelSeqList_len'], max_len=20)
+                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20)
                 seq_low_on_cateid_input = attention_layer_mask(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
                                                            id_type='seq_on_low_cate_id', shape=[2000, 16], att_type='dot'
-                                                                 , seq_len_actual=features['lowLevelSeqList_len'], max_len=20)
+                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20)
                 input_layer.extend([seq_high_on_cateid_input,seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input])
             elif 'seq_on' in params['version']:
                 seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
