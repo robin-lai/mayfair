@@ -43,7 +43,8 @@ def main(args):
         tl_set = set([str(e[0]) for e in tl])
         tl = list(tl_set)
         if args.debug:
-            print(tl)
+            if idx % 100 == 0:
+                print(tl)
         kk = 'Savana_IN' + '|' + str(d['uuid'])
         if kk in u2i2i_d:
             u2i2i_d[kk].extend(tl[0:100] if len(tl) > 100 else tl)
