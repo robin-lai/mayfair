@@ -149,8 +149,6 @@ def input_fn(task='ctr', batch_size=256, channel='train',
     data_iter = dataset.make_one_shot_iterator()
     print('#' * 40, 'dataset5')
     features, labels = data_iter.get_next()
-    features['highLevelSeqList_len'] = tf.reshape(features['highLevelSeqList_len'], shape=[-1, 1])
-    features['lowLevelSeqList_len'] = tf.reshape(features['lowLevelSeqList_len'], shape=[-1, 1])
     print('raw features:', features)
     print('raw click:', labels)
     if task == 'ctr':
@@ -336,6 +334,7 @@ def attention_layer_mask(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actua
         paddings = tf.zeros_like(score)
         if seq_len_actual is not None:
             mask = tf.sequence_mask(seq_len_actual, max_len)
+            mask = tf.reshape(mask, [-1,max_len])
             score = tf.where(mask, score, paddings)
         print('score_pad_shape', score.get_shape())
         # print('score_pad:', score.numpy().tolist())
