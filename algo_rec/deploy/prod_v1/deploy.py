@@ -27,7 +27,8 @@ fts_item_pickle = deploy_pkg_dir + 'item_features.pkl'
 
 # config
 rec_buk = 's3://warehouse-algo/rec/'
-in_rec_buk = 's3://algo-rec/rec/model_online/'
+# in_rec_buk = 's3://algo-rec/rec/model_online/'
+in_rec_buk = 's3://mayfair-algo-in/rec/model_online/'
 sg_rec_buk = 's3://algo-sg/rec/model_online/'
 in_s3_tar_file = ""
 sg_s3_tar_file = ""
