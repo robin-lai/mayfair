@@ -138,7 +138,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
                            "highLevelSeqList_len":0,
                            "lowerLevelSeqList_len":0
                            }
-        predictor = tf.compat.v1.saved_model.load(dir).signatures["serving_default"]
+        predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
             feed_dict = {}
             id = idx[ID].tolist()
