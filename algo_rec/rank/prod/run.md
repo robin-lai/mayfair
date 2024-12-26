@@ -43,4 +43,8 @@ compute cvr-auc cost: 3.601358413696289
 N: 22221789 avg_pred_ctr: 0.11485489584755129 avg_label_clk: 0.11450914235573023
 ctr-auc: 0.5873199451961778
 compute ctr-auc cost: 26.226640462875366
+
+# v1_mask
+nohup python run_rec_model_sg_di_prod_v1_mask.py --model_name=prod_mtl_seq_on_esmm_v1_mask  --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4   > run_seq_on_mask.log 2>&1 &
+
                                             

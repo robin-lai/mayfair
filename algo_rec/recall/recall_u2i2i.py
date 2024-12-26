@@ -19,7 +19,7 @@ def main(args):
     print('read i2i end, num:', len(i2i_d.keys()))
 
     if args.debug:
-        pt = parquet.read_table(args.u2i_s3).to_pylist()[0:1000]
+        pt = parquet.read_table(args.u2i_s3).to_pylist()[0:1000000]
     else:
         pt = parquet.read_table(args.u2i_s3).to_pylist()
     for idx, d in enumerate(pt):
