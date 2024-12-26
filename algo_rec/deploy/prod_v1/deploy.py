@@ -1194,7 +1194,7 @@ def request_sagemaker_time(args):
         )
         ed = time.time()
         cost.append(ed - st)
-    print('req:', args.n)
+    print('req:', args.req_num)
     print('goods_id_num:', args.goods_num)
     print('mean cost:', np.mean(cost), 'max cost:', np.max(cost), 'min cost:', np.min(cost))
 
