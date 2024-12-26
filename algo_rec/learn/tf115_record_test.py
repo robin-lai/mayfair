@@ -32,7 +32,13 @@ def _parse_fea(data):
        , "seq_goods_id": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20)
 
        , "is_clk": tf.FixedLenFeature(1, tf.int64, 0)
-       , "is_pay": tf.FixedLenFeature(1, tf.int64, 0)
+       , "is_pay": tf.FixedLenFeature(1, tf.int64, 0),
+       "highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+       "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+       "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+       "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+       "highLevelSeqList_len": tf.FixedLenFeature(1, tf.int64, default_value=0),
+       "lowerLevelSeqList_len": tf.FixedLenFeature(1, tf.int64, default_value=0),
    }
    features = tf.io.parse_single_example(data, features=feature_describe)
 
