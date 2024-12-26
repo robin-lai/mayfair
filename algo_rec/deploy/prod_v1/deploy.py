@@ -32,6 +32,80 @@ sg_rec_buk = 's3://algo-sg/rec/model_online/'
 in_s3_tar_file = ""
 sg_s3_tar_file = ""
 
+request = {
+    "signature_name": "serving_default",
+    "city": "Menbai",
+    "country": "IN",
+    "debug": "",
+    "parentGoodsId": "111307",
+    "featureMap": {
+        "userFeatures": {
+            "high_level_seq": [
+                "1327692",
+                "1402902",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "low_level_seq": [
+                "1327692",
+                "1402902",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+            ],
+            "user_feature_context": {
+                "register_brand": "other",
+                "last_login_device": "huawei",
+                "last_login_brand": "huawei"
+            }
+        }
+    },
+    "goodsIdList": [
+        "1327692",
+        "1402902",
+        "1459992",
+        "1477842"
+    ],
+    "ip": "127.0.0.1",
+    "platform": "H5",
+    "province": "Menbai",
+    "scene": "detail_rec",
+    "userId": "23221",
+    "userNo": "2321",
+    "uuid": "fxleyu",
+    "version": "8.2.2"
+}
 
 # endpoint = 'ctr-model-debug1121'
 
@@ -210,80 +284,7 @@ def create_edp(args):
 
 
 def request_sagemaker(args):
-    request = {
-        "signature_name": "serving_default",
-        "city": "Menbai",
-        "country": "IN",
-        "debug": "",
-        "parentGoodsId": "111307",
-        "featureMap": {
-            "userFeatures": {
-                "high_level_seq": [
-                    "1327692",
-                    "1402902",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                ],
-                "low_level_seq": [
-                    "1327692",
-                    "1402902",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                ],
-                "user_feature_context": {
-                    "register_brand": "other",
-                    "last_login_device": "huawei",
-                    "last_login_brand": "huawei"
-                }
-            }
-        },
-        "goodsIdList": [
-            "1327692",
-            "1402902",
-            "1459992",
-            "1477842"
-        ],
-        "ip": "127.0.0.1",
-        "platform": "H5",
-        "province": "Menbai",
-        "scene": "detail_rec",
-        "userId": "23221",
-        "userNo": "2321",
-        "uuid": "fxleyu",
-        "version": "8.2.2"
-    }
+
 
     req_row = {
         "signature_name": "serving_default",
@@ -1172,6 +1173,31 @@ def request_sagemaker(args):
         result.append(tmp)
     print('final ret:', result)
 
+import numpy as np
+def request_sagemaker_time(args):
+    request['goodsIdList'] = ["1327692"] * args.goods_num
+    cost = []
+    sg_client = boto3.client("sagemaker-runtime")
+    for i in range(args.req_num):
+        print('req idx:', i)
+        if i % 5 == 0:
+            print('sleep 1s')
+            time.sleep(10)
+        st = time.time()
+        res = sg_client.invoke_endpoint(
+            EndpointName=args.endpoint,
+            Body=json.dumps(request),
+            # Body=json.dumps(ipt4).encode('utf-8'),
+            # .encode('utf-8'),
+            # Body=ipt4,
+            ContentType="application/json"
+        )
+        ed = time.time()
+        cost.append(ed - st)
+    print('req:', args.n)
+    print('goods_id_num:', args.goods_num)
+    print('mean cost:', np.mean(cost), 'max cost:', np.max(cost), 'min cost:', np.min(cost))
+
 
 def main(args):
     print('before pkg, need inference.py')
@@ -1196,6 +1222,9 @@ def main(args):
         print('start request sagemaker')
         request_sagemaker(args)
         print('end request sagemaker')
+    if 'time' in args.pipeline:
+        request_sagemaker_time(args)
+
     print('end run pipeline:', args.pipeline)
 
 
@@ -1216,6 +1245,8 @@ if __name__ == '__main__':
     parser.add_argument('--format', default='col')
     parser.add_argument('--col_num',type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
+    parser.add_argument('--req_num', type=int,  default=10000)
+    parser.add_argument('--goods_num', type=int,  default=100)
     args = parser.parse_args()
     args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
     print('endpoint:', args.endpoint)
