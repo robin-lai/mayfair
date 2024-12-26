@@ -303,14 +303,18 @@ def attention_layer(seq_ids, tid_ids, id_type, shape):
     # return att_emb, tid_emb
 
 
-def attention_layer_mask(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actual=None, max_len=20):
+def attention_layer_mask(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actual=None, max_len=20,initialize='normal'):
     with tf.variable_scope("attention_" + id_type):
         print('raw seq_ipt tensor shape:', seq_ids.get_shape())
         print('raw tid_ipt tensor shape:', tid_ids.get_shape())
         seq_ids_hash = tf.string_to_hash_bucket_fast(seq_ids, shape[0])
         tid_ids_hash = tf.string_to_hash_bucket_fast(tid_ids, shape[0])
         with tf.variable_scope("att_" + id_type, reuse=tf.AUTO_REUSE) as name:
-            embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
+            if initialize == 'zero':
+                embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
+                                         shape=shape, trainable=True, initializer= tf.zeros_initializer())
+            else:
+                embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
                                          shape=shape, trainable=True, initializer=tf.random_normal_initializer(seed=10))
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
         print('seq_emb_shape',seq_emb.get_shape())
@@ -437,17 +441,17 @@ class DIN(tf.estimator.Estimator):
             if 'seq_mask_on' in params['version']:
                 seq_high_on_goodsid_input = attention_layer_mask(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
                                                          id_type='seq_on_high_goods_id', shape=[40000, 32], att_type='dot'
-                                                         , seq_len_actual=features['highLevelSeqList_len'], max_len=20)
+                                                         , seq_len_actual=features['highLevelSeqList_len'], max_len=20,initialize=params['initialize'])
                 seq_high_on_cateid_input = attention_layer_mask(seq_ids=features['highLevelSeqListCateId'], tid_ids=features['cate_id'],
                                                                  id_type='seq_on_high_cate_id', shape=[2000, 16], att_type='dot'
-                                                                 , seq_len_actual=features['highLevelSeqList_len'], max_len=20)
+                                                                 , seq_len_actual=features['highLevelSeqList_len'], max_len=20,initialize=params['initialize'])
 
                 seq_low_on_goodsid_input = attention_layer_mask(seq_ids=features['lowerLevelSeqListGoods'], tid_ids=features['goods_id'],
                                                             id_type='seq_on_low_goods_id', shape=[40000, 32], att_type='dot'
-                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20)
+                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20,initialize=params['initialize'])
                 seq_low_on_cateid_input = attention_layer_mask(seq_ids=features['lowerLevelSeqListCateId'], tid_ids=features['cate_id'],
                                                            id_type='seq_on_low_cate_id', shape=[2000, 16], att_type='dot'
-                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20)
+                                                                 , seq_len_actual=features['lowerLevelSeqList_len'], max_len=20,initialize=params['initialize'])
                 input_layer.extend([seq_high_on_cateid_input,seq_high_on_goodsid_input, seq_low_on_cateid_input, seq_low_on_goodsid_input])
             elif 'seq_on' in params['version']:
                 seq_high_on_goodsid_input = attention_layer(seq_ids=features['highLevelSeqListGoods'], tid_ids=features['goods_id'],
@@ -576,7 +580,8 @@ def main(args):
             'learning_rate': 0.001,
             'dropout_rate': 0.0001,
             'task': args.task,
-            'version': args.version
+            'version': args.version,
+            'initialize':args.initialize,
 
         },
         optimizer='Adam',
@@ -645,6 +650,7 @@ if __name__ == "__main__":
     tf.app.flags.DEFINE_string("site_code", None, None)
     tf.app.flags.DEFINE_integer("num_parallel_calls", 20, 20)
     tf.app.flags.DEFINE_string("model_dir",os.environ["SM_MODEL_DIR"], "")
+    tf.app.flags.DEFINE_string("initialize", 'normal', 'normal')
     print('start main', '#' * 80)
     st = time.time()
     main(FLAGS)

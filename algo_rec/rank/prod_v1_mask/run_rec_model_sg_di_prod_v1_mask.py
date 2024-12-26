@@ -105,6 +105,7 @@ if __name__ == '__main__':
     parse.add_argument('--model_name', type=str, default='prod_mtl_seq_on_esmm_v1')
     parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--warm_start_from', type=str, default='NEWEST')
+    parse.add_argument('--initialize', type=str, default='zero')
     parse.add_argument('--instance_count', type=int, default=1)
     args = parse.parse_args()
     if args.range != '':

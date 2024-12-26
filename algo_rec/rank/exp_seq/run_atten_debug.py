@@ -11,7 +11,7 @@ def attention_layer(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actual=Non
         tid_ids_hash = tf.string_to_hash_bucket_fast(tid_ids, shape[0])
         with tf.variable_scope("att_" + id_type, reuse=tf.AUTO_REUSE) as name:
             embeddings = tf.get_variable(name="emb_att_" + id_type , dtype=tf.float32,
-                                         shape=shape, trainable=True, initializer=tf.random_normal_initializer(seed=10))
+                                         shape=shape, trainable=True, initializer=tf.zeros_initializer())
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
         print('seq_emb_shape',seq_emb.get_shape())
         print('seq_emb', seq_emb.numpy().tolist())
