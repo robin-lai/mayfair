@@ -6,7 +6,11 @@ from random import shuffle
 
 from pyarrow import parquet
 import tensorflow as tf
+import sys
 print(tf.__version__)
+if '2' not in tf.__version__:
+    print('use tf2')
+    sys.exit(0)
 import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3

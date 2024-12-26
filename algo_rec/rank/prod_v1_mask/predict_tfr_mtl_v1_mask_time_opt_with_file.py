@@ -6,7 +6,11 @@ from random import shuffle
 
 from pyarrow import parquet
 import tensorflow as tf
+import sys
 print(tf.__version__)
+if '2' not in tf.__version__:
+    print('use tf2')
+    sys.exit(0)
 import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3
@@ -283,7 +287,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='predict',
         description='predict',
-        epilog='predict')
+        epilog='predict-use tf2.0')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v1_mask')
     parser.add_argument('--model_version', default='/ds=20241202-20241209/model/1735200130')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
