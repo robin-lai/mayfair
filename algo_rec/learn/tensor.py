@@ -7,6 +7,6 @@ print(t.tolist()) # error
 
 t = tf.constant([[1], [2],[3]])
 print(t.get_shape())
-tt = tf.reshape(t, shape=[-1, t.get_shape()[2]])
+tt = tf.reshape(t, shape=[-1, 1])
 print(tt.get_shape())
 print(tt)

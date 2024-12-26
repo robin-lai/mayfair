@@ -149,8 +149,8 @@ def input_fn(task='ctr', batch_size=256, channel='train',
     data_iter = dataset.make_one_shot_iterator()
     print('#' * 40, 'dataset5')
     features, labels = data_iter.get_next()
-    t_shape = features['highLevelSeqList_len'].get_shape()
-    features['highLevelSeqList_len'] = tf.reshape(features['highLevelSeqList_len'], shape=[-1, t_shape[2]] )
+    features['highLevelSeqList_len'] = tf.reshape(features['highLevelSeqList_len'], shape=[-1, 1])
+    features['lowLevelSeqList_len'] = tf.reshape(features['lowLevelSeqList_len'], shape=[-1, 1])
     print('raw features:', features)
     print('raw click:', labels)
     if task == 'ctr':
