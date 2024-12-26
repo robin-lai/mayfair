@@ -33,7 +33,8 @@ def main(args):
         "mode": args.mode,
         "hidden_units": "1024,256,128,64,32",
         "task": args.task,
-        "version": "seq_mask_on"
+        "version": "seq_mask_on",
+        "initialize": args.initialize
     }
     if args.warm_start_from == 'NEWEST':
         hps['warm_start_from'] = model_dir_s3_pre
