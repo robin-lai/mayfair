@@ -314,11 +314,11 @@ def attention_layer_mask(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actua
                                          shape=shape, trainable=True, initializer=tf.random_normal_initializer(seed=10))
         seq_emb = tf.nn.embedding_lookup(embeddings, seq_ids_hash )
         print('seq_emb_shape',seq_emb.get_shape())
-        print('seq_emb', seq_emb.numpy().tolist())
+        # print('seq_emb', seq_emb.numpy().tolist())
         seq_len = seq_emb.get_shape()[1]
         tid_emb = tf.nn.embedding_lookup(embeddings, tid_ids_hash)
         print('tid_emb_shape', tid_emb.get_shape())
-        print('tid_emb', tid_emb.numpy().tolist())
+        # print('tid_emb', tid_emb.numpy().tolist())
         tid_emb_tile = tf.tile(tid_emb, [1, seq_len, 1])
         if att_type == 'net':
             net = tf.concat([seq_emb, tid_emb_tile, seq_emb - tid_emb_tile, seq_emb * tid_emb_tile], axis=-1)
@@ -329,27 +329,27 @@ def attention_layer_mask(seq_ids, tid_ids,id_type, shape, att_type,seq_len_actua
             score = seq_emb * tid_emb_tile
             score = tf.reduce_mean(score, axis=2)
         print('score_shape', score.get_shape())
-        print('score:', score.numpy().tolist())
+        # print('score:', score.numpy().tolist())
 
         paddings = tf.zeros_like(score)
         if seq_len_actual is not None:
             mask = tf.sequence_mask(seq_len_actual, max_len)
             score = tf.where(mask, score, paddings)
         print('score_pad_shape', score.get_shape())
-        print('score_pad:', score.numpy().tolist())
+        # print('score_pad:', score.numpy().tolist())
         score_softmax = tf.nn.softmax(score)
-        print('score_softmax:', score_softmax.numpy().tolist())
+        # print('score_softmax:', score_softmax.numpy().tolist())
         if seq_len_actual is not None:
             score_softmax = tf.where(mask, score_softmax, paddings)
-        print('score_softmax_pad:', score_softmax.numpy().tolist())
+        # print('score_softmax_pad:', score_softmax.numpy().tolist())
         # output = tf.matmul(score_softmax, seq_emb) # 3,6 matmul 3,6,8 = 3,3,8
         score_softmax = tf.expand_dims(score_softmax,axis=-1)
         print('score_softmax_pad_expand_shape:', score_softmax.get_shape())
-        print('score_softmax_pad_expand:', score_softmax.numpy().tolist())
+        # print('score_softmax_pad_expand:', score_softmax.numpy().tolist())
         output = score_softmax * seq_emb # 3,6 matmul 3,6,8 = 3,3,8
-        print('output:', output.numpy().tolist())
+        # print('output:', output.numpy().tolist())
         output_2d = tf.reduce_mean(output, axis=1)
-        print('output_2d:', output_2d.numpy().tolist())
+        # print('output_2d:', output_2d.numpy().tolist())
         return output_2d
 class DIN(tf.estimator.Estimator):
     def __init__(self,
