@@ -48,9 +48,9 @@ def convert_text2pkl(text_dir):
     # print(ll[0:10])
     for line in ll:
         k, v = line.split(chr(1))
-        ll = v.split(chr(4))
+        ll = v.split(chr(2))
         for ele in ll:
-            fts_name, fts_value = ele.split(chr(2))
+            fts_name, fts_value = ele.split(chr(4))
             trim_v = str.rstrip(fts_value, '\n')
             if k in m:
                 m[k][fts_name] = trim_v
