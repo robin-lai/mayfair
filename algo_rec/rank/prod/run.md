@@ -62,4 +62,9 @@ compute ctr-auc cost: 28.422733068466187
 #v1_mask_zero
 nohup python -u run_rec_model_sg_di_prod_v1_mask.py --model_name=prod_mtl_seq_on_esmm_v1_mask_zero --initialize=zero --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4   > run_seq_on_mask_zero.log 2>&1 &
 
+# prod_ctr_seq_on_din_v20_mask_savana_in 
+* nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241202-20241209 --warm_start_from=NEW --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
+* predict: 
+
+
                                             

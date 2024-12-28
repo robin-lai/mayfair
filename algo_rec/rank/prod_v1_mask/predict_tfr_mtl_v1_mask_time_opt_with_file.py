@@ -180,9 +180,10 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
             cvr = [e[0] for e in cvr]
             score[CVR].extend(cvr)
             # ctcvr
-            ctcvr = res[CTCVR].numpy().tolist()
-            ctcvr = [e[0] for e in ctcvr]
-            score[CTCVR].extend(ctcvr)
+            if CTCVR in res:
+                ctcvr = res[CTCVR].numpy().tolist()
+                ctcvr = [e[0] for e in ctcvr]
+                score[CTCVR].extend(ctcvr)
         # print('rm file:',file_suffix)
         print('proc %s process file:%s / %s' % (str(proc), str(file_n), str(len(tfr_list))))
         os.system('rm %s'%file_suffix)
