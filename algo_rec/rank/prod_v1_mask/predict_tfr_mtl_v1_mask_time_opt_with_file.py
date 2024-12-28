@@ -212,15 +212,17 @@ def main(args):
     # download model
     s3_model = prod_model + args.model_name + args.model_version
     model_local = tmp_dir + args.model_name + args.model_version
+    predict_local = tmp_dir + args.model_name
     os.system("rm -rf %s" % (model_local))
     os.system("mkdir -p %s" % (model_local))
+    os.system("mkdir -p %s" % (predict_local))
     os.system("aws s3 cp --recursive %s %s" % (s3_model, model_local))
 
     st = time.time()
     jobs = []
     predict_files = []
     for thread_idx, tfr_list in enumerate(file_batch):
-        pkl_file = './predict_part_%s.pkl'%(str(thread_idx))
+        pkl_file = '%s/predict_part_%s.pkl'%(str(predict_local),str(thread_idx))
         predict_files.append(pkl_file)
         p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local,pkl_file,args.site_code ))
         jobs.append(p)
