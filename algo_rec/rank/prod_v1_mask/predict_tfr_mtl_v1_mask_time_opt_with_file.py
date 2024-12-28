@@ -246,14 +246,17 @@ def main(args):
                 else:
                     merge_score[k] = v
     print('end merge score cost: %s'%(str(ed - st)))
+    dump_file = './' + args.model_name + '_' + args.model_version.split('/')[-1] + '.pkl'
+    with open(dump_file, 'wb') as fout:
+        pickle.dump(merge_score, fout)
+    print('write pred score2file:', dump_file)
 
     # save
-    st = time.time()
-    tb = pa.table(merge_score)
-    save_file = pred_dir + args.model_name
-    parquet.write_table(tb, save_file)
-    ed = time.time()
-    print('end write2table cost:', str(ed - st))
+    # st = time.time()
+    # tb = pa.table(merge_score)
+    # save_file = pred_dir + args.model_name
+    # parquet.write_table(tb, save_file)
+    # ed = time.time()
 
     st = time.time()
     pcvr, is_pay = [], []
