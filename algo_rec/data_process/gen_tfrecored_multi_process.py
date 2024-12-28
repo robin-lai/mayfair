@@ -52,6 +52,7 @@ def cross_fea(v1_list, v2_list, n=1):
     v3_list = ['%s,,%s' % (v1, v2) for v1 in v1_list for v2 in v2_list]
     return bytes_fea(v3_list, n, True)
 
+fts_string = {}
 item_features_string = {"goods_id":"", "cate_id": "", "cate_level1_id":""
                         ,"cate_level2_id":"","cate_level2_name":"",
                         "cate_level3_id":"", "cate_level3_name":"",
@@ -71,8 +72,8 @@ item_features_double = {"ctr_7d":0.0, "cvr_7d":0.0}
 item_features_int = {"show_7d":0, "click_7d":0, "cart_7d":0, "ord_total":0,"pay_total":0,"ord_7d":0,"pay_7d":0 ,
                      "is_rel_cate":0,"is_rel_cate2":0, "is_rel_cate3":0, "is_rel_cate4":0,"sales_price":0
                      }
-user_int = {"age":-1,"seq_len":0}
-user_string = {"last_login_device":"","last_login_brand":"","register_brand":""}
+user_int = {"age":-1,"seq_len":0, "pos_idx": -1}
+user_string = {"last_login_device":"","last_login_brand":"","register_brand":"","client_type":""}
 user_seq_string = {"seq_goods_id":[""] * 20, "seq_cate_id":[""] * 20}
 user_seq_on_string = {"highLevelSeqListGoods":[""] * 20, "highLevelSeqListCateId":[""] * 20,
                       "lowerLevelSeqListGoods":[""] * 20, "lowerLevelSeqListCateId":[""] * 20}
@@ -153,6 +154,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         for t in pt:
             feature = dict()
             try:
+                if int(t['pos_idx']) >= 200:
+                    continue
                 feature = build_feature(t)
                 sample = tf.train.Example(features=tf.train.Features(feature=feature))
                 record = sample.SerializeToString()
@@ -238,10 +241,10 @@ if __name__ == '__main__':
     parser.add_argument('--ds', default='ds=20241202')
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
-    parser.add_argument('--thread', type=int, default=10)
+    parser.add_argument('--thread', type=int, default=17)
     parser.add_argument('--sample_num', type=int, default=None)
-    parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v10/')
-    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v10_tfr/')
+    parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/')
+    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v20_savana_in_tfr/')
     parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=20241224/')
 
     args = parser.parse_args()
