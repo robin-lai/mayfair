@@ -68,8 +68,8 @@ def gauc(pred_d,label_idx, pre_idx, type):
 
 
 def main(args):
-    pred_file = "s3://warehouse-algo/rec/model_pred/prod_mtl_seq_on_esmm_v1"
-    pt_file = './prod_mtl_seq_on_esmm_v1_pt_test.pkl'
+    pred_file = "s3://warehouse-algo/rec/model_pred/" + args.file
+    pt_file = './%s_test.pkl' % (args.file)
     if args.debug:
         with open(pt_file, 'rb') as fin:
             pt = pickle.load(fin)
@@ -124,6 +124,7 @@ if __name__ == '__main__':
         description='auc',
         epilog='auc')
     parser.add_argument('--debug', type=bool, default=False)
+    parser.add_argument('--file', type=str, default='')
     args = parser.parse_args()
     main(args)
 
