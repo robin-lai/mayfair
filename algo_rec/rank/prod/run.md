@@ -59,7 +59,23 @@ N: 23885532 avg_pred_ctr: 0.11377832367715975 avg_label_clk: 0.11291655551151215
 ctr-auc: 0.5839594195351057
 compute ctr-auc cost: 28.422733068466187
 
-#v1_mask_zero
+N: 23885532 label_mean: 0.11291655551151215 pred_mean: 0.11377832367715975 auc-all-ctr: 0.5839594195351053
+N: 2697072 label_mean: 0.006023940035712803 pred_mean: 0.005452963238471872 auc-all-ctr: 0.6692640859822552
+uuid num: 366036
+recid num: 4372847
+none_auc num 98459 of all uuid:366036
+uuid num:267577 have auc
+type:u-gauc 0.49855814157573963
+type:u-gauc percentle: [0.27610935 0.375      0.43       0.5        0.52777778 0.56643357
+ 0.62121212 0.72447758 1.        ]
+none_auc num 2509807 of all uuid:4372847
+uuid num:1863040 have auc
+type:q-gauc 0.48995064279993655
+type:q-gauc percentle: [0.         0.16666667 0.3        0.5        0.57142857 0.66666667
+ 0.8        1.         1.        ]
+
+
+# v1_mask_zero
 nohup python -u run_rec_model_sg_di_prod_v1_mask.py --model_name=prod_mtl_seq_on_esmm_v1_mask_zero --initialize=zero --warm_start_from=NEW  --train_ds=20241202-20241209 --instance_count=4   > run_seq_on_mask_zero.log 2>&1 &
 
 nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v1_mask_zero --tfr_s3=rec/cn_rec_detail_sample_v10_tfr/ds=20241210/  --model_version=/ds=20241202-20241209/model/1735233838 > runv2_savana_in.log 2>&1 &
@@ -75,6 +91,7 @@ compute cvr-auc cost: 3.7314655780792236
 N: 23885532 avg_pred_ctr: 0.11495262201891711 avg_label_clk: 0.11291655551151215
 ctr-auc: 0.5838542805442902
 compute ctr-auc cost: 27.98888325691223
+
 
 
 
