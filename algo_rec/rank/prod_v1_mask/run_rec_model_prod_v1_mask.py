@@ -154,14 +154,7 @@ def input_fn(task='ctr', batch_size=256, channel='train',
     features, labels = data_iter.get_next()
     print('raw features:', features)
     print('raw click:', labels)
-    if task == 'ctr':
-        return features, labels['is_clk']
-    elif task == 'cvr':
-        return features, labels['is_pay']
-    elif task == 'mtl':
-        return features, labels
-    else:
-        print('unknown task:', task)
+    return features, labels
 
 
 
