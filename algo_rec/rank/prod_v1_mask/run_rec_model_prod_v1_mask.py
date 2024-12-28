@@ -45,6 +45,8 @@ feature_spec_serve = {
     "last_login_device": tf.placeholder(dtype=tf.string, shape=[None, 1], name="last_login_device"),
     "last_login_brand": tf.placeholder(dtype=tf.string, shape=[None, 1], name="last_login_brand"),
     "register_brand": tf.placeholder(dtype=tf.string, shape=[None, 1], name="register_brand"),
+    "client_type": tf.placeholder(dtype=tf.string, shape=[None, 1], name="client_type"),
+
 
     "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
                 "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
@@ -95,6 +97,7 @@ feature_describe = {
     , "last_login_device": tf.FixedLenFeature(1, tf.string, "-1")
     , "last_login_brand": tf.FixedLenFeature(1, tf.string, "-1")
     , "register_brand": tf.FixedLenFeature(1, tf.string, "-1")
+    , "client_type": tf.FixedLenFeature(1, tf.string, "-1")
 
     , "cate_id": tf.FixedLenFeature(1, tf.string, "-1")
         , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")

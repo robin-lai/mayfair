@@ -95,7 +95,7 @@ if __name__ == '__main__':
     today = datetime.date.today().strftime('%Y%m%d')
     parse.add_argument('--task', type=str, default='mtl')
     parse.add_argument('--mode', type=str, default='train')
-    parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v10_tfr")
+    parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v20_savana_in_tfr")
     parse.add_argument('--site_code', type=str, default=None)
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str, default=today)
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
-    parse.add_argument('--model_name', type=str, default='prod_mtl_seq_on_esmm_v1')
+    parse.add_argument('--model_name', type=str, default='prod_mtl_seq_on_esmm_v20_mask_savana_in')
     parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--warm_start_from', type=str, default='NEWEST')
     parse.add_argument('--initialize', type=str, default='zero')
