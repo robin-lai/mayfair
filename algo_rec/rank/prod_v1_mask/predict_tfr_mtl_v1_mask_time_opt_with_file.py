@@ -141,6 +141,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
                            "last_login_device":"-1",
                            "last_login_brand":"-1",
                            "register_brand":"-1",
+                           "client_type":""
                            }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
