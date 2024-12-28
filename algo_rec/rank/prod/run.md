@@ -64,7 +64,9 @@ nohup python -u run_rec_model_sg_di_prod_v1_mask.py --model_name=prod_mtl_seq_on
 
 # prod_ctr_seq_on_din_v20_mask_savana_in 
 * nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241202-20241209 --warm_start_from=NEW --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
-* predict: 
-
+* predict: --
+* nohup python predict_tfr_mtl_v1_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &
+* test: 
+nohup python predict_tfr_mtl_v1_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 --sample_num=1 --proc=1 > runv2_savana_in.log 2>&1 &
 
                                             
