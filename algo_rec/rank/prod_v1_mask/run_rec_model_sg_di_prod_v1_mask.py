@@ -22,7 +22,7 @@ def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
 
 def main(args):
     # Basic config
-    job_name = 'Job-laidehe-%s-%s' % (args.model_name.replace('_', '-'), ts2date(time.time(), '%m-%d-%H-%M-%S'))
+    job_name = 'lai%s%s' % (args.model_name.replace('_', ''), ts2date(time.time(), '%m-%d-%H-%M'))
     code_dir_s3 = 's3://warehouse-algo/rec/%s/%s/ds=%s/code/' % (args.model_dir, args.model_name, args.train_ds)
     model_dir_s3_prefix = 's3://warehouse-algo/rec/%s/%s/ds=%s/' % (args.model_dir, args.model_name, args.train_ds)
     model_dir_s3 = model_dir_s3_prefix + job_name + '/model/'
