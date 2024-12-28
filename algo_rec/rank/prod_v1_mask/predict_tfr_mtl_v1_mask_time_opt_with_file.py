@@ -109,7 +109,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
     score[ID] = []
     score[CTR] = []
     score[CVR] = []
-    score[CTCVR] = []
+    # score[CTCVR] = []
     score[CLK] = []
     score[PAY] = []
     for file_n, file in enumerate(tfr_list):
