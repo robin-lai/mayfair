@@ -86,17 +86,42 @@ def main(args):
     uuid_pred = {}
     req_pred = {}
     for id, clk, pay, ctr, cvr in zip(pt['sample_id'], pt['is_clk'], pt['is_pay'], pt['ctr'], pt['cvr']):
-        token = str(id).split('|')
-        pred.append((token[0], token[2], clk, pay, ctr, cvr))
+        if args.sample == 'v10':
+            token = str(id).split('|')
+            uuid, reqid = token[0], token[2]
+        elif args.sample == 'v20':
+            # concat(
+            #     bhv.country,
+            #     '|',
+            #     bhv.scene_code,
+            #     '|',
+            #     bhv.client_type,
+            #     '|',
+            #     bhv.uuid,
+            #     '|',
+            #     bhv.pssid,
+            #     '|',
+            #     bhv.recid,
+            #     '|',
+            #     bhv.main_goods_id,
+            #     '|',
+            #     bhv.goods_id
+            # )
+            # AS
+            # sample_id,
+            token = str(id).split('|')
+            uuid, reqid = token[3], token[5]
+
+        pred.append((uuid, reqid, clk, pay, ctr, cvr))
         tt = (clk, pay, ctr, cvr)
-        if token[0] in uuid_pred:
-            uuid_pred[token[0]].append(tt)
+        if uuid in uuid_pred:
+            uuid_pred[uuid].append(tt)
         else:
-            uuid_pred[token[0]] = [tt]
-        if token[2] in req_pred:
-            req_pred[token[2]].append(tt)
+            uuid_pred[uuid] = [tt]
+        if reqid in req_pred:
+            req_pred[reqid].append(tt)
         else:
-            req_pred[token[2]] = [tt]
+            req_pred[reqid] = [tt]
 
     label = [e[2] for e in pred]
     pre = [e[4] for e in pred]
@@ -125,6 +150,7 @@ if __name__ == '__main__':
         epilog='auc')
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--file', type=str, default='')
+    parser.add_argument('--sample', type=str, default='v10')
     args = parser.parse_args()
     main(args)
 

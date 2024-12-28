@@ -92,6 +92,21 @@ N: 23885532 avg_pred_ctr: 0.11495262201891711 avg_label_clk: 0.11291655551151215
 ctr-auc: 0.5838542805442902
 compute ctr-auc cost: 27.98888325691223
 
+N: 23885532 label_mean: 0.11291655551151215 pred_mean: 0.11495262201891711 auc-all-ctr: 0.5838542805442898
+N: 2697072 label_mean: 0.006023940035712803 pred_mean: 0.0058745611610977475 auc-all-ctr: 0.6653962879454793
+uuid num: 366036
+recid num: 4372847
+none_auc num 98459 of all u-gauc :366036
+u-gauc num:267577 have auc
+type:u-gauc 0.49620909718372347
+type:u-gauc percentle: [0.27272727 0.375      0.42857143 0.49707602 0.52513464 0.56333373
+ 0.61904762 0.72222222 1.        ]
+none_auc num 2509807 of all q-gauc :4372847
+q-gauc num:1863040 have auc
+type:q-gauc 0.4884779313963087
+type:q-gauc percentle: [0.         0.16666667 0.3        0.5        0.5625     0.66666667
+ 0.8        1.         1.        ]
+
 
 
 
