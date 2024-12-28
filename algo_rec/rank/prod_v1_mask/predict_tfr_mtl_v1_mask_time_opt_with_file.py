@@ -78,7 +78,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
            , "last_login_device": v1.FixedLenFeature(1, tf.string, "-1")
            , "last_login_brand": v1.FixedLenFeature(1, tf.string, "-1")
            , "register_brand": v1.FixedLenFeature(1, tf.string, "-1")
-           , "client_type": v1.FixedLenFeature(1, tf.string, "-1")
+           # , "client_type": v1.FixedLenFeature(1, tf.string, "-1")
 
            , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
            , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -142,7 +142,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
                            "last_login_device":"-1",
                            "last_login_brand":"-1",
                            "register_brand":"-1",
-                           "client_type":""
+                           # "client_type":""
                            }
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
