@@ -1,9 +1,10 @@
 import tensorflow as tf
 import argparse
+import tensorflow.compat.v1 as v1
+
 print(tf.__version__)
 
 def main(args):
-    # import tensorflow.compat.v1 as v1
 
     def parse(data):
         feature_describe = {
@@ -44,7 +45,7 @@ def main(args):
             #
             # , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
-            # , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
