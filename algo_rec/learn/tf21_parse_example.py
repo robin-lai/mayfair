@@ -69,7 +69,7 @@ def main(args):
         return features
 
     ds = tf.data.TFRecordDataset(args.file)
-    ds = ds.map(parse).batch(100)
+    ds = ds.map(parse).batch(args.batch_size)
     print(list(ds.as_numpy_iterator())[0:args.n])
     # [{'is_clk': array([[1],
     #          [1]]),
@@ -87,6 +87,7 @@ if __name__ == '__main__':
         epilog='gentfr-help')
     parser.add_argument('--file',type=str, default='./tfrecord/part-00000-18b4c5ae-0eba-41d2-b246-79e7f457ee3d-c000')
     parser.add_argument('--n',type=int, default=10)
+    parser.add_argument('--batch_size',type=int, default=10)
     args = parser.parse_args()
     main(args)
 
