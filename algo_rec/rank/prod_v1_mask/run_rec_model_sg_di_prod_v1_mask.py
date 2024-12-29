@@ -98,7 +98,7 @@ if __name__ == '__main__':
     parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v20_savana_in_tfr")
     parse.add_argument('--site_code', type=str, default=None)
     parse.add_argument('--range', type=str, default='')
-    parse.add_argument('--train_ds', type=str, default=today)
+    parse.add_argument('--train_ds', type=str, default='20241202-20241209')
     parse.add_argument('--eval_ds', type=str, default='20241210eval')
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
