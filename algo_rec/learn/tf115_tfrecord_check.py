@@ -1,4 +1,5 @@
 import tensorflow as tf
+import argparse
 
 # print(tf.__version__)
 # a = tf.data.Dataset.range(1, 1000000)
@@ -50,41 +51,25 @@ def _parse_fea(data):
    return features, is_clk
 
 
-def input_fn_from_local_tfrecords(mode, channel=None, feature_description=None, label=None, batch_size=10, num_epochs=1,
-             num_parallel_calls=8,
-             shuffle_factor=10, prefetch_factor=20,
-             fn_mode='', num_host=1, host_rank=0):
-    print('Begin_input_fn channel', channel, '#' * 80)
+def main(args):
 
-    dataset = tf.data.TFRecordDataset('./tfrecord/part-00000-18b4c5ae-0eba-41d2-b246-79e7f457ee3d-c000')
-    # data_iter_before = dataset.make_one_shot_iterator()
-    # print('raw sample:', data_iter_before.get_next())
-    # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
-    if fn_mode == 'MultiWorkerShard':
-        dataset = dataset.shard(num_host, host_rank)
-    dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
+    dataset = tf.data.TFRecordDataset(args.file)
+    dataset = dataset.map(_parse_fea)
     dataset = dataset.filter(lambda x, y: tf.math.equal(x['country'][0],'IN'))
-
-    dataset = dataset.shuffle(buffer_size=batch_size * shuffle_factor)
-    dataset = dataset.batch(batch_size)
-
-    if channel == 'eval':
-        print('Begin read eval data sample 100000', '#' * 80)
-        dataset = dataset.take(100000)
-
-    if prefetch_factor > 0:
-        dataset = dataset.prefetch(buffer_size=prefetch_factor)
-    try:
-        data_iter = dataset.make_one_shot_iterator()
-    except AttributeError:
-        data_iter = tf.compat.v1.data.make_one_shot_iterator(dataset)
-
+    dataset = dataset.batch(args.batch_size)
+    data_iter = dataset.make_one_shot_iterator()
     features, click = data_iter.get_next()
-    print('raw features:', features)
-    print('raw click:', click)
-    return features, click
-
-if __name__ == '__main__':
-    features, click = input_fn_from_local_tfrecords(mode='train')
     with tf.Session() as sess:
         print(sess.run([features, click]))
+    print('raw features:', features)
+    print('raw click:', click)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog='record',
+        description='record',
+        epilog='record-help')
+    parser.add_argument('--batch_size', type=int, default=10)
+    parser.add_argument('--file', type=str, default='')
+    args = parser.parse_args()
+    main()
