@@ -69,7 +69,7 @@ def main(args):
         return features
 
     ds2 = ds.map(parse).batch(2)
-    print(list(ds.as_numpy_iterator()))
+    print(list(ds.as_numpy_iterator())[0:args.n])
     # [{'is_clk': array([[1],
     #          [1]]),
     #   'is_pay': array([[0],
@@ -85,6 +85,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--file',type=str, default='./tfrecord/part-00000-18b4c5ae-0eba-41d2-b246-79e7f457ee3d-c000')
+    parser.add_argument('--n',type=int, default=10)
     args = parser.parse_args()
     main(args)
 
