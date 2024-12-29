@@ -112,6 +112,7 @@ type:q-gauc percentle: [0.         0.16666667 0.3        0.5        0.5625     0
 
 # prod_ctr_seq_on_din_v20_mask_savana_in 
 * nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241202-20241209 --warm_start_from=NEW --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
+nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216 --warm_start_from=NEWEST --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
 * predict: --
 * nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &
 * test: 
@@ -125,5 +126,30 @@ compute cvr-auc cost: 3.290285587310791
 N: 22172843 avg_pred_ctr: 0.11678284083071333 avg_label_clk: 0.11224492050929148
 ctr-auc: 0.5699700505602705
 compute ctr-auc cost: 24.973762273788452
+
+N: 22172843 label_mean: 0.11224492050929148 pred_mean: 0.11678284083071333 auc-all-ctr: 0.5699700505602704
+N: 2488789 label_mean: 0.006350076282079357 pred_mean: 0.12254157575338512 auc-all-ctr: 0.47097684824685815
+uuid num: 338640
+recid num: 3991490
+none_auc num 91865 of all u-gauc :338640
+u-gauc num:246775 have auc
+type:u-gauc 0.5598931603191012
+type:u-gauc percentle: [0.33333333 0.4375     0.49726447 0.56402439 0.59808779 0.6368797
+ 0.69163557 0.8        1.        ]
+none_auc num 2301627 of all q-gauc :3991490
+q-gauc num:1689863 have auc
+type:q-gauc 0.5696350461462475
+type:q-gauc percentle: [0.         0.25       0.375      0.6        0.6875     0.80952381
+ 1.         1.         1.        ]
+
+
+
+# prod_mtl_seq_on_esmm_v20_mask_savana_in
+* nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241202-20241209 --warm_start_from=NEW --task=mtl --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in --instance_count=3 > v201228.log 2>&1
+  nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216 --warm_start_from=NEWEST --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
+* predict: --
+* nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &
+* test:
+  python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 --sample_num=1 --proc=1
 
                                             
