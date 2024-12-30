@@ -1,7 +1,9 @@
 import argparse
 from heapq import merge
-
+from datetime import datetime
+import pprint
 import pyarrow as pa
+import traceback
 from random import shuffle
 
 from pyarrow import parquet
@@ -192,6 +194,55 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
     with open(pkl_file, 'wb') as fout:
         pickle.dump(score, fout)
 
+def auc(label, pre):
+    new_data = [[p, l] for p, l in zip(pre, label)]
+    new_data.sort(key=lambda x: x[0])
+    score_index = {}
+    for index, i in enumerate(new_data):
+        if i[0] not in score_index:
+            score_index[i[0]] = []
+        score_index[i[0]].append(index + 1)
+    rank_sum = 0.
+    for i in new_data:
+        if i[1] == 1:
+            rank_sum += sum(score_index[i[0]]) / len(score_index[i[0]]) * 1.0
+    pos = label.count(1)
+    neg = label.count(0)
+    if not pos or not neg:
+        return None
+    return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
+
+def gauc(pred_d,label_idx, pre_idx, type):
+    gauc = {}
+    gauc_l = []
+    none_auc = 0
+    try:
+        for u, l in pred_d.items():
+            pred = [e[pre_idx] for e in l]
+            label = [e[label_idx] for e in l]
+            auc_score = auc(label, pred)
+            if auc_score is not None:
+                gauc[u] = auc_score
+                gauc_l.append(auc_score)
+            else:
+                none_auc += 1
+                # print('uid:%s auc is none'%(u), l)
+    except Exception:
+        print('data:', l)
+        traceback.print_exc(file=sys.stdout)
+    gnum = len(pred_d.keys())
+    gpos = len(gauc_l)
+    gneg = none_auc
+    gauc = np.mean(gauc_l)
+    pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
+    gaucpp = np.percentile(gauc_l, pp)
+    print('none_auc num %s of all %s :%s'%(str(gneg),type, str(gnum)))
+    print('%s num:%s have auc'%(type, str(gpos)))
+    print('type:%s'%type, gauc)
+    print('type:%s percentle:'%type, gaucpp)
+    return  gnum, gpos, gneg,gauc, gaucpp
+
+
 def main(args):
     s3_cli = boto3.client('s3')
     BUCKET = 'warehouse-algo'
@@ -251,13 +302,8 @@ def main(args):
         pickle.dump(merge_score, fout)
     print('write pred score2file:', dump_file)
 
-    # save
-    # st = time.time()
-    # tb = pa.table(merge_score)
-    # save_file = pred_dir + args.model_name
-    # parquet.write_table(tb, save_file)
-    # ed = time.time()
 
+    model_info = {}
     st = time.time()
     pcvr, is_pay = [], []
     for e1, e2, e3 in zip(merge_score[CLK], merge_score[PAY], merge_score[CVR]):
@@ -276,7 +322,17 @@ def main(args):
     ed = time.time()
     print('compute cvr-auc cost:', str(ed - st))
 
+    model_info['model_name'] = args.model_name
+    model_info['version'] = args.model_version
+    tfr_s3_tt = args.tfr_s3.split('/')
+    model_info['ds'] = tfr_s3_tt[-1]
+    model_info['sample'] = tfr_s3_tt[-2]
+    now = datetime.now()
+    model_info['datetime'] = now.strftime("%Y-%m-%d-%H:%M:%S")
+
     # auc
+    auc_ctr_d = model_info
+    auc_cvr_d = model_info
     st = time.time()
     pctr = merge_score[CTR]
     is_clk = merge_score[CLK]
@@ -286,8 +342,80 @@ def main(args):
     auc = roc_auc_score(list(is_clk), list(pctr))
     print('ctr-auc:', auc)
     ed = time.time()
+    auc_ctr_d['n'] = len(pctr)
+    auc_ctr_d['n+'] =  np.sum(is_clk)
+    auc_ctr_d['n-'] = len(pctr) - np.sum(is_clk)
+    auc_ctr_d['pred'] = avg_pred_ctr
+    auc_ctr_d['label'] = avg_label_clk
+    auc_ctr_d['auc'] = auc
     print('compute ctr-auc cost:', str(ed - st))
 
+    # gauc
+    pred = []
+    uuid_pred = {}
+    req_pred = {}
+    for id, clk, pay, ctr, cvr in zip(merge_score['sample_id'], merge_score['is_clk'], merge_score['is_pay'], merge_score['ctr'], merge_score['cvr']):
+        # "concat(bhv.country,'|',bhv.scene_code,'|',bhv.client_type,'|',bhv.uuid,'|',bhv.pssid,'|',bhv.recid,'|',bhv.main_goods_id,'|',bhv.goods_id)ASsample_id,"
+        token = str(id).split('|')
+        uuid, reqid = token[3], token[5]
+
+        pred.append((uuid, reqid, clk, pay, ctr, cvr))
+        tt = (clk, pay, ctr, cvr)
+        if uuid in uuid_pred:
+            uuid_pred[uuid].append(tt)
+        else:
+            uuid_pred[uuid] = [tt]
+        if reqid in req_pred:
+            req_pred[reqid].append(tt)
+        else:
+            req_pred[reqid] = [tt]
+
+    label = [e[2] for e in pred]
+    pre = [e[4] for e in pred]
+    auc_all = auc(label, pre)
+    print('N:', len(pred), 'label_mean:', np.mean(label), 'pred_mean:', np.mean(pre), 'auc-all-ctr:',auc_all)
+    label_cvr = [e[3] for e in pred if e[2] == 1]
+    pre_cvr = [e[5] for e in pred if e[2] == 1]
+    auc_all_cvr = auc(label_cvr, pre_cvr)
+    print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
+    auc_cvr_d['n'] = len(label_cvr)
+    auc_ctr_d['n+'] =  np.sum(is_pay)
+    auc_ctr_d['n-'] = len(label_cvr) - np.sum(is_pay)
+    auc_cvr_d['pred'] = np.mean(pre_cvr)
+    auc_cvr_d['label'] = np.mean(label_cvr)
+    auc_cvr_d['auc'] = auc_all_cvr
+
+    print('uuid num:', len(uuid_pred.keys()))
+    print('recid num:', len(req_pred.keys()))
+    gauc_ctr_user_d = model_info
+    ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc(uuid_pred, 0,3, 'u-ctr-gauc')
+    gauc_ctr_user_d['n'] = ugnum
+    gauc_ctr_user_d['n+'] = ugpos
+    gauc_ctr_user_d['n-'] = ugneg
+    gauc_ctr_user_d['auc'] = ugauc
+    gauc_ctr_user_d['auc-pp'] = ugaucpp
+    gauc_ctr_user_d['type'] = 'uuid_gauc'
+
+    gauc_ctr_req_d = model_info
+    qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc(req_pred, 0,3, 'q-ctr-gauc')
+    gauc_ctr_req_d['n'] = qgnum
+    gauc_ctr_req_d['n+'] = qgpos
+    gauc_ctr_req_d['n-'] = qgneg
+    gauc_ctr_req_d['auc'] = qgauc
+    gauc_ctr_req_d['auc-pp'] = qgaucpp
+    gauc_ctr_req_d['type'] = 'recid_gauc'
+
+
+    # save auc
+    auc_local_file = './auc.pkl'
+    os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
+    auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
+    print('*' * 60)
+    pprint.pprint(auc_list)
+    with open(auc_local_file, 'wb') as fout:
+        pickle.dump(auc_list, fout)
+    # with open(auc_local_file, 'rb') as fin:
+    #     auc_list = pickle.load(fin)
 
 
 
@@ -300,6 +428,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_version', default='/ds=20241202-20241209/model/1735200130')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241210/')
+    parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.pkl')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
     parser.add_argument('--sample_num', type=int, default=None)

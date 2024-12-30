@@ -174,5 +174,22 @@ compute cvr-auc cost: 4.0397186279296875
 N: 22172843 avg_pred_ctr: 0.11627199131462214 avg_label_clk: 0.11224492050929148
 ctr-auc: 0.5782970293469318
 compute ctr-auc cost: 26.08153510093689
+* 
+N: 22172843 label_mean: 0.11224492050929148 pred_mean: 0.11627199131462214 auc-all-ctr: 0.578297029346932
+N: 2488789 label_mean: 0.006350076282079357 pred_mean: 0.0070265482366829194 auc-all-ctr: 0.514699879804227
+uuid num: 338640
+recid num: 3991490
+none_auc num 91865 of all u-gauc :338640
+u-gauc num:246775 have auc
+type:u-gauc 0.5621014388242207
+type:u-gauc percentle: [0.33333333 0.4375     0.5        0.56666667 0.6        0.64084507
+ 0.69545948 0.8        1.        ]
+none_auc num 2301627 of all q-gauc :3991490
+q-gauc num:1689863 have auc
+type:q-gauc 0.566905920633207
+type:q-gauc percentle: [0.         0.25       0.375      0.59259259 0.66666667 0.8
+ 1.         1.         1.        ]
+
+
 
                                             
