@@ -83,7 +83,9 @@ def process(lines, c):
 
 
 alph = 1
+beta = 0.5
 user_debias = True
+item_debias = True
 out_file = ''
 def swing(*args):
     trig_itm_list = args[0]
@@ -99,6 +101,8 @@ def swing(*args):
         user_bhv_num = pickle.load(fin)
     with open(item_info_file%c, 'rb') as fin:
         item_info = pickle.load(fin)
+    with open(item_bhv_num_file%(c), 'rb') as fin:
+        item_bhv_num = pickle.load(fin)
     ret = {}
     n = 0
     N = len(trig_itm_list)
@@ -128,9 +132,18 @@ def swing(*args):
                 for tgt_item in common_items:
                     if trig_itm == tgt_item:
                         continue
-                    if user_debias:
+                    if user_debias and item_debias:
+                        score = round(
+                            (1 / user_bhv_num[user_sample[i]][cat3])
+                            * (1 / user_bhv_num[user_sample[j]][cat3])
+                            * (1 / math.pow(item_bhv_num[tgt_item], beta))
+                            * (1 / (alph + (len(common_items)))), 4)
+                    elif user_debias:
                         score = round((1 / user_bhv_num[user_sample[i]][cat3]) * (1 / user_bhv_num[user_sample[j]][cat3]) * (
                                     1 / (alph + (len(common_items)))), 4)
+                    elif item_debias:
+                        score = round((1 / math.pow(item_bhv_num[tgt_item], beta)) * (1 / (alph + (len(common_items)))), 4)
+
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
                     if tgt_item in swing:
