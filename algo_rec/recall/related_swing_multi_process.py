@@ -297,7 +297,7 @@ if __name__ == '__main__':
         epilog='swing-help')
     parser.add_argument('--flag',default='mock')
     parser.add_argument('--p',type=int, default=6)
-    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec_test/cn_rec_detail_recall_i2i_for_redis/')
+    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec_test/cn_rec_detail_recall_i2i_for_redis/item_user_debias/')
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20241217')
     args = parser.parse_args()
     main(args)
