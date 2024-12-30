@@ -157,13 +157,22 @@ nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216
 * test:
   python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 --sample_num=1 --proc=1
 
-
+[//]: # (s3://warehouse-algo/rec/prod_model/prod_mtl_seq_on_esmm_v20_mask_savana_in_fix/ds=20241202-20241209/model/1735496971/)
 # prod_mtl_seq_on_esmm_v20_mask_savana_in_fix -fix sample
 * nohup python -u run_rec_model_sg_di_prod_v1_mask.py  --warm_start_from=NEW --task=mtl --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix --instance_count=3 > 1230.log 2>&1 &
   nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216 --warm_start_from=NEWEST --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
 * predict: --
-* nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &
+* nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix   --model_version=/ds=20241202-20241209/model/1735496971 > runv2_savana_in.log 2>&1 &
 * test:
-  python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 --sample_num=1 --proc=1
+  python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix   --model_version=/ds=20241202-20241209/model/1735496971 --sample_num=1 --proc=1 
+model_name: prod_mtl_seq_on_esmm_v20_mask_savana_in_fix
+model_version: /ds=20241202-20241209/model/1735496971
+tfr_s3: rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241210/
+N: 2488789 avg_pred_cvr: 0.0070265482366829194 avg_label_pay: 0.006350076282079357
+cvr-auc: 0.5146998798042269
+compute cvr-auc cost: 4.0397186279296875
+N: 22172843 avg_pred_ctr: 0.11627199131462214 avg_label_clk: 0.11224492050929148
+ctr-auc: 0.5782970293469318
+compute ctr-auc cost: 26.08153510093689
 
                                             
