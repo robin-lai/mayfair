@@ -142,7 +142,12 @@ type:q-gauc 0.5696350461462475
 type:q-gauc percentle: [0.         0.25       0.375      0.6        0.6875     0.80952381
  1.         1.         1.        ]
 
-
+# prod_ctr_seq_on_din_v20_mask_savana_in_fix
+* nohup python -u run_rec_model_sg_di_prod_v1_mask.py  --warm_start_from=NEW --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in_fix --instance_count=3 > 1230_ctr.log 2>&1 &
+nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216 --warm_start_from=NEWEST --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
+* predict: --
+* nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &
+* test: 
 
 # prod_mtl_seq_on_esmm_v20_mask_savana_in
 * nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241202-20241209 --warm_start_from=NEW --task=mtl --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in --instance_count=3 > v201228.log 2>&1
@@ -154,7 +159,7 @@ type:q-gauc percentle: [0.         0.25       0.375      0.6        0.6875     0
 
 
 # prod_mtl_seq_on_esmm_v20_mask_savana_in_fix -fix sample
-* nohup python -u run_rec_model_sg_di_prod_v1_mask.py  --warm_start_from=NEW --task=mtl --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix --instance_count= > v201228.log 2>&1
+* nohup python -u run_rec_model_sg_di_prod_v1_mask.py  --warm_start_from=NEW --task=mtl --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix --instance_count=3 > 1230.log 2>&1 &
   nohup python -u run_rec_model_sg_di_prod_v1_mask.py --train_ds=20241210-20241216 --warm_start_from=NEWEST --task=ctr --model_name=prod_ctr_seq_on_din_v20_mask_savana_in --instance_count=4 > v201228.log 2>&1
 * predict: --
 * nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_ctr_seq_on_din_v20_mask_savana_in   --model_version=/ds=20241202-20241209/model/1735387684 > runv2_savana_in.log 2>&1 &

@@ -250,15 +250,21 @@ if __name__ == '__main__':
     args = parser.parse_args()
     debug = args.debug
     if args.range != '':
-        for ds in args.range.split(','):
-            st = time.time()
-            args.ds = 'ds=' + ds
-            print('args.ds:', args.ds)
-            # item_feature = get_item_feature(args.item % args.ds)
-            item_feature = get_item_feature(args.item%args.ds)
-            print('get item features:', len(item_feature.keys()))
-            main(args)
-            print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
+        try:
+            for ds in args.range.split(','):
+                st = time.time()
+                args.ds = 'ds=' + ds
+                print('args.ds:', args.ds)
+                # item_feature = get_item_feature(args.item % args.ds)
+                item_feature = get_item_feature(args.item%args.ds)
+                print('get item features:', len(item_feature.keys()))
+                main(args)
+                print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
+        except Exception:
+            print("-" * 60)
+            traceback.print_exc(file=sys.stdout)
+            print("-" * 60)
+            # print('data:',t)
     else:
         st = time.time()
         print('args.ds:', args.ds)
