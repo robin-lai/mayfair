@@ -194,7 +194,7 @@ def input_handler(data, context):
     if context.request_content_type == "application/json":
         # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
         d = json.loads(data.read())
-        logging.info('[DEBUG] request:', d)
+        print('request', d)
         if "debug" not in d:
             d["debug"] = ""
         if d["debug"] == '1':
