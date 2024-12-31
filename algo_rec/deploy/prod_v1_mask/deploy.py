@@ -1110,6 +1110,8 @@ def request_sagemaker(args):
                 request['ipt'] = rec_col2
             else:
                 request['ipt'] = rec_col
+    elif args.debug=='log':
+        request['debug'] = "log"
     else:
         request['debug'] = ""
 
