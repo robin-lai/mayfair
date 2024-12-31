@@ -9,7 +9,13 @@ def main(args):
     i2i_d = {}
     u2i2i_d = {}
 
-    i2i_file_ll = args.i2i_file.split(',')
+    i2i_file_ll = []
+    for i in range(args.i2i_part):
+        s3_file = args.i2i_s3 + args.i2i_file % str(i)
+        local_file = './' + args.i2i_file % str(i)
+        os.system('rm %s' % local_file)
+        os.system('aws s3 cp %s %s' % (s3_file, local_file))
+        i2i_file_ll.append(local_file)
     for file in i2i_file_ll:
         with open(file, 'r') as fin:
             lines = fin.readlines()
@@ -93,10 +99,12 @@ if __name__ == '__main__':
         prog='recall_u2i2i',
         description='recall_u2i2i',
         epilog='recall_u2i2i')
-    parser.add_argument('--i2i_file', default='./swing_rec_Savana_IN_part_0_online,./swing_rec_Savana_IN_part_1_online')
-    parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=20241224/')
+    parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debiasv2/')
+    parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
+    parser.add_argument('--i2i_part',type=int, default=4)
+    parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=20241230/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
-    parser.add_argument('--u2i2i_s3', default='s3://algo-sg/rec/recall_u2i2i/')
+    parser.add_argument('--u2i2i_s3', default='s3://warehouse-algo/rec/recall/recall_u2i2i/item_user_debiasv2')
     parser.add_argument('--part',type=int, default=10)
     parser.add_argument('--debug', type=bool,  default=False)
     args = parser.parse_args()
