@@ -4,6 +4,8 @@ import argparse
 import json
 import os
 import pickle
+
+from mypy.server.update import update_deps
 from pyarrow import parquet
 import boto3
 import sagemaker
@@ -200,11 +202,7 @@ def create_edp(args):
     instance_type = args.instance_type
     instance_count = 1
     retry_times = 0
-    try:
-        print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
-        return
-    except:
-        pass
+    print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
 
     # edp_model_name = endpoint_name + '-' + str(random.randint(10000, 19999))
     variant_name = "Variant-xlarge-1"  # start from 1, incr 1 when updating.
@@ -246,6 +244,75 @@ def create_edp(args):
     )
     print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
     wait_edp_inservice(args.endpoint)
+
+def update_edp(args):
+    s3_cli = boto3.client('s3')
+    sm_sess = sagemaker.Session()
+    print('aws region:', sm_sess.boto_region_name)
+    sm_cli = boto3.client('sagemaker')
+    role = get_execution_role()
+    print('role:', role)
+    instance_type = args.instance_type
+    instance_count = 1
+    retry_times = 0
+    # print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
+    endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
+    print(endpoint_info)
+    model_name = args.model_name.replace('_', '-')
+    variant_name = "Variant-xlarge-%s-%s" % (model_name, args.edp_version)
+    endpoint_config_name = 'edp-config-%s-%s' % (model_name, args.edp_version)
+
+    img = sagemaker.image_uris.retrieve(
+        framework='tensorflow',
+        version='1.15.3',
+        region=sm_sess.boto_region_name,
+        image_scope='inference',
+        instance_type=instance_type
+    )
+
+    print('in_s3_tar_file', args.s3_tar_file)
+    sm_sess.create_model(
+        name=args.endpoint,
+        role=role,
+        container_defs={
+            "Image": img,
+            "ModelDataUrl": args.s3_tar_file,
+            'Environment': {
+                'TF_DISABLE_MKL': '1',
+                'TF_DISABLE_POOL_ALLOCATOR': '1',
+                # 'SAGEMAKER_SUBMIT_DIRECTORY': '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/code/',  # Directory inside the container
+                # 'SAGEMAKER_PROGRAM': 'inference.py',
+            },
+        }
+    )
+
+    variant1 = production_variant(
+        model_name=args.endpoint,
+        instance_type=instance_type,
+        initial_instance_count=instance_count,
+        variant_name=variant_name,
+        initial_weight=1,
+    )
+
+    print(sm_cli.create_endpoint_config(
+        EndpointConfigName=endpoint_config_name,
+        ProductionVariants=[
+            variant1
+        ]
+    ))
+
+    print(sm_cli.update_endpoint(
+        EndpointName=args.endpoint,
+        EndpointConfigName=endpoint_config_name,
+    ))
+
+    # sm_sess.endpoint_from_production_variants(
+    #     name=args.endpoint, production_variants=[variant1],
+    #     tags=[{'Key': 'cost-team', 'Value': 'algorithm'}],
+    # )
+    print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
+    wait_edp_inservice(args.endpoint)
+
 
 
 def request_sagemaker(args):
@@ -1189,6 +1256,11 @@ def main(args):
         print('start request sagemaker')
         request_sagemaker(args)
         print('end request sagemaker')
+    if 'update_edp' in args.pipeline:
+        print('start update edp')
+        update_edp(args)
+        print('end update edp')
+
     if 'time' in args.pipeline:
         request_sagemaker_time(args)
 
@@ -1200,7 +1272,7 @@ if __name__ == '__main__':
         prog='deploy',
         description='deploy',
         epilog='deploy')
-    parser.add_argument('--pipeline', default='pkg,edp,req_sg')
+    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update_edp')
     parser.add_argument('--endpoint', default='prod-edp-model')
     parser.add_argument('--region', default='in')
     parser.add_argument('--edp_version', default='v3')
@@ -1215,6 +1287,9 @@ if __name__ == '__main__':
     parser.add_argument('--req_num', type=int,  default=10000)
     parser.add_argument('--goods_num', type=int,  default=100)
     args = parser.parse_args()
-    args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
+    if args.pipeline == 'update_edp':
+        args.endpoint = 'edp-' + args.model_name.replace('_', '-')
+    else:
+        args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
     print('endpoint:', args.endpoint)
     main(args)
