@@ -260,7 +260,7 @@ def main(args):
         "uuid": "fxleyu",
         "version": "8.2.2"
     }
-    print(get_infer_json_from_request(d))
+    # print(get_infer_json_from_request(d))
 
 
 if __name__ == '__main__':
