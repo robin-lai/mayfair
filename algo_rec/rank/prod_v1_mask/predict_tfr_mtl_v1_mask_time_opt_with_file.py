@@ -105,7 +105,10 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
        }
        if 'v20' in args.tfr_s3:
            feature_describe.update({
-               "client_type": v1.FixedLenFeature(1, tf.string, "-1"),
+               "client_type": v1.FixedLenFeature(1, tf.string, "-1")
+           })
+       if 'mask' in args.model_name:
+           feature_describe.update({
                "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
                "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
            })
