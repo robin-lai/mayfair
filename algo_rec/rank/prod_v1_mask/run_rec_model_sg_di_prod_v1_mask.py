@@ -59,7 +59,7 @@ def main(args):
         disable_profiler=True,
         framework_version="1.15.2",
         py_version='py37',
-        max_run=3600 * 24 * 1,
+        max_run=3600 * 5 * 1,
         keep_alive_period_in_seconds=1800,
         hyperparameters=hps,
         metric_definitions=[
