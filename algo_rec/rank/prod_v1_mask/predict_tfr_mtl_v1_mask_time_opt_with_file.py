@@ -152,6 +152,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
 
         if 'v20' in args.tfr_s3:
             user_seq_string.update({  "client_type":""})
+        if 'mask' in args.model_name:
             item_features_int.update({  "highLevelSeqList_len": 0,
                              "lowerLevelSeqList_len": 0})
 
