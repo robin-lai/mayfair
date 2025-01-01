@@ -5,6 +5,7 @@ import pprint
 import pyarrow as pa
 import traceback
 from random import shuffle
+import json
 
 from pyarrow import parquet
 import tensorflow as tf
@@ -411,7 +412,7 @@ def main(args):
     os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
     auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
     print('*' * 60)
-    pprint.pprint(auc_list)
+    pprint.pprint(json.dumps(auc_list))
     with open(auc_local_file, 'wb') as fout:
         pickle.dump(auc_list, fout)
     # with open(auc_local_file, 'rb') as fin:
