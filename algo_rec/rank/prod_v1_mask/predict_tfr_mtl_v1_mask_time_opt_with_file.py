@@ -421,7 +421,6 @@ def main(args):
     gauc_ctr_req_d['auc-pp'] = ','.join([str(e) for e in qgaucpp])
     gauc_ctr_req_d['type'] = 'recid_gauc'
 
-
     # save auc
     auc_local_file = './auc.json'
     os.system('rm %s' % auc_local_file)
