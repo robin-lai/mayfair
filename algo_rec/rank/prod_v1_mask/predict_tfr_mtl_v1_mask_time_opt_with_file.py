@@ -447,4 +447,7 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
+    st = time.time()
     main(args)
+    ed = time.time()
+    print('cost', str(ed-st))
