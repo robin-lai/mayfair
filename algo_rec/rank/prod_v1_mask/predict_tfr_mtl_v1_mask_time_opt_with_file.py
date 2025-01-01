@@ -141,8 +141,6 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
         item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
                              "pay_7d": 0,
                              "is_rel_cate":0, "is_rel_cate2":0, "is_rel_cate3":0,"is_rel_cate4":0, "sales_price":0,
-                             "highLevelSeqList_len": 0,
-                             "lowerLevelSeqList_len": 0
                              }
         user_seq_string = {"highLevelSeqListGoods": [""] * 20,
                            "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
@@ -150,8 +148,14 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
                            "last_login_device":"-1",
                            "last_login_brand":"-1",
                            "register_brand":"-1",
-                           "client_type":""
                            }
+
+        if 'v20' in args.tfr_s3:
+            user_seq_string.update({  "client_type":""})
+            item_features_int.update({  "highLevelSeqList_len": 0,
+                             "lowerLevelSeqList_len": 0})
+
+
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
             feed_dict = {}
