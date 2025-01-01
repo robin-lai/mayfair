@@ -82,7 +82,6 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
            , "last_login_device": v1.FixedLenFeature(1, tf.string, "-1")
            , "last_login_brand": v1.FixedLenFeature(1, tf.string, "-1")
            , "register_brand": v1.FixedLenFeature(1, tf.string, "-1")
-           , "client_type": v1.FixedLenFeature(1, tf.string, "-1")
 
            , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
            , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -100,12 +99,17 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
            , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
            , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
            , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-           "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
-           "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
            "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
            , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
            , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
        }
+       if 'v20' in args.s3_file:
+           feature_describe.update({
+               "client_type": v1.FixedLenFeature(1, tf.string, "-1"),
+               "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+               "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+           })
+
        features = tf.io.parse_single_example(data, features=feature_describe)
        return features
     os.system('mkdir -p %s'%tmp_dir_data)
