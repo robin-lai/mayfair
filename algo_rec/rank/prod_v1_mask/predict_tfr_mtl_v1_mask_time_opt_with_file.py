@@ -413,12 +413,12 @@ def main(args):
     # save auc
     auc_local_file = './auc.json'
     os.system('rm %s' % auc_local_file)
-    # os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
+    os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
     auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
     print('*' * 60)
-    # with open('./auc.json', 'r') as fin:
-    #     js = json.load(fin)
-    # auc_list.extend(list(js))
+    with open('./auc.json', 'r') as fin:
+        js = json.load(fin)
+    auc_list.extend(list(js))
     with open('./auc.json', 'w') as fout:
         json.dump(auc_list, fout,sort_keys=True)
     os.system("aws s3 cp %s %s" % (auc_local_file, args.auc_file))
