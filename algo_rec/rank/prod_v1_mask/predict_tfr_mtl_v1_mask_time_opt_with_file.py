@@ -326,8 +326,8 @@ def main(args):
     model_info['model_name'] = args.model_name
     model_info['version'] = args.model_version
     tfr_s3_tt = args.tfr_s3.split('/')
-    model_info['ds'] = tfr_s3_tt[-1]
-    model_info['sample'] = tfr_s3_tt[-2]
+    model_info['ds'] = tfr_s3_tt[-2]
+    model_info['sample'] = tfr_s3_tt[-3]
     now = datetime.now()
     model_info['datetime'] = now.strftime("%Y-%m-%d-%H:%M:%S")
 
@@ -412,6 +412,9 @@ def main(args):
     os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
     auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
     print('*' * 60)
+    with open('./auc.json', 'r') as fin:
+        js = json.load(fin)
+    auc_list.extend(list(js))
     with open('./auc.json', 'w') as fout:
         json.dump(auc_list, fout)
 
