@@ -103,7 +103,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
            , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
            , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
        }
-       if 'v20' in args.s3_file:
+       if 'v20' in args.tfr_s3:
            feature_describe.update({
                "client_type": v1.FixedLenFeature(1, tf.string, "-1"),
                "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
