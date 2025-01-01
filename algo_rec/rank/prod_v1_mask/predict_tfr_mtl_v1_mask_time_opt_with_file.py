@@ -416,7 +416,7 @@ def main(args):
         js = json.load(fin)
     auc_list.extend(list(js))
     with open('./auc.json', 'w') as fout:
-        json.dump(auc_list, fout)
+        json.dump(auc_list, fout,sort_keys=True)
 
     # pprint.pprint(json.dumps(auc_list))
     # with open(auc_local_file, 'wb') as fout:
