@@ -3,6 +3,7 @@ from heapq import merge
 from datetime import datetime
 import pprint
 import pyarrow as pa
+import copy
 import traceback
 from random import shuffle
 import json
@@ -332,8 +333,8 @@ def main(args):
     model_info['datetime'] = now.strftime("%Y-%m-%d-%H:%M:%S")
 
     # auc
-    auc_ctr_d = model_info
-    auc_cvr_d = model_info
+    auc_ctr_d = copy.deepcopy(model_info)
+    auc_cvr_d = copy.deepcopy(model_info)
     st = time.time()
     pctr = merge_score[CTR]
     is_clk = merge_score[CLK]
@@ -390,7 +391,7 @@ def main(args):
 
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
-    gauc_ctr_user_d = model_info
+    gauc_ctr_user_d = copy.deepcopy(model_info)
     ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc_fun(uuid_pred, 0,3, 'u-ctr-gauc')
     gauc_ctr_user_d['n'] = ugnum
     gauc_ctr_user_d['n+'] = ugpos
@@ -399,7 +400,7 @@ def main(args):
     gauc_ctr_user_d['auc-pp'] = ','.join([str(e) for e in ugaucpp])
     gauc_ctr_user_d['type'] = 'uuid_gauc'
 
-    gauc_ctr_req_d = model_info
+    gauc_ctr_req_d = copy.deepcopy(model_info)
     qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc_fun(req_pred, 0,3, 'q-ctr-gauc')
     gauc_ctr_req_d['n'] = qgnum
     gauc_ctr_req_d['n+'] = qgpos
