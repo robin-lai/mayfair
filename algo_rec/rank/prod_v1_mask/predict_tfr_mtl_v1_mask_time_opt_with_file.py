@@ -344,12 +344,12 @@ def main(args):
     auc = roc_auc_score(list(is_clk), list(pctr))
     print('ctr-auc:', auc)
     ed = time.time()
-    auc_ctr_d['n'] = len(pctr)
-    auc_ctr_d['n+'] =  np.sum(is_clk)
-    auc_ctr_d['n-'] = len(pctr) - np.sum(is_clk)
-    auc_ctr_d['pred'] = avg_pred_ctr
-    auc_ctr_d['label'] = avg_label_clk
-    auc_ctr_d['auc'] = auc
+    auc_ctr_d['n'] = str(len(pctr))
+    auc_ctr_d['n+'] =  str(np.sum(is_clk))
+    auc_ctr_d['n-'] = str(len(pctr) - np.sum(is_clk))
+    auc_ctr_d['pred'] = str(avg_pred_ctr)
+    auc_ctr_d['label'] = str(avg_label_clk)
+    auc_ctr_d['auc'] = str(auc)
     auc_ctr_d['type'] = 'all-ctr'
     print('compute ctr-auc cost:', str(ed - st))
 
@@ -381,31 +381,31 @@ def main(args):
     pre_cvr = [e[5] for e in pred if e[2] == 1]
     auc_all_cvr = auc_fun(label_cvr, pre_cvr)
     print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
-    auc_cvr_d['n'] = len(label_cvr)
-    auc_cvr_d['n+'] =  np.sum(is_pay)
-    auc_cvr_d['n-'] = len(label_cvr) - np.sum(is_pay)
-    auc_cvr_d['pred'] = np.mean(pre_cvr)
-    auc_cvr_d['label'] = np.mean(label_cvr)
-    auc_cvr_d['auc'] = auc_all_cvr
+    auc_cvr_d['n'] = str(len(label_cvr))
+    auc_cvr_d['n+'] =  str(np.sum(is_pay))
+    auc_cvr_d['n-'] = str(len(label_cvr) - np.sum(is_pay))
+    auc_cvr_d['pred'] = str(np.mean(pre_cvr))
+    auc_cvr_d['label'] = str(np.mean(label_cvr))
+    auc_cvr_d['auc'] = str(auc_all_cvr)
     auc_cvr_d['type'] = 'all-cvr'
 
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
     gauc_ctr_user_d = copy.deepcopy(model_info)
     ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc_fun(uuid_pred, 0,3, 'u-ctr-gauc')
-    gauc_ctr_user_d['n'] = ugnum
-    gauc_ctr_user_d['n+'] = ugpos
-    gauc_ctr_user_d['n-'] = ugneg
-    gauc_ctr_user_d['auc'] = ugauc
+    gauc_ctr_user_d['n'] = str(ugnum)
+    gauc_ctr_user_d['n+'] = str(ugpos)
+    gauc_ctr_user_d['n-'] = str(ugneg)
+    gauc_ctr_user_d['auc'] = str(ugauc)
     gauc_ctr_user_d['auc-pp'] = ','.join([str(e) for e in ugaucpp])
     gauc_ctr_user_d['type'] = 'uuid_gauc'
 
     gauc_ctr_req_d = copy.deepcopy(model_info)
     qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc_fun(req_pred, 0,3, 'q-ctr-gauc')
-    gauc_ctr_req_d['n'] = qgnum
-    gauc_ctr_req_d['n+'] = qgpos
-    gauc_ctr_req_d['n-'] = qgneg
-    gauc_ctr_req_d['auc'] = qgauc
+    gauc_ctr_req_d['n'] = str(qgnum)
+    gauc_ctr_req_d['n+'] = str(qgpos)
+    gauc_ctr_req_d['n-'] = str(qgneg)
+    gauc_ctr_req_d['auc'] = str(qgauc)
     gauc_ctr_req_d['auc-pp'] = ','.join([str(e) for e in qgaucpp])
     gauc_ctr_req_d['type'] = 'recid_gauc'
 
