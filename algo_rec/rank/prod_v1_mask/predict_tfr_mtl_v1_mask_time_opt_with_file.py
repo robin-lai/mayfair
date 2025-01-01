@@ -408,8 +408,10 @@ def main(args):
 
 
     # save auc
-    auc_local_file = './auc.pkl'
-    os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
+    auc_local_file = './auc.json'
+    # os.system('rm %s' % auc_local_file)
+    os.system("aws s3 cp %s %s" % (args.auc_local_file, auc_local_file))
+    # os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
     auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
     print('*' * 60)
     with open('./auc.json', 'r') as fin:
@@ -435,7 +437,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_version', default='/ds=20241210-20241216/model/1735706837/')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241217/')
-    parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.pkl')
+    parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.json')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
     parser.add_argument('--sample_num', type=int, default=None)
