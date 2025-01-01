@@ -3,8 +3,8 @@ import argparse
 import time
 import multiprocessing
 
-def process(ll):
-    os.system("aws s3 cp --recursive %s  %s" % (ll[0], ll[1]))
+def process(from_dir, to_dir):
+    os.system("aws s3 cp --recursive %s  %s" % (from_dir, to_dir))
 
 
 def main(args):
