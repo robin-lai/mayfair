@@ -194,7 +194,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
     with open(pkl_file, 'wb') as fout:
         pickle.dump(score, fout)
 
-def auc(label, pre):
+def auc_fun(label, pre):
     new_data = [[p, l] for p, l in zip(pre, label)]
     new_data.sort(key=lambda x: x[0])
     score_index = {}
@@ -212,7 +212,7 @@ def auc(label, pre):
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
 
-def gauc(pred_d,label_idx, pre_idx, type):
+def gauc_fun(pred_d,label_idx, pre_idx, type):
     gauc = {}
     gauc_l = []
     none_auc = 0
@@ -220,7 +220,7 @@ def gauc(pred_d,label_idx, pre_idx, type):
         for u, l in pred_d.items():
             pred = [e[pre_idx] for e in l]
             label = [e[label_idx] for e in l]
-            auc_score = auc(label, pred)
+            auc_score = auc_fun(label, pred)
             if auc_score is not None:
                 gauc[u] = auc_score
                 gauc_l.append(auc_score)
@@ -372,11 +372,11 @@ def main(args):
 
     label = [e[2] for e in pred]
     pre = [e[4] for e in pred]
-    auc_all = auc(label, pre)
+    auc_all = auc_fun(label, pre)
     print('N:', len(pred), 'label_mean:', np.mean(label), 'pred_mean:', np.mean(pre), 'auc-all-ctr:',auc_all)
     label_cvr = [e[3] for e in pred if e[2] == 1]
     pre_cvr = [e[5] for e in pred if e[2] == 1]
-    auc_all_cvr = auc(label_cvr, pre_cvr)
+    auc_all_cvr = auc_fun(label_cvr, pre_cvr)
     print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
     auc_cvr_d['n'] = len(label_cvr)
     auc_ctr_d['n+'] =  np.sum(is_pay)
@@ -388,7 +388,7 @@ def main(args):
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
     gauc_ctr_user_d = model_info
-    ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc(uuid_pred, 0,3, 'u-ctr-gauc')
+    ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc_fun(uuid_pred, 0,3, 'u-ctr-gauc')
     gauc_ctr_user_d['n'] = ugnum
     gauc_ctr_user_d['n+'] = ugpos
     gauc_ctr_user_d['n-'] = ugneg
@@ -397,7 +397,7 @@ def main(args):
     gauc_ctr_user_d['type'] = 'uuid_gauc'
 
     gauc_ctr_req_d = model_info
-    qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc(req_pred, 0,3, 'q-ctr-gauc')
+    qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc_fun(req_pred, 0,3, 'q-ctr-gauc')
     gauc_ctr_req_d['n'] = qgnum
     gauc_ctr_req_d['n+'] = qgpos
     gauc_ctr_req_d['n-'] = qgneg
