@@ -412,9 +412,12 @@ def main(args):
     os.system("aws s3 cp %s %s" % (args.auc_file, auc_local_file))
     auc_list = [auc_ctr_d, auc_cvr_d, gauc_ctr_user_d, gauc_ctr_req_d]
     print('*' * 60)
-    pprint.pprint(json.dumps(auc_list))
-    with open(auc_local_file, 'wb') as fout:
-        pickle.dump(auc_list, fout)
+    with open('./auc.json', 'w') as fout:
+        json.dump(auc_list, fout)
+
+    # pprint.pprint(json.dumps(auc_list))
+    # with open(auc_local_file, 'wb') as fout:
+    #     pickle.dump(auc_list, fout)
     # with open(auc_local_file, 'rb') as fin:
     #     auc_list = pickle.load(fin)
 
