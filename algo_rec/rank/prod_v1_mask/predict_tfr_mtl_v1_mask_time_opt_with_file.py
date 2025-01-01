@@ -394,7 +394,7 @@ def main(args):
     gauc_ctr_user_d['n+'] = ugpos
     gauc_ctr_user_d['n-'] = ugneg
     gauc_ctr_user_d['auc'] = ugauc
-    gauc_ctr_user_d['auc-pp'] = ugaucpp
+    gauc_ctr_user_d['auc-pp'] = ','.join([str(e) for e in ugaucpp])
     gauc_ctr_user_d['type'] = 'uuid_gauc'
 
     gauc_ctr_req_d = model_info
@@ -403,7 +403,7 @@ def main(args):
     gauc_ctr_req_d['n+'] = qgpos
     gauc_ctr_req_d['n-'] = qgneg
     gauc_ctr_req_d['auc'] = qgauc
-    gauc_ctr_req_d['auc-pp'] = qgaucpp
+    gauc_ctr_req_d['auc-pp'] = ','.join([str(e) for e in qgaucpp])
     gauc_ctr_req_d['type'] = 'recid_gauc'
 
 
