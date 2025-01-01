@@ -349,6 +349,7 @@ def main(args):
     auc_ctr_d['pred'] = avg_pred_ctr
     auc_ctr_d['label'] = avg_label_clk
     auc_ctr_d['auc'] = auc
+    auc_ctr_d['type'] = 'all-ctr'
     print('compute ctr-auc cost:', str(ed - st))
 
     # gauc
@@ -380,11 +381,12 @@ def main(args):
     auc_all_cvr = auc_fun(label_cvr, pre_cvr)
     print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
     auc_cvr_d['n'] = len(label_cvr)
-    auc_ctr_d['n+'] =  np.sum(is_pay)
-    auc_ctr_d['n-'] = len(label_cvr) - np.sum(is_pay)
+    auc_cvr_d['n+'] =  np.sum(is_pay)
+    auc_cvr_d['n-'] = len(label_cvr) - np.sum(is_pay)
     auc_cvr_d['pred'] = np.mean(pre_cvr)
     auc_cvr_d['label'] = np.mean(label_cvr)
     auc_cvr_d['auc'] = auc_all_cvr
+    auc_cvr_d['type'] = 'all-cvr'
 
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
