@@ -200,6 +200,7 @@ def input_handler(data, context):
 
     if context.request_content_type == "application/json":
         # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
+        print('edp-version:0102')
         d = json.loads(data.read())
         print('request', d)
         if "debug" not in d:
