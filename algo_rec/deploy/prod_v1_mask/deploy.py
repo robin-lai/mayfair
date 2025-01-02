@@ -273,7 +273,7 @@ def update_edp(args):
     print(endpoint_info)
     model_name = args.model_name.replace('_', '-')
     variant_name = "Variant-xlarge-%s-%s" % (model_name, args.edp_version)
-    endpoint_config_name = 'edp-config-%s-%s' % (model_name, args.edp_version)
+    endpoint_config_name = 'cf-%s-%s' % (model_name, args.edp_version)
 
     img = sagemaker.image_uris.retrieve(
         framework='tensorflow',
