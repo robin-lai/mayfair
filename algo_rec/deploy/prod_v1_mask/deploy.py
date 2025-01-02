@@ -5,7 +5,6 @@ import json
 import os
 import pickle
 
-from mypy.server.update import update_deps
 from pyarrow import parquet
 import boto3
 import sagemaker
