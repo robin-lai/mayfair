@@ -45,10 +45,14 @@ request = {
             "high_level_seq": [
                 "1327692",
                 "1402902",
+                "",
+                ""
             ],
             "low_level_seq": [
                 "1327692",
                 "1402902",
+                "",
+                ""
             ],
             "user_feature_context": {
                 "register_brand": "other",
@@ -1279,7 +1283,7 @@ if __name__ == '__main__':
     parser.add_argument('--endpoint', default='edp-prod-mtl-seq-on-esmm')
     parser.add_argument('--model_version', default='/ds=20241202-20241209/model/')
     parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix_0101.tar.gz')
-    parser.add_argument('--debug', default='1')
+    parser.add_argument('--debug', default='')
     parser.add_argument('--format', default='col')
     parser.add_argument('--col_num',type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
