@@ -266,8 +266,6 @@ def update_edp(args):
     role = get_execution_role()
     print('role:', role)
     instance_type = args.instance_type
-    instance_count = 1
-    retry_times = 0
     # print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
     endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
     print(endpoint_info)
@@ -302,7 +300,7 @@ def update_edp(args):
     variant1 = production_variant(
         model_name=args.endpoint,
         instance_type=instance_type,
-        initial_instance_count=instance_count,
+        initial_instance_count=args.instance_count,
         variant_name=variant_name,
         initial_weight=1,
     )
@@ -1299,6 +1297,7 @@ if __name__ == '__main__':
     parser.add_argument('--col_num',type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
     parser.add_argument('--req_num', type=int,  default=10000)
+    parser.add_argument('--instance_count', type=int,  default=2)
     parser.add_argument('--goods_num', type=int,  default=100)
     args = parser.parse_args()
     # if args.pipeline == 'update_edp':
