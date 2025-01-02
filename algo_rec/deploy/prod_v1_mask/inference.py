@@ -25,6 +25,7 @@ user_seq_on_string = {"highLevelSeqListGoods": [""] * 20, "highLevelSeqListCateI
 user_profile_string = {"last_login_device": "", "last_login_brand": "", "register_brand": "", "client_type":""}
 context_related = {"is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0}
 main_item = {"main_cate_id": "", "main_cate_level2_id": "", "main_cate_level3_id": "", "main_cate_level4_id": ""}
+seq_len = 20
 
 with open(item_fts_file, 'rb') as fin:
     item_dict = pickle.load(fin)
@@ -58,48 +59,54 @@ def get_infer_json_from_request(d):
         example_base = {}
         for name in user_seq_on_string.keys():
             if name == 'highLevelSeqListGoods':
-                seq = d['featureMap']['userFeatures']['high_level_seq']
-                if len(seq) == 20:
-                    example_base['highLevelSeqListGoods'] = seq
-                    example_base['highLevelSeqList_len'] = [20]
+                seq_old = d['featureMap']['userFeatures']['high_level_seq']
+                seq = [e for e in seq_old if e != '']
+                if len(seq) >= seq_len:
+                    example_base['highLevelSeqListGoods'] = seq[0:seq_len]
+                    example_base['highLevelSeqList_len'] = [seq_len]
                 else:
-                    example_base['highLevelSeqListGoods'] = seq + [""] * (20 - len(seq))
+                    example_base['highLevelSeqListGoods'] = seq + [""] * (seq_len - len(seq))
                     example_base['highLevelSeqList_len'] = [len(seq)]
 
             if name == 'lowerLevelSeqListGoods':
-                seq = d['featureMap']['userFeatures']['low_level_seq']
-                if len(seq) == 20:
-                    example_base['lowerLevelSeqListGoods'] = seq
-                    example_base['lowerLevelSeqList_len'] = [20]
+                seq_old = d['featureMap']['userFeatures']['low_level_seq']
+                seq = [e for e in seq_old if e != '']
+                if len(seq) >= seq_len:
+                    example_base['lowerLevelSeqListGoods'] = seq[0:seq_len]
+                    example_base['lowerLevelSeqList_len'] = [seq_len]
                 else:
-                    example_base['lowerLevelSeqListGoods'] = seq + [""] * (20 - len(seq))
+                    example_base['lowerLevelSeqListGoods'] = seq + [""] * (seq_len - len(seq))
                     example_base['lowerLevelSeqList_len'] = [len(seq)]
 
             if name == 'highLevelSeqListCateId':
                 cate_list = []
-                for e in d['featureMap']['userFeatures']['high_level_seq']:
+                seq_old = d['featureMap']['userFeatures']['high_level_seq']
+                seq = [e for e in seq_old if e != '']
+                for e in seq:
                     if e in item_dict:
                         cate_list.append(item_dict[e]['cate_id'])
                     else:
                         cate_list.append("")
                         print('goods_id:%s not in item map' % e)
-                if len(cate_list) == 20:
-                    example_base['highLevelSeqListCateId'] = cate_list
+                if len(cate_list) >= seq_len:
+                    example_base['highLevelSeqListCateId'] = cate_list[0:seq_len]
                 else:
-                    example_base['highLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
+                    example_base['highLevelSeqListCateId'] = cate_list + [""] * (seq_len - len(cate_list))
 
             if name == 'lowerLevelSeqListCateId':
                 cate_list = []
-                for e in d['featureMap']['userFeatures']['low_level_seq']:
+                seq_old = d['featureMap']['userFeatures']['low_level_seq']
+                seq = [e for e in seq_old if e != '']
+                for e in seq:
                     if e in item_dict:
                         cate_list.append(item_dict[e]['cate_id'])
                     else:
                         cate_list.append("")
                         print('goods_id:%s not in item map' % e)
-                if len(cate_list) == 20:
-                    example_base['lowerLevelSeqListCateId'] = cate_list
+                if len(cate_list) >= seq_len:
+                    example_base['lowerLevelSeqListCateId'] = cate_list[0:seq_len]
                 else:
-                    example_base['lowerLevelSeqListCateId'] = cate_list + [""] * (20 - len(cate_list))
+                    example_base['lowerLevelSeqListCateId'] = cate_list + [""] * (seq_len - len(cate_list))
         for name in user_profile_string.keys():
             user_d = d['featureMap']['userFeatures']['user_feature_context']
             if name in user_d:

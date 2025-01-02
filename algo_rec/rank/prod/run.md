@@ -194,6 +194,7 @@ type:q-gauc percentle: [0.         0.25       0.375      0.59259259 0.66666667 0
 # predict
 nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix   --model_version=/ds=20241202-20241209/model/1735496971/ --tfr_s3=rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241210/ > run.log 2>&1 &
 nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix   --model_version=/ds=20241210-20241216/model/1735706837/ --tfr_s3=rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241217/ > run.log 2>&1 &
+nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v20_mask_savana_in_fix   --model_version=/ds=20241217-20241226/model/1735731247/ --tfr_s3=rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=20241227/ > run.log 2>&1 &
 
 nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v1_mask_zero             --model_version=/ds=20241202-20241209/model/1735233838/ --tfr_s3=rec/cn_rec_detail_sample_v10_tfr/ds=20241210/   > run.log 2>&1 &
 
