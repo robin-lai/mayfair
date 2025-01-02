@@ -201,7 +201,7 @@ def create_edp(args):
     instance_type = args.instance_type
     instance_count = 1
     retry_times = 0
-    print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
+    # print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
 
     # edp_model_name = endpoint_name + '-' + str(random.randint(10000, 19999))
     variant_name = "Variant-xlarge-1"  # start from 1, incr 1 when updating.
