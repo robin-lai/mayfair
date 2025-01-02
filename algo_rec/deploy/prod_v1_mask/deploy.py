@@ -269,9 +269,10 @@ def update_edp(args):
     # print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
     endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
     print(endpoint_info)
-    model_name = args.model_name.replace('_', '-')
-    variant_name = "Variant-xl-%s-%s" % (model_name, args.edp_version)
-    endpoint_config_name = 'cf-%s-%s' % (model_name, args.edp_version)
+    model_name = args.model_name + '_' + args.edp_version
+    model_name = model_name.model_name.replace('_', '-')
+    variant_name = "Variant-xl-%s" % model_name
+    endpoint_config_name = 'cf-%s' % model_name
 
     img = sagemaker.image_uris.retrieve(
         framework='tensorflow',
@@ -283,7 +284,7 @@ def update_edp(args):
 
     print('in_s3_tar_file', args.s3_tar_file)
     sm_sess.create_model(
-        name=args.endpoint,
+        name=model_name,
         role=role,
         container_defs={
             "Image": img,
@@ -298,7 +299,7 @@ def update_edp(args):
     )
 
     variant1 = production_variant(
-        model_name=args.endpoint,
+        model_name=model_name,
         instance_type=instance_type,
         initial_instance_count=args.instance_count,
         variant_name=variant_name,
