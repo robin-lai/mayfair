@@ -1269,7 +1269,7 @@ def main(args):
         print('start request sagemaker')
         request_sagemaker(args)
         print('end request sagemaker')
-    if 'update_edp' in args.pipeline:
+    if 'update' in args.pipeline:
         print('start update edp')
         update_edp(args)
         print('end update edp')
@@ -1285,7 +1285,7 @@ if __name__ == '__main__':
         prog='deploy',
         description='deploy',
         epilog='deploy')
-    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update_edp,time')
+    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--region', default='in')
     parser.add_argument('--edp_version', default='0101')
     parser.add_argument('--model_dir', default='prod_model/')
