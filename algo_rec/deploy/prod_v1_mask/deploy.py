@@ -270,7 +270,7 @@ def update_edp(args):
     endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
     print(endpoint_info)
     model_name = args.model_name + '_' + args.edp_version
-    model_name = model_name.model_name.replace('_', '-')
+    model_name = model_name.replace('_', '-')
     variant_name = "Variant-xl-%s" % model_name
     endpoint_config_name = 'cf-%s' % model_name
 
