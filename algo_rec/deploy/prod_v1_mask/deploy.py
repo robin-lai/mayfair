@@ -1285,7 +1285,7 @@ if __name__ == '__main__':
         prog='deploy',
         description='deploy',
         epilog='deploy')
-    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update_edp')
+    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update_edp,time')
     parser.add_argument('--region', default='in')
     parser.add_argument('--edp_version', default='0101')
     parser.add_argument('--model_dir', default='prod_model/')
