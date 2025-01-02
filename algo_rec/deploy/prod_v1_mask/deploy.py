@@ -272,7 +272,7 @@ def update_edp(args):
     endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
     print(endpoint_info)
     model_name = args.model_name.replace('_', '-')
-    variant_name = "Variant-xlarge-%s-%s" % (model_name, args.edp_version)
+    variant_name = "Variant-xl-%s-%s" % (model_name, args.edp_version)
     endpoint_config_name = 'cf-%s-%s' % (model_name, args.edp_version)
 
     img = sagemaker.image_uris.retrieve(
