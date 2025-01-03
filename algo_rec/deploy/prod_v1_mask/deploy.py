@@ -10,7 +10,7 @@ import boto3
 import sagemaker
 from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
-
+import datetime
 todell_dir = '/home/sagemaker-user/todell/tmp'
 deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1_mask/'
 deploy_pkg_dir = deploy_dir + 'pkg/'
@@ -1287,7 +1287,7 @@ if __name__ == '__main__':
         epilog='deploy')
     parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--region', default='in')
-    parser.add_argument('--edp_version', default='20241231')
+    parser.add_argument('--edp_version', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
     parser.add_argument('--endpoint', default='edp-prod-mtl-seq-on-esmm')
