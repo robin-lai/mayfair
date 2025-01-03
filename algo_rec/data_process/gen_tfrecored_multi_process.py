@@ -164,7 +164,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
                 print("-" * 60)
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
-                # print('data:',t)
+                print('data:',t)
             if debug:
                 print('features',feature)
         ed = time.time()
