@@ -109,7 +109,7 @@ if __name__ == '__main__':
         prog='recall_u2i2i',
         description='recall_u2i2i',
         epilog='recall_u2i2i')
-    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part',type=int, default=4)
@@ -128,6 +128,6 @@ if __name__ == '__main__':
     st = time.time()
     main(args)
     ed = time.time()
-    job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
-    add_job_monitor('u2i2i', job_d)
+    # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
+    # add_job_monitor('u2i2i', job_d)
     print('cost:', ed-st)

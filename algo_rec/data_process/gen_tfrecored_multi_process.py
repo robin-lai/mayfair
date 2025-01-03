@@ -11,6 +11,7 @@ import boto3
 from random import shuffle
 import numpy as np
 import traceback
+import datetime
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
@@ -241,7 +242,7 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--ds', default='ds=20241202')
+    parser.add_argument('--ds', type=str, default='ds=%s'%(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
