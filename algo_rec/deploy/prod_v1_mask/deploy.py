@@ -1287,12 +1287,12 @@ if __name__ == '__main__':
         epilog='deploy')
     parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--region', default='in')
-    parser.add_argument('--edp_version', default='0101')
+    parser.add_argument('--edp_version', default='20241231')
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
     parser.add_argument('--endpoint', default='edp-prod-mtl-seq-on-esmm')
-    parser.add_argument('--model_version', default='/ds=20241202-20241209/model/')
-    parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix_0101.tar.gz')
+    parser.add_argument('--model_version', default='/ds=%s/model/')
+    parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix_%s.tar.gz')
     parser.add_argument('--debug', default='')
     parser.add_argument('--format', default='col')
     parser.add_argument('--col_num',type=int, default=1)
@@ -1301,6 +1301,8 @@ if __name__ == '__main__':
     parser.add_argument('--instance_count', type=int,  default=2)
     parser.add_argument('--goods_num', type=int,  default=100)
     args = parser.parse_args()
+    args.tar_name= args.tar_name % args.edp_version
+    args.model_version = args.model_version % args.edp_version
     # if args.pipeline == 'update_edp':
     #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     # else:

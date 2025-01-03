@@ -1,0 +1,17 @@
+{
+  "u2i2i": [
+    {"idx": 0, "status":"ok","today":"", "newest_ds": "", "start_time": "", "end_time": "", "cost": ""}
+  ],
+  "tfr": [
+    {"idx": 0, "status":"ok","today":"", "newest_ds": "", "start_time": "", "end_time": "", "cost": ""}
+  ],
+  "train": [
+    {"idx": 0, "status":"ok","today":"", "newest_ds": "", "start_time": "", "end_time": "", "cost": ""}
+  ],
+  "predict": [
+    {"idx": 0, "status":"ok","today":"", "newest_ds": "", "start_time": "", "end_time": "", "cost": ""}
+  ],
+  "deploy_pkg": [
+    {"idx": 0, "status":"ok","today":"", "newest_ds": "", "start_time": "", "end_time": "", "cost": ""}
+  ]
+}
