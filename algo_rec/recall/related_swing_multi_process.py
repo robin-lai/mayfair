@@ -8,6 +8,7 @@ import argparse
 import time
 from pyarrow import parquet
 import pickle
+import datetime
 import numpy as np
 import sys
 
@@ -297,7 +298,12 @@ if __name__ == '__main__':
         epilog='swing-help')
     parser.add_argument('--flag',default='mock')
     parser.add_argument('--p',type=int, default=4)
-    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec_test/cn_rec_detail_recall_i2i_for_redis/item_user_debiasv2/')
-    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20241217')
+    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
+    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
     args = parser.parse_args()
+    args.in_file = args.in_file % args.pre_ds
+    args.s3_file = args.s3_file % args.pre_ds
+    print('s3_file', args.s3_file)
+    print('in_file', args.in_file)
     main(args)
