@@ -11,6 +11,13 @@ import pickle
 import datetime
 import numpy as np
 import sys
+from pathlib import Path
+print(sys.path)
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
+print(sys.path)
+from algo_rec.utils.util import add_job_monitor
+
 
 
 import math
@@ -306,4 +313,9 @@ if __name__ == '__main__':
     args.s3_file = args.s3_file % args.pre_ds
     print('s3_file', args.s3_file)
     print('in_file', args.in_file)
+    st = time.time()
     main(args)
+    ed = time.time()
+    job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
+    add_job_monitor('tfr', job_d)
+    print('cost:', ed-st)

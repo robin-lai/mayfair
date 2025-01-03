@@ -9,6 +9,13 @@ from sagemaker import get_execution_role
 from sagemaker.tensorflow import TensorFlow
 from aws_auth_init import *
 
+import sys
+from pathlib import Path
+print(sys.path)
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
+print(sys.path)
+from algo_rec.utils.util import add_job_monitor
 # steup up
 s3_cli = boto3.client('s3')
 sm_sess = sagemaker.Session()
@@ -122,4 +129,7 @@ if __name__ == '__main__':
         print('eval ds:', args.eval_ds)
         st = time.time()
         main(args)
+        ed = time.time()
+        job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
+        add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
