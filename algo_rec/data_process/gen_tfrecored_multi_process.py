@@ -92,6 +92,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         else:
             js = dict(json.loads(seq_on))
         for k, v in js.items():
+            if k not in ['lowerLevelSeqList', 'highLevelSeqList']:
+                continue
             goods = []
             cate_id_list = []
             cate_name_list = []
