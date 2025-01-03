@@ -130,6 +130,6 @@ if __name__ == '__main__':
         st = time.time()
         main(args)
         ed = time.time()
-        job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
-        add_job_monitor('train', job_d)
+        # job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
+        # add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
