@@ -12,18 +12,12 @@ import datetime
 import numpy as np
 import sys
 from pathlib import Path
+# print(sys.path)
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
-print(sys.path)
-from algo_rec.utils.util import add_job_monitor
-
-
 
 import math
-
-from sagemaker.jumpstart.utils import tag_key_in_array
-
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
