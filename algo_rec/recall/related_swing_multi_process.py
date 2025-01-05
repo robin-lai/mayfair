@@ -310,8 +310,8 @@ if __name__ == '__main__':
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
     args = parser.parse_args()
     args.in_file = args.in_file % args.pre_ds
-    args.s3_file = args.s3_file % args.pre_ds
-    print('s3_file', args.s3_file)
+    args.s3_dir = args.s3_dir % args.pre_ds
+    print('s3_dir', args.s3_dir)
     print('in_file', args.in_file)
     st = time.time()
     main(args)
