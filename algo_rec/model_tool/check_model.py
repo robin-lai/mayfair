@@ -48,6 +48,6 @@ if __name__ == '__main__':
         description='check_model',
         epilog='check_model')
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
-    parser.add_argument('--model_version', default='/ds=20241217-20241226/')
+    parser.add_argument('--model_version', default='ds=20241217-20241226')
     args = parser.parse_args()
     main(args)
