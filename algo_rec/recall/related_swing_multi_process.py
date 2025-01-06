@@ -298,7 +298,7 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--flag',default='s3')
-    parser.add_argument('--p',type=int, default=4)
+    parser.add_argument('--p',type=int, default=1)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
