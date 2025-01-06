@@ -20,20 +20,20 @@ def main(args):
     def norm(arr):
         norm = np.linalg.norm(arr,ord=1, axis=1)
         norm_v = [e for e in norm if e != 0]
-        norm_s = norm_v.sort(reverse=True)
+        norm_v.sort(reverse=True)
         print('norm1 num:', len(norm_v))
-        print('norm1_s', norm_s)
+        print('norm1_s', norm_v)
 
         norm = np.linalg.norm(arr, ord=2, axis=1)
         norm_v = [e for e in norm if e != 0]
-        norm_s = norm_v.sort(reverse=True)
+        norm_v.sort(reverse=True)
         print('norm2 num:', len(norm_v))
-        print('norm2_s', norm_s)
+        print('norm2_s', norm_v)
 
     for var in emb_name:
         emb = tf.train.load_variable(local_model, var)
         print(emb.shape)
-        print(emb[0:100])
+        # print(emb[0:100])
         print('var name:', var)
         norm(emb)
         emb_df = pd.DataFrame(emb)
