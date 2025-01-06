@@ -17,17 +17,6 @@ def main(args):
                 'attention_seq_on_low_goods_id/att_seq_on_low_goods_id/emb_att_seq_on_low_goods_id']
     print('list variable:', tf.train.list_variables(local_model))
 
-    def norm(arr):
-        norm_v = [e for e in norm if e != 0]
-        norm_v.sort(reverse=True)
-        print('norm1 num:', len(norm_v))
-        print('norm1_s', norm_v[0:100])
-
-        norm_v = [e for e in norm if e != 0]
-        norm_v.sort(reverse=True)
-        print('norm2 num:', len(norm_v))
-        print('norm2_s', norm_v[0:100])
-
     for var in emb_name:
         emb = tf.train.load_variable(local_model, var)
         ll = []
