@@ -22,13 +22,13 @@ def main(args):
         norm_v = [e for e in norm if e != 0]
         norm_v.sort(reverse=True)
         print('norm1 num:', len(norm_v))
-        print('norm1_s', norm_v)
+        print('norm1_s', norm_v[0:100])
 
         norm = np.linalg.norm(arr, ord=2, axis=1)
         norm_v = [e for e in norm if e != 0]
         norm_v.sort(reverse=True)
         print('norm2 num:', len(norm_v))
-        print('norm2_s', norm_v)
+        print('norm2_s', norm_v[0:100])
 
     for var in emb_name:
         emb = tf.train.load_variable(local_model, var)
