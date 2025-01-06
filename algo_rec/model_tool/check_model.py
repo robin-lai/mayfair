@@ -21,10 +21,10 @@ def main(args):
         emb = tf.train.load_variable(local_model, var)
         ll = []
         print('var name:', var)
-        for l in emb:
-            d = {'v': ','.join([str(e) for e in l]),
-                 'norm1': np.linalg.norm(l, ord=1, axis=1),
-                 'norm2': np.linalg.norm(l, ord=2, axis=1)
+        for line in emb:
+            d = {'v': ','.join([str(e) for e in line]),
+                 'norm1': np.linalg.norm(line, ord=1, axis=1),
+                 'norm2': np.linalg.norm(line, ord=2, axis=1)
                  }
             ll.append(d)
         emb_df = pd.DataFrame(ll)
