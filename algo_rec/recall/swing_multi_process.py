@@ -368,6 +368,7 @@ def main(args):
         if fail_cnt:
             raise ValueError('Failed in %d process.' % fail_cnt)
         print('step swing done cost:', str(time.time() - st))
+        swing_result_ana(args, country, args.p)
     else:
         swing_result_ana(args, country, args.p)
 
@@ -380,7 +381,7 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--flag',default='s3')
-    parser.add_argument('--pipeline',default='ana')
+    parser.add_argument('--pipeline',default='swing')
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
