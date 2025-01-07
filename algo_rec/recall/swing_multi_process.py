@@ -29,9 +29,10 @@ item_bhv_user_list_file = './%s_item_bhv_user_list.pkl'
 user_bhv_item_list_file = './%s_user_bhv_item_list.pkl'
 user_bhv_num_file = './%s_user_bhv_num.pkl'
 item_bhv_num_file = './%s_item_bhv_num.pkl'
+trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
 
 
-def process(lines, c):
+def process(lines, c, part):
     user_bhv_item_list = {}
     user_bhv_num = {}
     item_bhv_user_list = {}
@@ -68,6 +69,22 @@ def process(lines, c):
     with open(item_bhv_num_file%(c), 'wb') as fout:
         pickle.dump(item_bhv_num, fout)
 
+    item_list = []
+    hot_item_num = 0
+    for k, v in item_bhv_num.items():
+        item_list.append(k)
+        if v > 1000:
+            hot_item_num += 1
+    batch = part
+    print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num.keys()), len(item_list), hot_item_num))
+    shuffle(item_list)
+    item_batch = list(chunks(item_list, batch))
+    for i, ele in enumerate(item_batch):
+        with open(trig_item_list_file % (c, i), 'wb') as fout:
+            pickle.dump(ele, fout)
+        print('batch size:', len(ele))
+    print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
+
 
 alph = 1
 beta = 0.5
@@ -75,8 +92,7 @@ user_debias = True
 item_debias = True
 out_file = ''
 def swing(*args):
-    trig_itm_list = args[0]
-    print('O(n):', len(trig_itm_list))
+    # trig_itm_list = args[0]
     out_file = args[1]
     c = args[2]
     s3_file = args[3]
@@ -88,6 +104,9 @@ def swing(*args):
         user_bhv_num = pickle.load(fin)
     with open(item_bhv_num_file%(c), 'rb') as fin:
         item_bhv_num = pickle.load(fin)
+    with open(args[0], 'rb') as fin:
+        trig_itm_list = pickle.load(fin)
+    print('O(n):', len(trig_itm_list))
     ret = {}
     n = 0
     N = len(trig_itm_list)
@@ -218,8 +237,7 @@ def get_test_data():
         print('country:%s lines:%s' % (k, len(v)))
     return m
 
-def main(args):
-    # get data
+def get_data(args, country):
     st = time.time()
     in_file = args.in_file
     if args.flag == 's3':
@@ -229,44 +247,30 @@ def main(args):
     elif args.flag == 'sample':
         m = get_test_data()
     else:
-        print('unknown flag:',args.flag)
+        print('unknown flag:', args.flag)
     ed = time.time()
-    print('step 1 get_date done cost:', str(ed-st))
-
+    print('step 1 get_date done cost:', str(ed - st))
     # preprocess
+    v = m[country]
+    process(v, country, args.p)
+
+
+def main(args):
+    # get data
     st = time.time()
-    for country, v in m.items():
-        print('process country:', country)
-        if country != 'Savana_IN':
-            continue
-        process(v, country)
-        print('step 2 preprocess done cost:', str(time.time() - st))
-        # swing
-        st = time.time()
-        with open(item_bhv_num_file%(country), 'rb') as fin:
-            item_bhv_num = pickle.load(fin)
-        item_list = []
-        hot_item_num = 0
-        for k, v in item_bhv_num.items():
-            item_list.append(k)
-            if v > 1000:
-                hot_item_num += 1
-        batch = args.p
-        print('item_list_raw:%s  item_list_filter:%s  hot_item_num:%s'%(len(item_bhv_num.keys()), len(item_list), hot_item_num))
-        shuffle(item_list)
-        item_batch = list(chunks(item_list, batch))
-        for ele in item_batch:
-            print('batch size:', len(ele))
-        print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
-        outfile = './swing_rec_%s_part_%s'
-        s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[args, outfile%(country,i), country, s3_file%(country, i)]) for i, args in enumerate(item_batch)]
-        [p.start() for p in proc_list]
-        [p.join() for p in proc_list]
-        fail_cnt = sum([p.exitcode for p in proc_list])
-        if fail_cnt:
-            raise ValueError('Failed in %d process.' % fail_cnt)
-        print('step swing done cost:', str(time.time() - st))
+    country = 'Savana_IN'
+    get_data(args, country)
+    # swing
+    st = time.time()
+    outfile = './swing_rec_%s_part_%s'
+    s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
+    proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i)]) for i in range(args.p)]
+    [p.start() for p in proc_list]
+    [p.join() for p in proc_list]
+    fail_cnt = sum([p.exitcode for p in proc_list])
+    if fail_cnt:
+        raise ValueError('Failed in %d process.' % fail_cnt)
+    print('step swing done cost:', str(time.time() - st))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
