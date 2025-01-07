@@ -59,11 +59,34 @@ def process(lines, c, part, sample_num=None):
             item_bhv_num[itm] = 1
     print('data desc: user num %s, item num:%s'%(len(user_bhv_num.keys()), len(item_bhv_user_list.keys())))
     print('dump data into file')
+    # sample
+    user_bhv_item_list_new = {}
+    for u, v in user_bhv_item_list.items():
+        if len(v) >= 600:
+            v_s = random.sample(list(v), 600)
+            user_bhv_item_list_new[u] = v_s
+        else:
+            user_bhv_item_list_new[u] = v
+    item_bhv_user_list_new = {}
+    for itm, u in item_bhv_user_list.items():
+        if len(u) >= 700:
+            u_s = random.sample(list(u), 700)
+            item_bhv_user_list_new[itm] = u_s
+        else:
+            item_bhv_user_list_new[itm] = u
+
+    for u, n in user_bhv_num.items():
+        if n >= 600:
+            user_bhv_num[u] = 600
+
+    for itm, n in item_bhv_num.items():
+        if n >= 700:
+            item_bhv_num[itm] = 700
 
     with open(item_bhv_user_list_file%(c), 'wb') as fout:
-        pickle.dump(item_bhv_user_list, fout)
+        pickle.dump(item_bhv_user_list_new, fout)
     with open(user_bhv_item_list_file%(c), 'wb') as fout:
-        pickle.dump(user_bhv_item_list, fout)
+        pickle.dump(user_bhv_item_list_new, fout)
     with open(user_bhv_num_file%(c), 'wb') as fout:
         pickle.dump(user_bhv_num, fout)
     with open(item_bhv_num_file%(c), 'wb') as fout:
@@ -117,15 +140,15 @@ def swing(*args):
     st = time.time()
     for trig_itm in trig_itm_list:
         swing = {}
-        user = list(item_bhv_user_list[trig_itm])
-        u_num = len(user)
+        user_sample = list(item_bhv_user_list[trig_itm])
+        u_num = len(user_sample)
         if u_num < 2:
             continue
-        if u_num >= 700:
-            user_sample = random.sample(user, 700)
-        else:
-            user_sample = user
-        u_num = len(user_sample)
+        # if u_num >= 700:
+        #     user_sample = random.sample(user, 700)
+        # else:
+        #     user_sample = user
+        # u_num = len(user_sample)
         # print('common user num:', u_num)
         n += 1
         for i in range(0, u_num-1):
@@ -276,6 +299,9 @@ def main(args):
     print('step swing done cost:', str(time.time() - st))
 
 if __name__ == '__main__':
+    # 'https://help.aliyun.com/zh/pai/use-cases/improved-swing-similarity-calculation-algorithm' 700, 500截断逻辑
+    # 每个用户的最长序列长度，如果超过该长度会对最近进行截断保留, 600
+    # 每个物品使用多少个用户的点击序列来计算k近邻
     parser = argparse.ArgumentParser(
         prog='swing',
         description='swing-args',
