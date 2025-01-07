@@ -202,7 +202,7 @@ def swing(*args):
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
-            tgt = [e for e in tgt if e > 0]
+            tgt = [e for e in tgt if float(e[1]) > 0]
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
             row_n = 100
