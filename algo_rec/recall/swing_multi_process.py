@@ -399,7 +399,7 @@ if __name__ == '__main__':
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation%s/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--swing_ana_file', type=str, default='swing_result%s_%s.csv')
-    parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/%s/')
+    parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     args = parser.parse_args()
     args.in_file = args.in_file % (args.v, args.pre_ds)
     args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
