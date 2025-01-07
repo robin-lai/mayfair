@@ -35,6 +35,7 @@ item_bhv_num_file = './%s_item_bhv_num.pkl'
 trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
 item_info_file = './%s_item_info.pkl'
 pklfile = './swing_rec_%s_part_%s.pkl'
+round_num = 5
 
 
 def process(lines, c, part, sample_num=None):
@@ -174,16 +175,16 @@ def swing(*args):
                         score = round((1 / user_bhv_num[user_sample[i]])
                                       * (1 / user_bhv_num[user_sample[j]])
                                       * (1 / math.pow(item_bhv_num[tgt_item], beta))
-                                      * (1 / (alph + (len(common_items)))), 4)
+                                      * (1 / (alph + (len(common_items)))), round_num)
                     elif user_debias:
                         score = round((1 / user_bhv_num[user_sample[i]]) * (1 / user_bhv_num[user_sample[j]]) * (
-                                    1 / (alph + (len(common_items)))), 4)
+                                    1 / (alph + (len(common_items)))), round_num)
                     elif item_debias:
-                        score = round((1 / math.pow(item_bhv_num[tgt_item], beta)) * (1 / (alph + (len(common_items)))), 4)
+                        score = round((1 / math.pow(item_bhv_num[tgt_item], beta)) * (1 / (alph + (len(common_items)))), round_num)
                     else:
-                        score = round((1 / (alph + (len(common_items)))), 4)
+                        score = round((1 / (alph + (len(common_items)))), round_num)
                     if tgt_item in swing:
-                        swing[tgt_item] = round(swing[tgt_item] +  score, 4)
+                        swing[tgt_item] = round(swing[tgt_item] +  score, round_num)
                     else:
                         swing[tgt_item] = score
         if len(swing.keys()) < 1:
@@ -201,6 +202,7 @@ def swing(*args):
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
+            tgt = [e for e in tgt if e > 0]
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
             row_n = 100
