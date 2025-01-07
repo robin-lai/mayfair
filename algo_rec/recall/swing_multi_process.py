@@ -6,6 +6,8 @@ import pprint
 import random
 import argparse
 import time
+
+import pandas as pd
 from pyarrow import parquet
 import pickle
 import datetime
@@ -16,6 +18,7 @@ from pathlib import Path
 # sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
 # sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
+import gc
 
 import math
 
@@ -303,30 +306,66 @@ def swing_result_ana(args, country, p):
     with open(item_bhv_num_file%country, 'rb') as fin:
         item_num = pickle.load(fin)
 
+    dd = {}
+    ll = []
+    stat = {'is_cat2_rel_ratio': 0, 'is_cat3_rel_ratio': 0, 'is_leaf_rel_ratio': 0}
+    topn = 100
+    n = len(d.keys())
+    for itm, v in d.items():
+        trig_t = item_info[itm]
+        v.sort(lambda x: x[1], reverse=True)
+        cat2_c, cat3_c, leaf_c = 0,0,0
+        vs = v if len(v) <= 100 else v[0:topn]
+        tgt_list_tmp = []
+        for ele in vs:
+            tgt_t = item_info[ele[0]]
+            tmp_l = [str(ele[0]), str(item_num[ele[0]]), str(ele[1]) , str(tgt_t[0]), str(tgt_t[1]) ,str(tgt_t[2])]
+            tgt_list_tmp.append(','.join(tmp_l))
+            if trig_t[0] == tgt_t[0]:
+                cat2_c += 1
+            if trig_t[1] == tgt_t[1]:
+                cat3_c += 1
+            if trig_t[2] == tgt_t[2]:
+                leaf_c += 1
+        ll.append([itm,item_num[itm],trig_t[0], trig_t[1], trig_t[2], '|'.join(tgt_list_tmp)])
+        c = len(vs)
+        dd[itm] = [c, item_num[itm],  cat2_c / c, cat3_c / c, leaf_c /c ]
+        stat['is_cat2_rel_ratio'] += cat2_c / c
+        stat['is_cat3_rel_ratio'] += cat3_c / c
+        stat['is_leaf_rel_ratio'] +=  leaf_c /c
 
-
-    pass
-
-
+    df = pd.DataFrame(ll, columns=['trig', 'num', 'cat2', 'cat3', 'leaf', 'tgt-itm-num-score-cat2-cat3-leaf'])
+    local_file = './' + args.swing_ana_file
+    swing_s3_file = args.s3_dir + args.swing_ana_file
+    df.to_csv(local_file)
+    os.system('aws s3 cp %s %s' % (local_file, swing_s3_file))
+    print('swing_s3_file:', swing_s3_file)
+    for k, v in stat.items():
+        stat[k] = v / n
+    print('swing result relate stat:')
+    print(stat)
 
 
 def main(args):
     # get data
-    st = time.time()
     country = 'Savana_IN'
-    get_data(args, country)
-    # swing
-    st = time.time()
-    outfile = './swing_rec_%s_part_%s'
-    s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-    proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i)]) for i in range(args.p)]
-    [p.start() for p in proc_list]
-    [p.join() for p in proc_list]
-    fail_cnt = sum([p.exitcode for p in proc_list])
-    if fail_cnt:
-        raise ValueError('Failed in %d process.' % fail_cnt)
-    print('step swing done cost:', str(time.time() - st))
-    swing_result_ana(args, country, args.p)
+    if args.pipeline != 'ana':
+        st = time.time()
+        get_data(args, country)
+        gc.collect()
+        # swing
+        st = time.time()
+        outfile = './swing_rec_%s_part_%s'
+        s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i)]) for i in range(args.p)]
+        [p.start() for p in proc_list]
+        [p.join() for p in proc_list]
+        fail_cnt = sum([p.exitcode for p in proc_list])
+        if fail_cnt:
+            raise ValueError('Failed in %d process.' % fail_cnt)
+        print('step swing done cost:', str(time.time() - st))
+    else:
+        swing_result_ana(args, country, args.p)
 
 if __name__ == '__main__':
     # 'https://help.aliyun.com/zh/pai/use-cases/improved-swing-similarity-calculation-algorithm' 700, 500截断逻辑
@@ -337,11 +376,13 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     parser.add_argument('--flag',default='s3')
+    parser.add_argument('--pipeline',default='ana')
     parser.add_argument('--p',type=int, default=4)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
+    parser.add_argument('--swing_ana_file', type=str, default='swing_result.csv')
     args = parser.parse_args()
     args.in_file = args.in_file % args.pre_ds
     args.s3_dir = args.s3_dir % args.pre_ds
