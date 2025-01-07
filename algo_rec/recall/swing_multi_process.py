@@ -218,7 +218,7 @@ def swing(*args):
 
 
 
-def get_data_from_s3(raw_file):
+def get_data_from_s3(raw_file,item_feature):
     st = time.time()
     print('begin read parquet data from file:', raw_file)
     pt = parquet.read_table(raw_file)
