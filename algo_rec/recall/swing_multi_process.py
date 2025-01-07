@@ -214,9 +214,10 @@ def get_data_from_s3(raw_file):
     print('begin read parquet data from file:', raw_file)
     pt = parquet.read_table(raw_file)
     m = {}
-    for uuid, goods_id, clk_num, country_code in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']):
+    for uuid, goods_id, clk_num, country_code,cat2,cat3,leaf in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']
+                                                     ,pt['cate_level2_id'],pt['cate_level3_id'],pt['cate_id']):
         country_code = country_code.as_py()
-        t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py())
+        t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py(),cat2,cat3,leaf)
         if country_code in m:
             m[country_code].append(t)
         else:
@@ -287,6 +288,11 @@ def get_data(args, country):
     v = m[country]
     process(v, country, args.p, args.sample_num)
 
+def swing_result_ana(args):
+    pass
+
+
+
 
 def main(args):
     # get data
@@ -304,6 +310,7 @@ def main(args):
     if fail_cnt:
         raise ValueError('Failed in %d process.' % fail_cnt)
     print('step swing done cost:', str(time.time() - st))
+    swing_result_ana(args)
 
 if __name__ == '__main__':
     # 'https://help.aliyun.com/zh/pai/use-cases/improved-swing-similarity-calculation-algorithm' 700, 500截断逻辑
