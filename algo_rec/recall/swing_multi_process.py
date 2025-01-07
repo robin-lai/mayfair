@@ -31,6 +31,7 @@ user_bhv_num_file = './%s_user_bhv_num.pkl'
 item_bhv_num_file = './%s_item_bhv_num.pkl'
 trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
 item_info_file = './%s_item_info.pkl'
+pklfile = './swing_rec_%s_part_%s.pkl'
 
 
 def process(lines, c, part, sample_num=None):
@@ -43,7 +44,7 @@ def process(lines, c, part, sample_num=None):
     for line in lines:
         u, itm, clk, cat2, cat3, leaf = line[0], line[1], line[2], line[3], line[4], line[5],
         if itm not in item_info.keys():
-            item_info[itm] = {'cat3': cat3, 'cat2': cat2, 'leaf': leaf}
+            item_info[itm] = (cat2, cat3,leaf)
         # u, itm, clk = line[0], line[1], line[2]
         if u in user_bhv_item_list.keys():
             user_bhv_item_list[u].add(itm)
@@ -125,10 +126,14 @@ user_debias = True
 item_debias = True
 out_file = ''
 def swing(*args):
+    with open(args[0], 'rb') as fin:
+        trig_itm_list = pickle.load(fin)
+    print('O(n):', len(trig_itm_list))
     # trig_itm_list = args[0]
     out_file = args[1]
     c = args[2]
     s3_file = args[3]
+    pkl_file = args[4]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -137,9 +142,6 @@ def swing(*args):
         user_bhv_num = pickle.load(fin)
     with open(item_bhv_num_file%(c), 'rb') as fin:
         item_bhv_num = pickle.load(fin)
-    with open(args[0], 'rb') as fin:
-        trig_itm_list = pickle.load(fin)
-    print('O(n):', len(trig_itm_list))
     ret = {}
     n = 0
     N = len(trig_itm_list)
@@ -191,6 +193,8 @@ def swing(*args):
     print('swing process done, cost:', time.time() - st0)
 
     print('write swing result to file:', out_file)
+    with open(pkl_file, 'wb') as fout:
+        pickle.dump(ret, fout)
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
@@ -288,7 +292,19 @@ def get_data(args, country):
     v = m[country]
     process(v, country, args.p, args.sample_num)
 
-def swing_result_ana(args):
+def swing_result_ana(args, country, p):
+    d = {}
+    for i in range(p):
+        with open(pklfile % (country, i), 'rb') as fin:
+            d.update(pickle.load(fin))
+    print('swing result merge item num:', len(d.keys()))
+    with open(item_info_file%country, 'rb') as fin:
+        item_info = pickle.load(fin)
+    with open(item_bhv_num_file%country, 'rb') as fin:
+        item_num = pickle.load(fin)
+
+
+
     pass
 
 
@@ -303,14 +319,14 @@ def main(args):
     st = time.time()
     outfile = './swing_rec_%s_part_%s'
     s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-    proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i)]) for i in range(args.p)]
+    proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i)]) for i in range(args.p)]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
     fail_cnt = sum([p.exitcode for p in proc_list])
     if fail_cnt:
         raise ValueError('Failed in %d process.' % fail_cnt)
     print('step swing done cost:', str(time.time() - st))
-    swing_result_ana(args)
+    swing_result_ana(args, country, args.p)
 
 if __name__ == '__main__':
     # 'https://help.aliyun.com/zh/pai/use-cases/improved-swing-similarity-calculation-algorithm' 700, 500截断逻辑
