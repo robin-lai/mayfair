@@ -223,10 +223,14 @@ def get_data_from_s3(raw_file):
     print('begin read parquet data from file:', raw_file)
     pt = parquet.read_table(raw_file)
     m = {}
-    for uuid, goods_id, clk_num, country_code,cat2,cat3,leaf in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']
-                                                     ,pt['cate_level2_id'],pt['cate_level3_id'],pt['cate_id']):
+    for uuid, goods_id, clk_num, country_code in zip(pt['uuid'], pt['goods_id'], pt['clk_num'], pt['country_code']):
         country_code = country_code.as_py()
-        t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py(),cat2,cat3,leaf)
+        # t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py(),cat2,cat3,leaf)
+        if goods_id.as_py() in item_feature:
+            goods_info = item_feature[goods_id.as_py()]
+            t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py(),goods_info["cate_level2_name"],goods_info["cate_level3_name"],goods_info["cate_name"])
+        else:
+            t = (uuid.as_py(), goods_id.as_py(), clk_num.as_py(),"", "", "")
         if country_code in m:
             m[country_code].append(t)
         else:
@@ -280,11 +284,11 @@ def get_test_data():
         print('country:%s lines:%s' % (k, len(v)))
     return m
 
-def get_data(args, country):
+def get_data(args, country, item_feature):
     st = time.time()
     in_file = args.in_file
     if args.flag == 's3':
-        m = get_data_from_s3(in_file)
+        m = get_data_from_s3(in_file, item_feature)
     elif args.flag == 'mock':
         m = get_mock_data()
     elif args.flag == 'sample':
@@ -349,13 +353,19 @@ def swing_result_ana(args, country, p):
     print('swing result relate stat:')
     print(stat)
 
+def get_item_feature(file):
+    ret = {}
+    pt = parquet.read_table(file).to_pylist()
+    for e in pt:
+        ret[int(e['goods_id'])] = e
+    return ret
 
-def main(args):
+def main(args, item_feature):
     # get data
     country = 'Savana_IN'
     if args.pipeline != 'ana':
         st = time.time()
-        get_data(args, country)
+        get_data(args, country, item_feature)
         gc.collect()
         # swing
         st = time.time()
@@ -389,6 +399,7 @@ if __name__ == '__main__':
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation%s/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--swing_ana_file', type=str, default='swing_result%s_%s.csv')
+    parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/%s/')
     args = parser.parse_args()
     args.in_file = args.in_file % (args.v, args.pre_ds)
     args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
@@ -397,7 +408,8 @@ if __name__ == '__main__':
     print('in_file', args.in_file)
     print('swing_ana_file', args.swing_ana_file)
     st = time.time()
-    main(args)
+    item_feature = get_item_feature(args.item % args.pre_ds)
+    main(args, item_feature)
     ed = time.time()
     # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
     # add_job_monitor('tfr', job_d)
