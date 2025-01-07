@@ -32,7 +32,7 @@ item_bhv_num_file = './%s_item_bhv_num.pkl'
 trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
 
 
-def process(lines, c, part):
+def process(lines, c, part, sample_num=None):
     user_bhv_item_list = {}
     user_bhv_num = {}
     item_bhv_user_list = {}
@@ -81,7 +81,10 @@ def process(lines, c, part):
     item_batch = list(chunks(item_list, batch))
     for i, ele in enumerate(item_batch):
         with open(trig_item_list_file % (c, i), 'wb') as fout:
-            pickle.dump(ele, fout)
+            if sample_num is None:
+                pickle.dump(ele, fout)
+            else:
+                pickle.dump(ele[0:sample_num], fout)
         print('batch size:', len(ele))
     print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
 
@@ -252,7 +255,7 @@ def get_data(args, country):
     print('step 1 get_date done cost:', str(ed - st))
     # preprocess
     v = m[country]
-    process(v, country, args.p)
+    process(v, country, args.p, args.sample_num)
 
 
 def main(args):
@@ -279,6 +282,7 @@ if __name__ == '__main__':
         epilog='swing-help')
     parser.add_argument('--flag',default='s3')
     parser.add_argument('--p',type=int, default=4)
+    parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
