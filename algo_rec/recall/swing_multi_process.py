@@ -313,7 +313,7 @@ def swing_result_ana(args, country, p):
     n = len(d.keys())
     for itm, v in d.items():
         trig_t = item_info[itm]
-        v.sort(lambda x: x[1], reverse=True)
+        v.sort(key=lambda x: x[1], reverse=True)
         cat2_c, cat3_c, leaf_c = 0,0,0
         vs = v if len(v) <= 100 else v[0:topn]
         tgt_list_tmp = []
