@@ -377,7 +377,7 @@ if __name__ == '__main__':
         epilog='swing-help')
     parser.add_argument('--flag',default='s3')
     parser.add_argument('--pipeline',default='ana')
-    parser.add_argument('--p',type=int, default=4)
+    parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
