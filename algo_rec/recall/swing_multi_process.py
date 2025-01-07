@@ -8,14 +8,16 @@ import argparse
 import time
 from pyarrow import parquet
 import pickle
+import datetime
 import numpy as np
 import sys
-
+from pathlib import Path
+# print(sys.path)
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
+print(sys.path)
 
 import math
-
-from sagemaker.jumpstart.utils import tag_key_in_array
-
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -68,7 +70,9 @@ def process(lines, c):
 
 
 alph = 1
+beta = 0.5
 user_debias = True
+item_debias = True
 out_file = ''
 def swing(*args):
     trig_itm_list = args[0]
@@ -82,6 +86,8 @@ def swing(*args):
         user_bhv_item_list = pickle.load(fin)
     with open(user_bhv_num_file%(c), 'rb') as fin:
         user_bhv_num = pickle.load(fin)
+    with open(item_bhv_num_file%(c), 'rb') as fin:
+        item_bhv_num = pickle.load(fin)
     ret = {}
     n = 0
     N = len(trig_itm_list)
@@ -93,8 +99,8 @@ def swing(*args):
         u_num = len(user)
         if u_num < 2:
             continue
-        if u_num >= 200:
-            user_sample = random.sample(user, 200)
+        if u_num >= 300:
+            user_sample = random.sample(user, 300)
         else:
             user_sample = user
         u_num = len(user_sample)
@@ -107,9 +113,16 @@ def swing(*args):
                 for tgt_item in common_items:
                     if trig_itm == tgt_item:
                         continue
-                    if user_debias:
+                    if user_debias and item_debias:
+                        score = round((1 / user_bhv_num[user_sample[i]])
+                                      * (1 / user_bhv_num[user_sample[j]])
+                                      * (1 / math.pow(item_bhv_num[tgt_item], beta))
+                                      * (1 / (alph + (len(common_items)))), 4)
+                    elif user_debias:
                         score = round((1 / user_bhv_num[user_sample[i]]) * (1 / user_bhv_num[user_sample[j]]) * (
                                     1 / (alph + (len(common_items)))), 4)
+                    elif item_debias:
+                        score = round((1 / math.pow(item_bhv_num[tgt_item], beta)) * (1 / (alph + (len(common_items)))), 4)
                     else:
                         score = round((1 / (alph + (len(common_items)))), 4)
                     if tgt_item in swing:
@@ -131,13 +144,13 @@ def swing(*args):
         for trig, tgt in ret.items():
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
-            row_n = 30
+            row_n = 100
             for ele in tgt:
                 row_n -= 1
                 if row_n == 0:
                     break
-                vs.append(ele[0] + chr(4) + str(ele[1]))
-            line = (c + chr(4) + trig + chr(1) + chr(2).join(vs) + '\n')
+                vs.append(str(ele[0]) + chr(4) + str(ele[1]))
+            line = (c + chr(4) + str(trig) + chr(1) + chr(2).join(vs) + '\n')
             lines.append(line)
         fout.writelines(lines)
     os.system('aws s3 cp %s %s' % (out_file, s3_file))
@@ -260,9 +273,19 @@ if __name__ == '__main__':
         prog='swing',
         description='swing-args',
         epilog='swing-help')
-    parser.add_argument('--flag',default='mock')
-    parser.add_argument('--p',type=int, default=1)
-    parser.add_argument('--s3_dir', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_i2i_for_redis/')
-    parser.add_argument('--in_file', type=str, default='s3://algo-sg/rec/cn_rec_detail_recall_ui_relation/ds=20241216')
+    parser.add_argument('--flag',default='s3')
+    parser.add_argument('--p',type=int, default=4)
+    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=%s')
+    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
     args = parser.parse_args()
+    args.in_file = args.in_file % args.pre_ds
+    args.s3_dir = args.s3_dir % args.pre_ds
+    print('s3_dir', args.s3_dir)
+    print('in_file', args.in_file)
+    st = time.time()
     main(args)
+    ed = time.time()
+    # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
+    # add_job_monitor('tfr', job_d)
+    print('cost:', ed-st)
