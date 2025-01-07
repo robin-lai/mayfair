@@ -332,10 +332,11 @@ def swing_result_ana(args, country, p):
                 leaf_c += 1
         ll.append([itm,item_num[itm],trig_t[0], trig_t[1], trig_t[2], '|'.join(tgt_list_tmp)])
         c = len(vs)
-        dd[itm] = [c, item_num[itm],  cat2_c / c, cat3_c / c, leaf_c /c ]
-        stat['is_cat2_rel_ratio'] += cat2_c / c
-        stat['is_cat3_rel_ratio'] += cat3_c / c
-        stat['is_leaf_rel_ratio'] +=  leaf_c /c
+        if c > 0:
+            dd[itm] = [c, item_num[itm],  cat2_c / c, cat3_c / c, leaf_c /c ]
+            stat['is_cat2_rel_ratio'] += cat2_c / c
+            stat['is_cat3_rel_ratio'] += cat3_c / c
+            stat['is_leaf_rel_ratio'] +=  leaf_c /c
 
     df = pd.DataFrame(ll, columns=['trig', 'num', 'cat2', 'cat3', 'leaf', 'tgt-itm-num-score-cat2-cat3-leaf'])
     local_file = './' + args.swing_ana_file
