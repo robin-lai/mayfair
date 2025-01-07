@@ -99,8 +99,8 @@ def swing(*args):
         u_num = len(user)
         if u_num < 2:
             continue
-        if u_num >= 300:
-            user_sample = random.sample(user, 300)
+        if u_num >= 700:
+            user_sample = random.sample(user, 700)
         else:
             user_sample = user
         u_num = len(user_sample)
