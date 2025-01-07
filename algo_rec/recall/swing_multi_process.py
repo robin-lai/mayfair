@@ -30,6 +30,7 @@ user_bhv_item_list_file = './%s_user_bhv_item_list.pkl'
 user_bhv_num_file = './%s_user_bhv_num.pkl'
 item_bhv_num_file = './%s_item_bhv_num.pkl'
 trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
+item_info_file = './%s_item_info.pkl'
 
 
 def process(lines, c, part, sample_num=None):
@@ -37,9 +38,13 @@ def process(lines, c, part, sample_num=None):
     user_bhv_num = {}
     item_bhv_user_list = {}
     item_bhv_num = {}
+    item_info = {}
 
     for line in lines:
-        u, itm, clk = line[0], line[1], line[2]
+        u, itm, clk, cat2, cat3, leaf = line[0], line[1], line[2], line[3], line[4], line[5],
+        if itm not in item_info.keys():
+            item_info[itm] = {'cat3': cat3, 'cat2': cat2, 'leaf': leaf}
+        # u, itm, clk = line[0], line[1], line[2]
         if u in user_bhv_item_list.keys():
             user_bhv_item_list[u].add(itm)
         else:
@@ -64,14 +69,14 @@ def process(lines, c, part, sample_num=None):
     for u, v in user_bhv_item_list.items():
         if len(v) >= 600:
             v_s = random.sample(list(v), 600)
-            user_bhv_item_list_new[u] = v_s
+            user_bhv_item_list_new[u] = set(v_s)
         else:
             user_bhv_item_list_new[u] = v
     item_bhv_user_list_new = {}
     for itm, u in item_bhv_user_list.items():
         if len(u) >= 700:
             u_s = random.sample(list(u), 700)
-            item_bhv_user_list_new[itm] = u_s
+            item_bhv_user_list_new[itm] = set(u_s)
         else:
             item_bhv_user_list_new[itm] = u
 
@@ -91,6 +96,8 @@ def process(lines, c, part, sample_num=None):
         pickle.dump(user_bhv_num, fout)
     with open(item_bhv_num_file%(c), 'wb') as fout:
         pickle.dump(item_bhv_num, fout)
+    with open(item_info_file % (c), 'wb') as fout:
+        pickle.dump(item_info, fout)
 
     item_list = []
     hot_item_num = 0
