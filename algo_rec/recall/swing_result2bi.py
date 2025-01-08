@@ -3,10 +3,12 @@ from pyarrow import parquet
 import pyarrow as pa
 import argparse
 import time
+import os
 
 import gc
 
 def main(args):
+
     pt = parquet.read_table(args.item_file).to_pylist()
     d = {}
     for e in pt:
@@ -15,7 +17,9 @@ def main(args):
     dd = {'trig_goods_id': [], 'trig_goods_name': [], 'num': [], 'cat2': [], 'cat3': [], 'leaf': [], 'trig_pic_url': [],
           'tgt_goods_id': [], 'tgt_goods_name': [], 'tgt_score': [], 'tgt_pic_url': [], 'tgt_num': [], 'tgt_cat2': [],
           'tgt_cat3': [], 'tgt_leaf': []}
-    df = pd.read_csv(args.swing_result)
+    local_file = args.swing_result.split('/')[-1]
+    os.system("aws s3 cp %s %s" % (args.swing_result, local_file))
+    df = pd.read_csv(local_file)
     swing_ll = df.to_dict(orient='records')
 
     st = time.time()
