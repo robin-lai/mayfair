@@ -50,6 +50,8 @@ def main(args):
                 continue
             for e in tgt_pair.split(chr(2)):
                 tt = e.split(chr(4))
+                if len(tt) < 1:
+                    continue
                 if float(tt[1]) < 0.0000001:
                     continue
                 tl.append((tt[0], float(tt[1])))
