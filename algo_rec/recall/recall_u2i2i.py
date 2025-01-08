@@ -1,4 +1,5 @@
 import argparse
+import gc
 import os
 import time
 import datetime
@@ -40,7 +41,7 @@ def main(args):
         pt = parquet.read_table(args.u2i_s3).to_pylist()
     for idx, d in enumerate(pt):
         if idx % 3000 == 0:
-            print('process %s of %s' % (idx * 3000, len(pt)))
+            print('process %s of %s' % (int(idx / 3000) * 3000, len(pt)))
         tl = []
         for id in d['goods_list']:
             i2i_k = 'Savana_IN' + chr(4) + str(id)
@@ -69,6 +70,7 @@ def main(args):
         else:
             u2i2i_d[kk] = tl[0:100] if len(tl) > 100 else tl
     # line0, line1, line2 , line3 = [], [], [], []
+    gc.collect()
     lines, fins = [[] for _ in range(args.part)], []
     for i in range(args.part):
         fin = open(args.u2i2i_file % i, 'w')
