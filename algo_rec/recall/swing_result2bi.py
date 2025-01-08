@@ -32,6 +32,12 @@ def main(args):
             ed = time.time()
             print('process %s of %s cost %s' % ((idx / 1000) * 1000, len(swing_ll), st-ed))
             st = time.time()
+        if e['trig'] in d:
+            trig_n = d[e['trig']]['goods_name']
+            trig_url = d[e['trig']]['goods_pic_url']
+        else:
+            trig_n = ''
+            trig_url = ''
 
         for tt_str in tgt.split('|'):
             tt = tt_str.split(',')
@@ -43,12 +49,12 @@ def main(args):
                 tgt_good_name = d[int(tt[0])]['goods_name']
 
             dd['trig_goods_id'].append(int(e['trig']))
-            dd['trig_goods_name'].append(str(d[e['trig']]['goods_name']))
+            dd['trig_goods_name'].append(str(trig_n))
             dd['num'].append(int(e['num']))
             dd['cat2'].append(str(e['cat2']))
             dd['cat3'].append(str(e['cat3']))
             dd['leaf'].append(str(e['leaf']))
-            dd['trig_pic_url'].append(str(d[e['trig']]['goods_pic_url']))
+            dd['trig_pic_url'].append(str(trig_url))
             dd['tgt_goods_id'].append(int(tt[0]))
             dd['tgt_goods_name'].append(str(tgt_good_name))
             dd['tgt_score'].append(float(tt[2]))
