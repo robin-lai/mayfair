@@ -30,7 +30,7 @@ def main(args):
         # print(tgt)
         if idx % 1000 == 0:
             ed = time.time()
-            print('process %s of %s cost %s' % ((idx / 1000) * 1000, len(swing_ll), st-ed))
+            print('process %s of %s cost %s' % ((idx / 1000) * 1000, len(swing_ll), ed-st))
             st = time.time()
         if e['trig'] in d:
             trig_n = d[e['trig']]['goods_name']
