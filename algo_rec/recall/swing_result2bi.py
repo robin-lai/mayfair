@@ -18,12 +18,16 @@ def main(args):
     df = pd.read_csv(args.swing_result)
     swing_ll = df.to_dict(orient='records')
 
-    for e in swing_ll:
-
+    st = time.time()
+    for idx, e in enumerate(swing_ll):
         tgt = e['tgt-itm-num-score-cat2-cat3-leaf']
         if ',' not in str(tgt):
             continue
         # print(tgt)
+        if idx % 1000 == 0:
+            ed = time.time()
+            print('process %s of %s cost %s' % ((idx / 1000) * 1000, len(swing_ll), st-ed))
+            st = time.time()
 
         for tt_str in tgt.split('|'):
             tt = tt_str.split(',')
