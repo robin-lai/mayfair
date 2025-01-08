@@ -39,9 +39,12 @@ def main(args):
         pt = parquet.read_table(args.u2i_s3).to_pylist()[0:1000000]
     else:
         pt = parquet.read_table(args.u2i_s3).to_pylist()
+    st = time.time()
     for idx, d in enumerate(pt):
         if idx % 3000 == 0:
-            print('process %s of %s' % (int(idx / 3000) * 3000, len(pt)))
+            ed = time.time()
+            print('process %s of %s cost %s' % (int(idx / 3000) * 3000, len(pt), ed -st))
+            st = time.time()
         tl = []
         for id in d['goods_list']:
             i2i_k = 'Savana_IN' + chr(4) + str(id)
