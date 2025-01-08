@@ -110,18 +110,19 @@ if __name__ == '__main__':
         description='recall_u2i2i',
         epilog='recall_u2i2i')
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
-    parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s/')
+    parser.add_argument('--v',default='')
+    parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
-    parser.add_argument('--i2i_part',type=int, default=4)
+    parser.add_argument('--i2i_part',type=int, default=7)
     parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
-    parser.add_argument('--u2i2i_s3', default='s3://warehouse-algo/rec/recall/recall_u2i2i/item_user_debias_%s/')
+    parser.add_argument('--u2i2i_s3', default='s3://warehouse-algo/rec/recall/recall_u2i2i/item_user_debias%s_%s/')
     parser.add_argument('--part',type=int, default=10)
     parser.add_argument('--debug', type=bool,  default=False)
     args = parser.parse_args()
-    args.i2i_s3 = args.i2i_s3 % args.pre_ds
+    args.i2i_s3 = args.i2i_s3 % (args.v, args.pre_ds)
     args.u2i_s3 = args.u2i_s3 % args.pre_ds
-    args.u2i2i_s3 = args.u2i2i_s3 % args.pre_ds
+    args.u2i2i_s3 = args.u2i2i_s3 % (args.v, args.pre_ds)
     print('i2i_s3', args.i2i_s3)
     print('u2i_s3', args.u2i_s3)
     print('u2i2i_s3', args.u2i2i_s3)
