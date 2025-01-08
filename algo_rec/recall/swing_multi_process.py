@@ -85,13 +85,13 @@ def process(lines, c, part, sample_num=None):
         else:
             item_bhv_user_list_new[itm] = u
 
-    for u, n in user_bhv_num.items():
-        if n >= 600:
-            user_bhv_num[u] = 600
-
-    for itm, n in item_bhv_num.items():
-        if n >= 700:
-            item_bhv_num[itm] = 700
+    # for u, n in user_bhv_num.items():
+    #     if n >= 600:
+    #         user_bhv_num[u] = 600
+    #
+    # for itm, n in item_bhv_num.items():
+    #     if n >= 700:
+    #         item_bhv_num[itm] = 700
 
     with open(item_bhv_user_list_file%(c), 'wb') as fout:
         pickle.dump(item_bhv_user_list_new, fout)
