@@ -62,7 +62,7 @@ def main(args):
             dd['cat2'].append(str(e['cat2']))
             dd['cat3'].append(str(e['cat3']))
             dd['leaf'].append(str(e['leaf']))
-            dd['leaf_cn'].append(str(map_d[e['leaf']]['cate_name_cn']))
+            dd['leaf_cn'].append(map_d.get(e['leaf'], {}).get('cate_name_cn', ""))
             dd['trig_pic_url'].append(str(trig_url))
             dd['tgt_goods_id'].append(int(tt[0]))
             dd['tgt_goods_name'].append(str(tgt_good_name))
@@ -72,7 +72,7 @@ def main(args):
             dd['tgt_cat2'].append(str(tt[3]))
             dd['tgt_cat3'].append(str(tt[4]))
             dd['tgt_leaf'].append(str(tt[5]))
-            dd['tgt_leaf_cn'].append(str(map_d[str(tt[5])]['cate_name_cn']))
+            dd['tgt_leaf_cn'].append(map_d.get(str(tt[5]), {}).get('cate_name_cn', ""))
 
     tb = pa.table(dd)
     parquet.write_table(tb, args.save_file)

@@ -198,5 +198,7 @@ nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl
 
 nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl_seq_on_esmm_v1_mask_zero             --model_version=/ds=20241202-20241209/model/1735233838/ --tfr_s3=rec/cn_rec_detail_sample_v10_tfr/ds=20241210/   > run.log 2>&1 &
 
+# train
+nohup python -u run_rec_model_sg_di_prod_v1_mask.py --pre_ds=20241217-20241226  --train_ds=20241227-20250105 > run.log 2>&1 &
 
                                             
