@@ -28,7 +28,7 @@ def main(args):
     leaf_ll = leaf_df.to_dict(orient='records')
     map_d = {}
     for e in leaf_ll:
-        map_d[e['cate_id']] = e
+        map_d[e['cate_name']] = e
 
     st = time.time()
     for idx, e in enumerate(swing_ll):
