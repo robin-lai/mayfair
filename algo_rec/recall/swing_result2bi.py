@@ -14,13 +14,21 @@ def main(args):
     for e in pt:
         d[e['goods_id']] = {'goods_pic_url': e['goods_pic_url'], 'goods_name': e['goods_name']}
     gc.collect()
-    dd = {'trig_goods_id': [], 'trig_goods_name': [], 'num': [], 'cat2': [], 'cat3': [], 'leaf': [], 'trig_pic_url': [],
+    dd = {'trig_goods_id': [], 'trig_goods_name': [], 'num': [], 'cat2': [], 'cat3': [], 'leaf': [], 'leaf_cn':[], 'trig_pic_url': [],
           'tgt_goods_id': [], 'tgt_goods_name': [], 'tgt_score': [], 'tgt_pic_url': [], 'tgt_num': [], 'tgt_cat2': [],
-          'tgt_cat3': [], 'tgt_leaf': []}
+          'tgt_cat3': [], 'tgt_leaf': [], 'tgt_leaf_cn':[]}
     local_file = args.swing_result.split('/')[-1]
     os.system("aws s3 cp %s %s" % (args.swing_result, local_file))
     df = pd.read_csv(local_file)
     swing_ll = df.to_dict(orient='records')
+
+    leaf_local = args.leaf_info.split('/')[-1]
+    os.system("aws s3 cp %s %s" % (args.leaf_info, leaf_local))
+    leaf_df = pd.read_csv(leaf_local)
+    leaf_ll = leaf_df.to_dict(orient='records')
+    map_d = {}
+    for e in leaf_ll:
+        map_d[e['cate_id']] = e
 
     st = time.time()
     for idx, e in enumerate(swing_ll):
@@ -54,6 +62,7 @@ def main(args):
             dd['cat2'].append(str(e['cat2']))
             dd['cat3'].append(str(e['cat3']))
             dd['leaf'].append(str(e['leaf']))
+            dd['leaf_cn'].append(str(map_d[e['leaf']]['cate_name_cn']))
             dd['trig_pic_url'].append(str(trig_url))
             dd['tgt_goods_id'].append(int(tt[0]))
             dd['tgt_goods_name'].append(str(tgt_good_name))
@@ -63,6 +72,7 @@ def main(args):
             dd['tgt_cat2'].append(str(tt[3]))
             dd['tgt_cat3'].append(str(tt[4]))
             dd['tgt_leaf'].append(str(tt[5]))
+            dd['tgt_leaf_cn'].append(str(map_d[str(tt[5])]['cate_name_cn']))
 
     tb = pa.table(dd)
     parquet.write_table(tb, args.save_file)
@@ -76,6 +86,7 @@ if __name__ == '__main__':
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/dim_mf_goods_s3/ds=20250107')
     parser.add_argument('--save_file', default='s3://warehouse-algo/rec/recall/rec_detail_recall_swing_result')
     parser.add_argument('--swing_result', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106/swing_result_20250106.csv')
+    parser.add_argument('--leaf_info', default='s3://warehouse-algo/rec/leafname_map_cn.csv')
     args = parser.parse_args()
     st = time.time()
     main(args)
