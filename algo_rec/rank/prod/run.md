@@ -200,5 +200,6 @@ nohup python predict_tfr_mtl_v1_mask_time_opt_with_file.py --model_name=prod_mtl
 
 # train
 nohup python -u run_rec_model_sg_di_prod_v1_mask.py --pre_ds=20241217-20241226  --train_ds=20241227-20250105 > run.log 2>&1 &
+nohup python -u run_rec_model_sg_di_prod_v1_mask.py --pre_ds=20241227-20250105  --train_ds=20250106 --instance_count=2 > run.log 2>&1 &
 
                                             
