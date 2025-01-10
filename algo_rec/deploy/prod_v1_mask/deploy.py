@@ -1273,7 +1273,7 @@ def main(args):
         print('end request sagemaker')
     if 'update' in args.pipeline:
         print('start update edp')
-        args.s3_tar_file = in_rec_buk + args.tar_name
+        args.s3_tar_file = in8_rec_buk + args.tar_name
         update_edp(args)
         print('end update edp')
 
