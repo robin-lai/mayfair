@@ -1292,7 +1292,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
     parser.add_argument('--endpoint', default='edp-prod-mtl-seq-on-esmm')
     parser.add_argument('--model_version', default='/ds=%s/model/')
-    parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix_%s.tar.gz')
+    parser.add_argument('--tar_name', default='mtl_seq_on_esmm_%s.tar.gz')
     parser.add_argument('--debug', default='')
     parser.add_argument('--format', default='col')
     parser.add_argument('--col_num',type=int, default=1)
