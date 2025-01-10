@@ -457,7 +457,7 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict-use tf2.0')
-    parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
+    parser.add_argument('--model_name', default='mtl_seq_esmm')
     parser.add_argument('--ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')

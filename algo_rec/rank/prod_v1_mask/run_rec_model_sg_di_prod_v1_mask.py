@@ -110,7 +110,7 @@ if __name__ == '__main__':
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=3)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
-    parse.add_argument('--model_name', type=str, default='prod_mtl_seq_on_esmm_v20_mask_savana_in_fix')
+    parse.add_argument('--model_name', type=str, default='mtl_seq_esmm')
     parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--warm_start_from', type=str, default='NEWEST')
     parse.add_argument('--initialize', type=str, default='zero')
