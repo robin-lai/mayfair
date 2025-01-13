@@ -402,22 +402,23 @@ if __name__ == '__main__':
     parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     args = parser.parse_args()
     if ',' in args.pre_ds:
-        range = args.pre_ds
-        print('process range:', range)
-        for pre_ds in range.split(','):
-            args.in_file = args.in_file % (args.v, pre_ds)
-            args.s3_dir = args.s3_dir % (args.v, pre_ds)
-            args.swing_ana_file = args.swing_ana_file % (args.v, pre_ds)
+        ds_range = args.pre_ds
+        print('process range:', ds_range)
+        for pre_ds in ds_range.split(','):
+            args.pre_ds = pre_ds
+            args.in_file = args.in_file % (args.v, args.pre_ds)
+            args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
+            args.swing_ana_file = args.swing_ana_file % (args.v, args.pre_ds)
             print('s3_dir', args.s3_dir)
             print('in_file', args.in_file)
             print('swing_ana_file', args.swing_ana_file)
             st = time.time()
-            item_feature = get_item_feature(args.item % pre_ds)
+            item_feature = get_item_feature(args.item % args.pre_ds)
             main(args, item_feature)
             ed = time.time()
             # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
             # add_job_monitor('tfr', job_d)
-            print('process pre_ds: %s, cost:%s'%(pre_ds, ed - st))
+            print('cost:', ed - st)
     else:
         args.in_file = args.in_file % (args.v, args.pre_ds)
         args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
