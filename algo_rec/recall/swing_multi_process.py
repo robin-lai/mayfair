@@ -24,9 +24,9 @@ import math
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
-    c = math.ceil(len(lst) / n)
-    for i in range(0, len(lst), c):
-        yield lst[i:i + c]
+    num = math.ceil(len(lst) / n)
+    for i in range(0, len(lst), num):
+        yield lst[i:i + num]
 
 item_bhv_user_list_file = './%s_item_bhv_user_list.pkl'
 user_bhv_item_list_file = './%s_user_bhv_item_list.pkl'
