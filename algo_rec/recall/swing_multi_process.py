@@ -415,7 +415,7 @@ if __name__ == '__main__':
             print('swing_ana_file', args.swing_ana_file)
             st = time.time()
             item_feature = get_item_feature(args.item % args.pre_ds)
-            # main(args, item_feature)
+            main(args, item_feature)
             ed = time.time()
             # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
             # add_job_monitor('tfr', job_d)
