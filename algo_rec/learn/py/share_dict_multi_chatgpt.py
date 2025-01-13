@@ -8,19 +8,19 @@ def worker(proc_id, shm_name, size):
     """子进程任务，从共享内存中读取嵌套字典并访问数据。"""
     # 连接到共享内存
     existing_shm = shared_memory.SharedMemory(name=shm_name)
-    try:
-        # 读取共享内存的数据
-        shared_bytes = existing_shm.buf[:size]
-        shared_data = json.loads(shared_bytes.tobytes().decode())
+    # try:
+    # 读取共享内存的数据
+    shared_bytes = existing_shm.buf[:size]
+    shared_data = json.loads(shared_bytes.tobytes().decode())
 
-        # 测试访问嵌套字典
-        start = time.time()
-        for i in range(1000000):  # 模拟访问操作
-            _ = shared_data[f'k{i}']['1']
-        end = time.time()
-        print(f"Process {proc_id} - Access time: {end - start:.4f} seconds")
-    finally:
-        print('run finally')
+    # 测试访问嵌套字典
+    start = time.time()
+    for i in range(1000000):  # 模拟访问操作
+        _ = shared_data[f'k{i}']['1']
+    end = time.time()
+    print(f"Process {proc_id} - Access time: {end - start:.4f} seconds")
+    # finally:
+    #     print('run finally')
         # 关闭共享内存
         # existing_shm.close()
 
