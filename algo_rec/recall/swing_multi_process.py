@@ -405,6 +405,7 @@ if __name__ == '__main__':
         ds_range = args.pre_ds
         print('process range:', ds_range)
         for pre_ds in ds_range.split(','):
+            args = parser.parse_args()
             args.pre_ds = pre_ds
             args.in_file = args.in_file % (args.v, args.pre_ds)
             args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
@@ -414,7 +415,7 @@ if __name__ == '__main__':
             print('swing_ana_file', args.swing_ana_file)
             st = time.time()
             item_feature = get_item_feature(args.item % args.pre_ds)
-            main(args, item_feature)
+            # main(args, item_feature)
             ed = time.time()
             # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
             # add_job_monitor('tfr', job_d)
