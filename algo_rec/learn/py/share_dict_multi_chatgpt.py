@@ -15,18 +15,24 @@ def worker(proc_id, shm_name, size):
 
         # 测试访问嵌套字典
         start = time.time()
-        for i in range(1000):  # 模拟访问操作
+        for i in range(1000000):  # 模拟访问操作
             _ = shared_data[f'k{i}']['1']
         end = time.time()
         print(f"Process {proc_id} - Access time: {end - start:.4f} seconds")
     finally:
+        print('run finally')
         # 关闭共享内存
-        existing_shm.close()
+        # existing_shm.close()
 
 
 if __name__ == "__main__":
     # 创建嵌套字典
-    data = {f'k{i}': {"1": 0.1, "2": 0.2} for i in range(100000)}  # 示例数据
+    data = {f'k{i}': {"1": 0.1, "2": 0.2} for i in range(10000000)}  # 示例数据
+    start = time.time()
+    for i in range(1000000):  # 模拟访问操作
+        _ = data[f'k{i}']['1']
+    end = time.time()
+    print('单进程访问', end-start)
     serialized_data = json.dumps(data).encode()  # 序列化为 JSON
 
     # 创建共享内存
