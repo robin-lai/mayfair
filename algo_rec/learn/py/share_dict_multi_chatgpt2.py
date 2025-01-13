@@ -2,7 +2,7 @@ import multiprocessing
 from multiprocessing import shared_memory
 import pickle
 import time
-
+read_num = 10000000
 def worker(proc_id, shm_name, shm_size):
     """子进程读取共享内存中的嵌套字典并访问其内容。"""
     # 连接到现有共享内存
@@ -14,7 +14,7 @@ def worker(proc_id, shm_name, shm_size):
 
         # 模拟对嵌套字典的访问
         start = time.time()
-        for i in range(10000000):  # 假设访问 1000 次
+        for i in range(read_num):  # 假设访问 1000 次
             _ = nested_dict[f'key_{i}']['inner_key']
         end = time.time()
         print(f"Process {proc_id} - Access time: {end - start:.4f} seconds")
@@ -24,7 +24,7 @@ def worker(proc_id, shm_name, shm_size):
 
 if __name__ == "__main__":
     # 创建一个嵌套字典
-    nested_dict = {f'key_{i}': {'inner_key': i, 'value': i * 2} for i in range(100000000)}
+    nested_dict = {f'key_{i}': {'inner_key': i, 'value': i * 2} for i in range(read_num)}
 
     # 序列化嵌套字典
     serialized_data = pickle.dumps(nested_dict)
