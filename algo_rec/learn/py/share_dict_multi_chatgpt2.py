@@ -25,6 +25,11 @@ def worker(proc_id, shm_name, shm_size):
 if __name__ == "__main__":
     # 创建一个嵌套字典
     nested_dict = {f'key_{i}': {'inner_key': i, 'value': i * 2} for i in range(read_num)}
+    start = time.time()
+    for i in range(read_num):  # 假设访问 1000 次
+        _ = nested_dict[f'key_{i}']['inner_key']
+    end = time.time()
+    print(f"Process only - Access time: {end - start:.4f} seconds")
 
     # 序列化嵌套字典
     serialized_data = pickle.dumps(nested_dict)
