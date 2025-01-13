@@ -419,7 +419,7 @@ if __name__ == '__main__':
             ed = time.time()
             # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
             # add_job_monitor('tfr', job_d)
-            print('cost:', ed - st)
+            print('final cost:', ed - st)
     else:
         args.in_file = args.in_file % (args.v, args.pre_ds)
         args.s3_dir = args.s3_dir % (args.v, args.pre_ds)
@@ -433,4 +433,4 @@ if __name__ == '__main__':
         ed = time.time()
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
         # add_job_monitor('tfr', job_d)
-        print('cost:', ed-st)
+        print('final cost:', ed-st)
