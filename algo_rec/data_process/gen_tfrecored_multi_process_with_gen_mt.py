@@ -338,6 +338,10 @@ def main(args):
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
     fail_cnt = sum([p.exitcode for p in proc_list])
+    shm.close()
+    shm.unlink()
+    shm_itm.close()
+    shm_itm.unlink()
     if fail_cnt > 0:
         print('process fail cnt:', fail_cnt)
         # raise ValueError('Failed in %d process.' % fail_cnt)
