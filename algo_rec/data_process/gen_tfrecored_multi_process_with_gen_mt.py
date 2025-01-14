@@ -67,7 +67,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list, shm_i2i_
         tmp_d = {}
         n = 20
         for e in ll:
-            tt = e.split(1)
+            tt = e.split(chr(1))
             if len(tt) > 2:
                 trig = tt[1]
                 if trig not in tmp_d:
