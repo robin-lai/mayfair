@@ -12,6 +12,7 @@ from random import shuffle
 import numpy as np
 import traceback
 import datetime
+from pympler import asizeof
 
 s3_cli = boto3.client('s3')
 BUCKET = 'warehouse-algo'
@@ -253,6 +254,7 @@ if __name__ == '__main__':
                 print('args.ds:', args.ds)
                 # item_feature = get_item_feature(args.item % args.ds)
                 item_feature = get_item_feature(args.item%args.ds)
+                print('size of mem [M]', asizeof.asizeof(item_feature) / 1048576)  #
                 print('get item features:', len(item_feature.keys()))
                 main(args)
                 print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
@@ -265,6 +267,7 @@ if __name__ == '__main__':
         st = time.time()
         print('args.ds:', args.ds)
         item_feature = get_item_feature(args.item % args.ds)
+        print('size of mem [M]', asizeof.asizeof(item_feature) / 1048576)  #
         print('get item features:', len(item_feature.keys()))
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
