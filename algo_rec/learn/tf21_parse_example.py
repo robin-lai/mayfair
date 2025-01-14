@@ -61,6 +61,10 @@ def main(args):
             , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
             "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
             "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            "mt_i2i_main": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            "mt_i2i_main_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0),
+            "mt_i2i_long": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            "mt_i2i_long_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0),
             # "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
             # , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
             # , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
