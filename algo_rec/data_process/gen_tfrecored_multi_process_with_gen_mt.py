@@ -103,24 +103,25 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list, shm_i2i_
                     mt.append('i2i_short')
                     mt_w.append(ret[1])
 
-        feature['mt_i2i_main'] = 0
-        feature['mt_i2i_main_score'] = 0.0
-        feature['mt_i2i_long'] = 0
-        feature['mt_i2i_long_score'] = 0.0
-        feature['mt_i2i_short'] = 0
-        feature['mt_i2i_short_score'] = 0.0
+        feature['mt_i2i_main'] = ints_fea([0])
+        feature['mt_i2i_main_score'] = floats_fea([0.0])
+        feature['mt_i2i_long'] = ints_fea([0])
+        feature['mt_i2i_long_score'] = floats_fea([0.0])
+        feature['mt_i2i_short'] = ints_fea([0])
+        feature['mt_i2i_short_score'] = floats_fea([0.0])
         for ele in zip(mt, mt_w):
             if ele[0] == 'i2i_main':
-                feature['mt_i2i_main'] = 1
-                feature['mt_i2i_main_score'] = ele[1]
+                feature['mt_i2i_main'] = ints_fea([1])
+                feature['mt_i2i_main_score'] = floats_fea([ele[1]])
             if ele[0] == 'i2i_long':
-                feature['mt_i2i_long'] = 1
-                feature['mt_i2i_long_score'] = ele[1]
+                feature['mt_i2i_long'] = ints_fea([1])
+                feature['mt_i2i_long_score'] = floats_fea([ele[1]])
             if ele[0] == 'i2i_short':
-                feature['mt_i2i_short'] = 1
-                feature['mt_i2i_short_score'] = ele[1]
-        feature['mt'] = mt
-        feature['mt_w'] = mt_w
+                feature['mt_i2i_short'] = ints_fea([1])
+                feature['mt_i2i_short_score'] = floats_fea([ele[1]])
+        feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
+            value=[bytes(v, encoding="utf8") for v in mt]))
+        feature['mt_w'] = floats_fea(mt_w)
 
     def build_seq_on(seq_on, feature):
         if debug:
@@ -365,7 +366,7 @@ if __name__ == '__main__':
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=7)
-    parser.add_argument('--v',default='')
+    parser.add_argument('--v', default='')
 
     args = parser.parse_args()
     debug = args.debug
