@@ -124,8 +124,6 @@ def process(lines, c, part, sample_num=None):
     print('%s : %s process deal data len:%s'%(str(batch), str(len(item_batch)), str(len(item_list))))
 
 
-alph = 1
-beta = 0.5
 user_debias = True
 item_debias = True
 out_file = ''
@@ -138,6 +136,8 @@ def swing(*args):
     c = args[2]
     s3_file = args[3]
     pkl_file = args[4]
+    beta = args[5]
+    alph = args[6]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -371,7 +371,7 @@ def main(args, item_feature):
         st = time.time()
         outfile = './swing_rec_%s_part_%s'
         s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i)]) for i in range(args.p)]
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph]) for i in range(args.p)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
@@ -393,6 +393,8 @@ if __name__ == '__main__':
     parser.add_argument('--flag',default='s3')
     parser.add_argument('--v',default='')
     parser.add_argument('--pipeline',default='swing')
+    parser.add_argument('--beta', type=float, default=0.5)
+    parser.add_argument('--alph', type=float, default=1.0)
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
