@@ -138,6 +138,7 @@ def swing(*args):
     pkl_file = args[4]
     beta = args[5]
     alph = args[6]
+    ubeta = args[7]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -172,8 +173,8 @@ def swing(*args):
                     if trig_itm == tgt_item:
                         continue
                     if user_debias and item_debias:
-                        score = round((1 / user_bhv_num[user_sample[i]])
-                                      * (1 / user_bhv_num[user_sample[j]])
+                        score = round((1 / math.pow(user_bhv_num[user_sample[i]], ubeta))
+                                      * (1 / math.pow(user_bhv_num[user_sample[j]], ubeta))
                                       * (1 / math.pow(item_bhv_num[tgt_item], beta))
                                       * (1 / (alph + (len(common_items)))), round_num)
                     elif user_debias:
@@ -371,7 +372,7 @@ def main(args, item_feature):
         st = time.time()
         outfile = './swing_rec_%s_part_%s'
         s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph]) for i in range(args.p)]
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta]) for i in range(args.p)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
@@ -394,12 +395,13 @@ if __name__ == '__main__':
     parser.add_argument('--v',default='')
     parser.add_argument('--pipeline',default='swing')
     parser.add_argument('--beta', type=float, default=0.5)
+    parser.add_argument('--ubeta', type=float, default=0.5)
     parser.add_argument('--alph', type=float, default=1.0)
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation%s/ds=%s')
-    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s_%s_%s/')
+    parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s_%s_%s_%s/')
     parser.add_argument('--swing_ana_file', type=str, default='swing_result%s_%s.csv')
     parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     args = parser.parse_args()
@@ -410,7 +412,7 @@ if __name__ == '__main__':
             args = parser.parse_args()
             args.pre_ds = pre_ds
             args.in_file = args.in_file % (args.v, args.pre_ds)
-            args.s3_dir = args.s3_dir % (args.v, args.pre_ds, str(args.alph), str(args.beta))
+            args.s3_dir = args.s3_dir % (args.v, args.pre_ds, str(args.alph), str(args.beta), str(args.ubeta))
             args.swing_ana_file = args.swing_ana_file % (args.v, args.pre_ds)
             print('s3_dir', args.s3_dir)
             print('in_file', args.in_file)
@@ -424,7 +426,7 @@ if __name__ == '__main__':
             print('final cost:', ed - st)
     else:
         args.in_file = args.in_file % (args.v, args.pre_ds)
-        args.s3_dir = args.s3_dir % (args.v, args.pre_ds, str(args.alph), str(args.beta))
+        args.s3_dir = args.s3_dir % (args.v, args.pre_ds, str(args.alph), str(args.beta), str(args.ubeta))
         args.swing_ana_file = args.swing_ana_file % (args.v, args.pre_ds)
         print('s3_dir', args.s3_dir)
         print('in_file', args.in_file)
