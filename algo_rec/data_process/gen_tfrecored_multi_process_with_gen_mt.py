@@ -301,7 +301,10 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
                 tmp_d = {}
                 for tt in v.split(chr(2)):
                     tokens = tt.split(chr(4))
-                    tmp_d[int(tokens[0])] = tokens[1]
+                    if len(tokens) == 2:
+                        tmp_d[int(tokens[0])] = tokens[1]
+                    else:
+                        print('error data:',tt)
                 i2i_d[int(k.split(chr(4))[1])] = tmp_d
     print('read i2i end, num:', len(i2i_d.keys()))
     return i2i_d
