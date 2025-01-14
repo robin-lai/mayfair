@@ -69,7 +69,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list, shm_i2i_
         for e in ll:
             tt = e.split(chr(1))
             if len(tt) > 2:
-                trig = tt[1]
+                trig = int(tt[1])
                 if trig not in tmp_d:
                     tmp_d[trig] = 1
                     n -= 1
@@ -83,8 +83,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list, shm_i2i_
     def build_mt(tt, feature):
         mt = []
         mt_w = []
-        main_goods = tt['main_goods_id']
-        tgt_id = tt['goods_id']
+        main_goods = int(tt['main_goods_id'])
+        tgt_id = int(tt['goods_id'])
         if main_goods in i2i_d:
             if tgt_id in i2i_d[main_goods]:
                 mt.append('i2i_main')
@@ -296,10 +296,11 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
             lines = fin.readlines()
             for line in lines:
                 k, v = line.split(chr(1))
-                vs = []
+                tmp_d = {}
                 for tt in v.split(chr(2)):
-                    vs.append(tt.split(chr(4)))
-                i2i_d[k] = vs
+                    tokens = tt.split(chr(4))
+                    tmp_d[int(tokens[0])] = tokens[1]
+                i2i_d[int(k)] = tmp_d
     print('read i2i end, num:', len(i2i_d.keys()))
     return i2i_d
 
