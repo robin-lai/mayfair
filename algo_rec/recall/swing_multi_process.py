@@ -438,3 +438,5 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
         # add_job_monitor('tfr', job_d)
         print('final cost:', ed-st)
+
+# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6
