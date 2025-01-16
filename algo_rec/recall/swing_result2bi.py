@@ -10,6 +10,14 @@ import datetime
 
 import gc
 
+def remove_file(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"文件 {file_path} 已被删除.")
+    else:
+        print(f"文件 {file_path} 不存在.")
+
+
 def main(args):
 
     pt = parquet.read_table(args.item_file).to_pylist()
@@ -21,11 +29,13 @@ def main(args):
           'tgt_goods_id': [], 'tgt_goods_name': [], 'tgt_score': [], 'tgt_pic_url': [], 'tgt_num': [], 'tgt_cat2': [],
           'tgt_cat3': [], 'tgt_leaf': [], 'tgt_leaf_cn':[], 'version':[]}
     local_file = args.swing_result.split('/')[-1]
+    remove_file(local_file)
     os.system("aws s3 cp %s %s" % (args.swing_result, local_file))
     df = pd.read_csv(local_file)
     swing_ll = df.to_dict(orient='records')
 
     leaf_local = args.leaf_info.split('/')[-1]
+    remove_file(leaf_local)
     os.system("aws s3 cp %s %s" % (args.leaf_info, leaf_local))
     leaf_df = pd.read_csv(leaf_local)
     leaf_ll = leaf_df.to_dict(orient='records')
