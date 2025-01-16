@@ -440,3 +440,4 @@ if __name__ == '__main__':
         print('final cost:', ed-st)
 
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6
+# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7
