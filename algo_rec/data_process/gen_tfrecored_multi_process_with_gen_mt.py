@@ -103,6 +103,12 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
         mt_w = []
         main_goods = int(tt['main_goods_id'])
         tgt_id = int(tt['goods_id'])
+        if tgt_id in site_hot_d['Savana_IN']:
+            mt.append('hot')
+        if tgt_id in hot_i2leaf_d[tt['main_cate_id']]:
+            mt.append('hot_i2leaf')
+        if tgt_id in u2cart_wish_d[tt['uuid']]:
+            mt.append('u2i_f') # u2icart_wish
         if main_goods in i2i_d:
             if tgt_id in i2i_d[main_goods]:
                 mt.append('i2i_main')
@@ -137,6 +143,12 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
             if ele[0] == 'i2i_short':
                 feature['mt_i2i_short'] = ints_fea([1])
                 feature['mt_i2i_short_score'] = floats_fea([ele[1]])
+            if ele[0] == 'hot':
+                feature['mt_hot'] = ints_fea([1])
+            if ele[0] == 'hot_i2leaf':
+                feature['mt_hot_i2leaf'] = ints_fea([1])
+            if ele[0] == 'u2i_f':
+                feature['mt_u2i_f'] = ints_fea([1])
         if len(mt) > 1:
             print('feature', feature)
         feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
