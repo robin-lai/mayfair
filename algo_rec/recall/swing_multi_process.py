@@ -441,4 +441,5 @@ if __name__ == '__main__':
 
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
-# nohup python -u swing_multi_process.py --pre_ds=20250107 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=10  cpu vs mem: 6:8 r5.4x
+# nohup python -u swing_multi_process.py --pre_ds=20250107 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=10  cpu vs mem: 6:8 r5.4x  6440s
+# nohup python -u swing_multi_process.py --pre_ds=20250108,20250109,20250110,20250111,20250112,20250113,20250114,20250115,20250116 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=10
