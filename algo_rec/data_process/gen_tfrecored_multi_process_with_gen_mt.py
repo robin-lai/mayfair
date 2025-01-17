@@ -54,14 +54,32 @@ def cross_fea(v1_list, v2_list, n=1):
     return bytes_fea(v3_list, n, True)
 
 
-def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list, shm_i2i_name, shm_i2i_size, shm_itm_name,
-                   shm_itm_size):
-    shm_i2i = shared_memory.SharedMemory(name=shm_i2i_name)
-    sd_i2i = bytes(shm_i2i.buf[:shm_i2i_size])
-    i2i_d = pickle.loads(sd_i2i)  # 反序列化为嵌套字典
-    shm_itm = shared_memory.SharedMemory(name=shm_itm_name)
-    sd_itm = bytes(shm_itm.buf[:shm_itm_size])
-    itm_d = pickle.loads(sd_itm)  # 反序列化为嵌套字典
+def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
+                   itm_shm_n, itm_shm_size,i2i_shm_n,i2i_shm_size, u2cart_wish_shm_n, u2cart_wish_shm_size,
+                   hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size
+                   ):
+    # shm_i2i = shared_memory.SharedMemory(name=shm_i2i_name)
+    # sd_i2i = bytes(shm_i2i.buf[:shm_i2i_size])
+    # i2i_d = pickle.loads(sd_i2i)  # 反序列化为嵌套字典
+    itm_shm = shared_memory.SharedMemory(name=itm_shm_n)
+    itm_s = bytes(itm_shm.buf[:itm_shm_size])
+    itm_d = pickle.loads(itm_s)  # 反序列化为嵌套字典
+
+    i2i_shm = shared_memory.SharedMemory(name=i2i_shm_n)
+    i2i_s = bytes(i2i_shm.buf[:i2i_shm_size])
+    i2i_d = pickle.loads(i2i_s)  # 反序列化为嵌套字典
+
+    u2cart_wish_shm = shared_memory.SharedMemory(name=u2cart_wish_shm_n)
+    u2cart_wish_s = bytes(u2cart_wish_shm.buf[:u2cart_wish_shm_size])
+    u2cart_wish_d = pickle.loads(u2cart_wish_s)  # 反序列化为嵌套字典
+
+    hot_i2leaf_shm = shared_memory.SharedMemory(name=hot_i2leaf_shm_n)
+    hot_i2leaf_s = bytes(hot_i2leaf_shm.buf[:hot_i2leaf_shm_size])
+    hot_i2leaf_d = pickle.loads(hot_i2leaf_s)  # 反序列化为嵌套字典
+
+    site_hot_shm = shared_memory.SharedMemory(name=site_hot_shm_n)
+    site_hot_s = bytes(site_hot_shm.buf[:site_hot_shm_size])
+    site_hot_d = pickle.loads(site_hot_s)  # 反序列化为嵌套字典
 
     def is_tgt_in_recall(ll, i2i_d, tgt_id):
         tmp_d = {}
@@ -304,10 +322,63 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
                     if len(tokens) == 2:
                         tmp_d[int(tokens[0])] = tokens[1]
                     else:
-                        print('error data:',tt)
+                        print('error data:', tt)
                 i2i_d[int(k.split(chr(4))[1])] = tmp_d
     print('read i2i end, num:', len(i2i_d.keys()))
     return i2i_d
+
+
+def get_u2cart_wish(txt_pt):
+    pt = parquet.read_table(txt_pt).to_pylist()
+    u2cart_wish_d = {}
+    for e in pt:
+        u2cart_wish_d[e['uuid']] = {tt: 1 for tt in e['goods_list']}
+    if debug:
+        print('get_u2cart_wish')
+        for k in u2cart_wish_d.keys()[0:10]:
+            print(k, u2cart_wish_d[k])
+
+    return u2cart_wish_d
+
+
+def get_hot_i2leaf(txt_dir):
+    local_txt_dir = './' + txt_dir
+    os.system('aws s3 cp --recursive %s %s' % (txt_dir, local_txt_dir))
+
+    hot_i2leaf_d = {}
+    for filename in os.listdir(local_txt_dir):
+        if filename.endswith(".txt"):  # Filter .txt files
+            file_path = os.path.join(local_txt_dir, filename)
+            with open(file_path, "r") as infile:
+                lines = infile.readlines()
+                for line in lines:
+                    k, v = line.split(chr(1))
+                    hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))]}
+    if debug:
+        print('hot_i2leaf_d')
+        for k in hot_i2leaf_d.keys()[0:10]:
+            print(k, hot_i2leaf_d[k])
+    return hot_i2leaf_d
+
+
+def get_site_hot(txt_dir):
+    local_txt_dir = './' + txt_dir
+    os.system('aws s3 cp --recursive %s %s' % (txt_dir, local_txt_dir))
+
+    site_hot_d = {}
+    for filename in os.listdir(local_txt_dir):
+        if filename.endswith(".txt"):  # Filter .txt files
+            file_path = os.path.join(local_txt_dir, filename)
+            with open(file_path, "r") as infile:
+                lines = infile.readlines()
+                for line in lines:
+                    k, v = line.split(chr(1))
+                    site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))][0:100]}
+    if debug:
+        print('site_hot_d')
+        for k in site_hot_d.keys()[0:1]:
+            print(k, site_hot_d[k])
+    return site_hot_d
 
 
 def get_item_feature(file):
@@ -320,35 +391,59 @@ def get_item_feature(file):
 
 def main(args):
     itm_d = get_item_feature(args.item % args.ds)
+    itm_s = pickle.dumps(itm_d)
+    itm_shm_size = len(itm_s)
+    itm_shm = shared_memory.SharedMemory(create=True, size=itm_shm_size)
+    itm_shm.buf[:itm_shm_size] = itm_s  # 写入数据
     print('item_feature size of mem [M]', asizeof.asizeof(itm_d) / 1048576)  #
     print('get item features:', len(itm_d.keys()))
+
     i2i_d = get_i2i(args.i2i_part, args.i2i_s3, args.i2i_file)
     print('i2i_d size of mem [M]', asizeof.asizeof(i2i_d) / 1048576)  #
-    # run_multi_process(build_tfrecord, args, i2i_d, item_feature)
+    i2i_s = pickle.dumps(i2i_d)
+    i2i_shm_size = len(i2i_s)
+    i2i_shm = shared_memory.SharedMemory(create=True, size=i2i_shm_size)
+    i2i_shm.buf[:i2i_shm_size] = i2i_s  # 写入数据
 
-    serialized_data = pickle.dumps(i2i_d)
-    shm_size = len(serialized_data)
-    # 创建共享内存并写入序列化数据
-    shm = shared_memory.SharedMemory(create=True, size=shm_size)
-    shm.buf[:shm_size] = serialized_data  # 写入数据
-    print(f"Shared memory created. Name: {shm.name}, Size: {shm_size} bytes")
+    u2cart_wish_d = get_u2cart_wish(args.u2cart_wish_file)
+    print('u2cart_wish_d size of mem [M]', asizeof.asizeof(u2cart_wish_d) / 1048576)  #
+    u2cart_wish_s = pickle.dumps(u2cart_wish_d)
+    u2cart_wish_shm_size = len(u2cart_wish_s)
+    u2cart_wish_shm = shared_memory.SharedMemory(create=True, size=u2cart_wish_shm_size)
+    u2cart_wish_shm.buf[:u2cart_wish_shm_size] = u2cart_wish_s  # 写入数据
 
-    serialized_data_itm = pickle.dumps(itm_d)
-    shm_itm_size = len(serialized_data_itm)
-    shm_itm = shared_memory.SharedMemory(create=True, size=shm_itm_size)
-    shm_itm.buf[:shm_itm_size] = serialized_data_itm  # 写入数据
-    print(f"Shared memory created. Name: {shm_itm.name}, Size: {shm_itm_size} bytes")
+    hot_i2leaf_d = get_hot_i2leaf(args.hot_i2leaf)
+    print('hot_i2leaf_d size of mem [M]', asizeof.asizeof(hot_i2leaf_d) / 1048576)  #
+    hot_i2leaf_s = pickle.dumps(hot_i2leaf_d)
+    hot_i2leaf_shm_size = len(hot_i2leaf_s)
+    hot_i2leaf_shm = shared_memory.SharedMemory(create=True, size=hot_i2leaf_shm_size)
+    hot_i2leaf_shm.buf[:hot_i2leaf_shm_size] = hot_i2leaf_s  # 写入数据
+
+    site_hot_d = get_site_hot(args.site_hot)
+    print('site_hot_d size of mem [M]', asizeof.asizeof(site_hot_d) / 1048576)  #
+    site_hot_s = pickle.dumps(site_hot_d)
+    site_hot_shm_size = len(site_hot_s)
+    site_hot_shm = shared_memory.SharedMemory(create=True, size=site_hot_shm_size)
+    site_hot_shm.buf[:site_hot_shm_size] = site_hot_s  # 写入数据
 
     args_list = get_file_list(args)
     proc_list = [multiprocessing.Process(target=build_tfrecord, args=(
-        args[0], args[1], args[2], shm.name, shm_size, shm_itm.name, shm_itm_size)) for args in args_list]
+        args[0], args[1], args[2], proc_id, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
+        hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size)) for proc_id, args in
+                 enumerate(args_list)]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
     fail_cnt = sum([p.exitcode for p in proc_list])
-    shm.close()
-    shm.unlink()
-    shm_itm.close()
-    shm_itm.unlink()
+    itm_shm.close()
+    itm_shm.unlink()
+    i2i_shm.close()
+    i2i_shm.unlink()
+    u2cart_wish_shm.close()
+    u2cart_wish_shm.unlink()
+    hot_i2leaf_shm.close()
+    hot_i2leaf_shm.unlink()
+    site_hot_shm.close()
+    site_hot_shm.unlink()
     if fail_cnt > 0:
         print('process fail cnt:', fail_cnt)
         # raise ValueError('Failed in %d process.' % fail_cnt)
@@ -372,6 +467,10 @@ if __name__ == '__main__':
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=7)
+    parser.add_argument('--u2cart_wish_file',
+                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/')
+    parser.add_argument('--hot_i2leaf', default='s3://algo-sg/rec/cn_rec_detail_recall_main_leaf2i_for_redis/')
+    parser.add_argument('--site_hot', default='s3://algo-sg/rec/cn_rec_detail_recall_site_hot_for_redis/')
     parser.add_argument('--v', default='')
 
     args = parser.parse_args()
