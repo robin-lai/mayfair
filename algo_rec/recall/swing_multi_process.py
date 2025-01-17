@@ -394,7 +394,7 @@ if __name__ == '__main__':
     parser.add_argument('--flag',default='s3')
     parser.add_argument('--v',default='')
     parser.add_argument('--pipeline',default='swing')
-    parser.add_argument('--beta', type=float, default=0.5)
+    parser.add_argument('--beta', type=float, default=0.7)
     parser.add_argument('--ubeta', type=float, default=0.5)
     parser.add_argument('--alph', type=float, default=1.0)
     parser.add_argument('--p',type=int, default=7)
@@ -439,5 +439,6 @@ if __name__ == '__main__':
         # add_job_monitor('tfr', job_d)
         print('final cost:', ed-st)
 
-# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6
-# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7
+# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
+# nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
+# nohup python -u swing_multi_process.py --pre_ds=20250107 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=10
