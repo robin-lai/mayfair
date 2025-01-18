@@ -546,6 +546,8 @@ if __name__ == '__main__':
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
+                print('item_file', args.item_file)
+                print('item_stat', args.item_stat)
                 print('i2i_s3', args.i2i_s3)
                 print('u2cart_wish_file', args.u2cart_wish_file)
                 print('hot_i2leaf', args.hot_i2leaf)
@@ -567,6 +569,8 @@ if __name__ == '__main__':
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
         args.hot_i2leaf = args.hot_i2leaf % pre_ds
         args.site_hot = args.site_hot % pre_ds
+        print('item_file', args.item_file)
+        print('item_stat', args.item_stat)
         print('i2i_s3', args.i2i_s3)
         print('u2cart_wish_file', args.u2cart_wish_file)
         print('hot_i2leaf', args.hot_i2leaf)
