@@ -380,8 +380,9 @@ def get_u2cart_wish(txt_pt):
 
 
 def get_hot_i2leaf(txt_dir):
-    local_txt_dir = './' + '/'.join(txt_dir.split('/')[-3:])
+    local_txt_dir = './tmp/hot_i2leaf/'
     print(f"hot_i2leaf local_txt_dir:{local_txt_dir}")
+    os.system('rm -r %s' % local_txt_dir)
     os.system('aws s3 cp --recursive %s %s' % (txt_dir, local_txt_dir))
 
     hot_i2leaf_d = {}
@@ -402,8 +403,9 @@ def get_hot_i2leaf(txt_dir):
 
 
 def get_site_hot(txt_dir):
-    local_txt_dir = './' + '/'.join(txt_dir.split('/')[-3:])
+    local_txt_dir = './tmp/site_hot/'
     print(f"site_hot local_txt_dir:{local_txt_dir}")
+    os.system('rm -r %s' % local_txt_dir)
     os.system('aws s3 cp --recursive %s %s' % (txt_dir, local_txt_dir))
 
     site_hot_d = {}
