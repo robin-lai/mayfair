@@ -13,7 +13,7 @@ import boto3
 from random import shuffle
 import numpy as np
 import traceback
-import datetime
+from datetime import datetime,date, timedelta
 from pympler import asizeof
 
 import math
@@ -513,7 +513,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', type=str,
-                        default='ds=%s' % (datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+                        default='ds=%s' % (datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
