@@ -389,7 +389,7 @@ def get_hot_i2leaf(txt_dir):
             lines = infile.readlines()
             for line in lines:
                 k, v = line.split(chr(1))
-                hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))]}
+                hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4))[0] for e in v.split(chr(2))]}
     return hot_i2leaf_d
 
 
@@ -408,7 +408,7 @@ def get_site_hot(txt_dir):
             lines = infile.readlines()
             for line in lines:
                 k, v = line.split(chr(1))
-                site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))][0:100]}
+                site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4))[0] for e in v.split(chr(2))][0:100]}
     return site_hot_d
 
 
