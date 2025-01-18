@@ -513,7 +513,7 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', type=str,
-                        default='ds=%s' % (datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
+                        default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
@@ -560,7 +560,7 @@ if __name__ == '__main__':
             # print('data:',t)
     else:
         st = time.time()
-        args.i2i_s3 = args.i2i_s3 % (args.v, args.ds[3:])
+        args.i2i_s3 = args.i2i_s3 % (args.v, args.ds)
         print('args.ds:', args.ds)
         pre_ds = (datetime.strptime(args.ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
         args.item_file = args.item_file % args.ds
