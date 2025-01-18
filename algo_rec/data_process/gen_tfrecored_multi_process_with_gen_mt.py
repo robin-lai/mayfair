@@ -520,7 +520,7 @@ if __name__ == '__main__':
     parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/')
-    parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/%s/')
+    parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s')
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
