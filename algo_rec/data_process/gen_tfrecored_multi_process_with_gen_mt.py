@@ -302,11 +302,11 @@ def get_file_list(args):
     s3_buk = "s3://warehouse-algo/"
     s3_obj = "rec/"
     local_data = "/home/sagemaker-user/mayfair/algo_rec/data/"
-    path_pt = s3_buk + s3_obj + args.dir_pt + args.ds
-    path_pt_suffix = s3_obj + args.dir_pt + args.ds
-    path_tfr_local = local_data + args.dir_tfr + args.ds
+    path_pt = s3_buk + s3_obj + args.dir_pt
+    path_pt_suffix = s3_obj + args.dir_pt
+    path_tfr_local = local_data + args.dir_tfr
     path_tfr_local_base = local_data + args.dir_tfr
-    path_tfr_s3 = s3_buk + s3_obj + args.dir_tfr + args.ds
+    path_tfr_s3 = s3_buk + s3_obj + args.dir_tfr
     os.system('rm -rf %s' % path_tfr_local_base)
     os.system('mkdir -p %s' % path_tfr_local)
     # get files
@@ -359,8 +359,8 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
                     tokens = tt.split(chr(4))
                     if len(tokens) == 2:
                         tmp_d[int(tokens[0])] = tokens[1]
-                    else:
-                        print('error data:', tt)
+                    # else:
+                    #     print('error data:', tt)
                 i2i_d[int(k.split(chr(4))[1])] = tmp_d
     print('read i2i end, num:', len(i2i_d.keys()))
     return i2i_d
@@ -519,18 +519,18 @@ if __name__ == '__main__':
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
     parser.add_argument('--sample_num', type=int, default=None)
-    parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/')
-    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/')
+    parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/ds=%s/')
+    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/ds=%s/')
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
-    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s')
+    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
-                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s')
-    parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/cn_rec_detail_recall_main_leaf2i_ds/ds=%s')
-    parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/cn_rec_detail_recall_site_hot/ds=%s')
+                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
+    parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/cn_rec_detail_recall_main_leaf2i_ds/ds=%s/')
+    parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/cn_rec_detail_recall_site_hot/ds=%s/')
 
     args = parser.parse_args()
     debug = args.debug
@@ -547,6 +547,10 @@ if __name__ == '__main__':
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
+                args.dir_pt = args.dir_pt % args.ds
+                args.dir_tfr = args.dir_tfr % args.ds
+                print('dir_pt', args.dir_pt)
+                print('dir_tfr', args.dir_tfr)
                 print('item_file', args.item_file)
                 print('item_stat', args.item_stat)
                 print('i2i_s3', args.i2i_s3)
@@ -570,6 +574,10 @@ if __name__ == '__main__':
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
         args.hot_i2leaf = args.hot_i2leaf % pre_ds
         args.site_hot = args.site_hot % pre_ds
+        args.dir_pt = args.dir_pt % args.ds
+        args.dir_tfr = args.dir_tfr % args.ds
+        print('dir_pt', args.dir_pt)
+        print('dir_tfr', args.dir_tfr)
         print('item_file', args.item_file)
         print('item_stat', args.item_stat)
         print('i2i_s3', args.i2i_s3)
