@@ -385,13 +385,13 @@ def get_hot_i2leaf(txt_dir):
 
     hot_i2leaf_d = {}
     for filename in os.listdir(local_txt_dir):
-        if filename.endswith(".txt"):  # Filter .txt files
-            file_path = os.path.join(local_txt_dir, filename)
-            with open(file_path, "r") as infile:
-                lines = infile.readlines()
-                for line in lines:
-                    k, v = line.split(chr(1))
-                    hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))]}
+        # if filename.endswith(".txt"):  # Filter .txt files
+        file_path = os.path.join(local_txt_dir, filename)
+        with open(file_path, "r") as infile:
+            lines = infile.readlines()
+            for line in lines:
+                k, v = line.split(chr(1))
+                hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))]}
     if debug:
         print('hot_i2leaf_d')
         for k in list(hot_i2leaf_d.keys())[0:10]:
@@ -405,13 +405,13 @@ def get_site_hot(txt_dir):
 
     site_hot_d = {}
     for filename in os.listdir(local_txt_dir):
-        if filename.endswith(".txt"):  # Filter .txt files
-            file_path = os.path.join(local_txt_dir, filename)
-            with open(file_path, "r") as infile:
-                lines = infile.readlines()
-                for line in lines:
-                    k, v = line.split(chr(1))
-                    site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))][0:100]}
+        # if filename.endswith(".txt"):  # Filter .txt files
+        file_path = os.path.join(local_txt_dir, filename)
+        with open(file_path, "r") as infile:
+            lines = infile.readlines()
+            for line in lines:
+                k, v = line.split(chr(1))
+                site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))][0:100]}
     if debug:
         print('site_hot_d')
         for k in list(site_hot_d.keys())[0:1]:
