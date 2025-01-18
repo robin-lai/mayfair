@@ -339,11 +339,16 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
     i2i_d = {}
     i2i_file_ll = []
     for i in range(i2i_part):
-        s3_file = i2i_s3 + i2i_file % str(i)
-        local_file = './' + i2i_file % str(i)
-        os.system('rm %s' % local_file)
-        os.system('aws s3 cp %s %s' % (s3_file, local_file))
-        i2i_file_ll.append(local_file)
+        try:
+            s3_file = i2i_s3 + i2i_file % str(i)
+            local_file = './' + i2i_file % str(i)
+            os.system('rm %s' % local_file)
+            os.system('aws s3 cp %s %s' % (s3_file, local_file))
+            i2i_file_ll.append(local_file)
+        except Exception:
+            print("-" * 60)
+            traceback.print_exc(file=sys.stdout)
+            print("-" * 60)
     for file in i2i_file_ll:
         with open(file, 'r') as fin:
             lines = fin.readlines()
@@ -487,6 +492,8 @@ def main(args):
     fail_cnt = sum([p.exitcode for p in proc_list])
     itm_shm.close()
     itm_shm.unlink()
+    itm_stat_shm.close()
+    itm_stat_shm.unlink()
     i2i_shm.close()
     i2i_shm.unlink()
     u2cart_wish_shm.close()
@@ -518,7 +525,7 @@ if __name__ == '__main__':
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
-    parser.add_argument('--i2i_part', type=int, default=7)
+    parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s')
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/cn_rec_detail_recall_main_leaf2i_ds/ds=%s')
