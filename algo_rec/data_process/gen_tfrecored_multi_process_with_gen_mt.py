@@ -373,7 +373,7 @@ def get_u2cart_wish(txt_pt):
         u2cart_wish_d[e['uuid']] = {tt: 1 for tt in e['goods_list']}
     if debug:
         print('get_u2cart_wish')
-        for k in u2cart_wish_d.keys()[0:10]:
+        for k in list(u2cart_wish_d.keys())[0:10]:
             print(k, u2cart_wish_d[k])
 
     return u2cart_wish_d
@@ -394,7 +394,7 @@ def get_hot_i2leaf(txt_dir):
                     hot_i2leaf_d[k.split('|')[1]] = {str(tt): 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))]}
     if debug:
         print('hot_i2leaf_d')
-        for k in hot_i2leaf_d.keys()[0:10]:
+        for k in list(hot_i2leaf_d.keys())[0:10]:
             print(k, hot_i2leaf_d[k])
     return hot_i2leaf_d
 
@@ -414,7 +414,7 @@ def get_site_hot(txt_dir):
                     site_hot_d[k] = {tt: 1 for tt in [e.split(chr(4)[0]) for e in v.split(chr(2))][0:100]}
     if debug:
         print('site_hot_d')
-        for k in site_hot_d.keys()[0:1]:
+        for k in list(site_hot_d.keys())[0:1]:
             print(k, site_hot_d[k])
     return site_hot_d
 
