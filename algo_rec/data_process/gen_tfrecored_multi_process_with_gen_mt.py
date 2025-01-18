@@ -154,8 +154,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                 feature['mt_hot_i2leaf'] = ints_fea([1])
             if ele[0] == 'u2i_f':
                 feature['mt_u2i_f'] = ints_fea([1])
-        if len(mt) > 1:
-            print('feature', feature)
+        # if len(mt) > 1:
+        #     print('feature', feature)
         feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
             value=[bytes(v, encoding="utf8") for v in mt]))
         feature['mt_w'] = floats_fea(mt_w)
