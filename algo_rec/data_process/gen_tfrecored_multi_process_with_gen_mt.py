@@ -13,7 +13,7 @@ import boto3
 from random import shuffle
 import numpy as np
 import traceback
-import datetime
+from datetime import datetime, timedelta
 from pympler import asizeof
 
 import math
@@ -55,8 +55,9 @@ def cross_fea(v1_list, v2_list, n=1):
 
 
 def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
-                   itm_shm_n, itm_shm_size,i2i_shm_n,i2i_shm_size, u2cart_wish_shm_n, u2cart_wish_shm_size,
-                   hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size
+                   itm_shm_n, itm_shm_size, i2i_shm_n, i2i_shm_size, u2cart_wish_shm_n, u2cart_wish_shm_size,
+                   hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size,
+                   itm_stat_shm_n, itm_stat_shm_size
                    ):
     # shm_i2i = shared_memory.SharedMemory(name=shm_i2i_name)
     # sd_i2i = bytes(shm_i2i.buf[:shm_i2i_size])
@@ -64,6 +65,10 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
     itm_shm = shared_memory.SharedMemory(name=itm_shm_n)
     itm_s = bytes(itm_shm.buf[:itm_shm_size])
     itm_d = pickle.loads(itm_s)  # 反序列化为嵌套字典
+
+    itm_stat_shm = shared_memory.SharedMemory(name=itm_stat_shm_n)
+    itm_stat_s = bytes(itm_stat_shm.buf[:itm_stat_shm_size])
+    itm_stat_d = pickle.loads(itm_stat_s)  # 反序列化为嵌套字典
 
     i2i_shm = shared_memory.SharedMemory(name=i2i_shm_n)
     i2i_s = bytes(i2i_shm.buf[:i2i_shm_size])
@@ -108,7 +113,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
         if tgt_id in hot_i2leaf_d[tt['main_cate_id']]:
             mt.append('hot_i2leaf')
         if tgt_id in u2cart_wish_d[tt['uuid']]:
-            mt.append('u2i_f') # u2icart_wish
+            mt.append('u2i_f')  # u2icart_wish
         if main_goods in i2i_d:
             if tgt_id in i2i_d[main_goods]:
                 mt.append('i2i_main')
@@ -210,11 +215,19 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                                 "prop_main_material": "", "prop_pattern": "",
                                 "prop_style": "", "prop_quantity": "", "prop_fitness": ""
                                 }
-        item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
-        item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
-                             "pay_7d": 0,
-                             "is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0, "sales_price": 0
+        item_stat_double = {'pctr_1d': -1.0, 'pcart_1d': -1.0, 'pwish_1d': -1.0, 'pcvr_1d': -1.0, 'pctr_3d': -1.0,
+                                'pcart_3d': -1.0, 'pwish_3d': -1.0, 'pcvr_3d': -1.0, 'pctr_5d': -1.0, 'pcart_5d': -1.0,
+                                'pwish_5d': -1.0, 'pcvr_5d': -1.0, 'pctr_7d': -1.0, 'pcart_7d': -1.0, 'pwish_7d': -1.0,
+                                'pcvr_7d': -1.0, 'pctr_14d': -1.0, 'pcart_14d': -1.0, 'pwish_14d': -1.0,
+                                'pcvr_14d': -1.0, 'pctr_30d': -1.0, 'pcart_30d': -1.0, 'pwish_30d': -1.0,
+                                'pcvr_30d': -1.0}
+        item_stat_int = {'pv_1d': -1, 'ipv_1d': -1, 'cart_1d': -1, 'wish_1d': -1, 'pay_1d': -1, 'pv_3d': -1,
+                             'ipv_3d': -1, 'cart_3d': -1, 'wish_3d': -1, 'pay_3d': -1, 'pv_5d': -1, 'ipv_5d': -1,
+                             'cart_5d': -1, 'wish_5d': -1, 'pay_5d': -1, 'pv_7d': -1, 'ipv_7d': -1, 'cart_7d': -1,
+                             'wish_7d': -1, 'pay_7d': -1, 'pv_14d': -1, 'ipv_14d': -1, 'cart_14d': -1, 'wish_14d': -1,
+                             'pay_14d': -1, 'pv_30d': -1, 'ipv_30d': -1, 'cart_30d': -1, 'wish_30d': -1, 'pay_30d': -1
                              }
+        item_features_int ={"is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0, "sales_price": 0}
         user_int = {"age": -1, "seq_len": 0, "pos_idx": -1}
         user_string = {"last_login_device": "", "last_login_brand": "", "register_brand": "", "client_type": ""}
         user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
@@ -230,10 +243,18 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
 
         for name in other_string.keys():
             feature.update({name: bytes_fea(t[name])})
-        for name in item_features_double.keys():
-            feature.update({name: floats_fea(t[name])})
+        for name in item_stat_double.keys():
+            if int(t['goods_id']) in itm_stat_d:
+                feature.update({name: floats_fea(itm_stat_d[t['goods_id']][name])})
+            else:
+                feature.update({name: floats_fea(item_stat_int[name])})
         for name in item_features_int.keys():
             feature.update({name: ints_fea(t[name])})
+        for name in item_stat_int.keys():
+            if int(t['goods_id']) in itm_stat_d:
+                feature.update({name: ints_fea(itm_stat_d[t['goods_id']][name])})
+            else:
+                feature.update({name: ints_fea(item_stat_int[name])})
         for name in user_int.keys():
             feature.update({name: ints_fea(t[name])})
         for name in other_int.keys():
@@ -401,14 +422,30 @@ def get_item_feature(file):
     return ret
 
 
+def get_item_stat(file):
+    ret = {}
+    pt = parquet.read_table(file).to_pylist()
+    for e in pt:
+        ret[int(e['goods_id'])] = e
+    return ret
+
+
 def main(args):
-    itm_d = get_item_feature(args.item % args.ds)
+    itm_d = get_item_feature(args.item_file)
     itm_s = pickle.dumps(itm_d)
     itm_shm_size = len(itm_s)
     itm_shm = shared_memory.SharedMemory(create=True, size=itm_shm_size)
     itm_shm.buf[:itm_shm_size] = itm_s  # 写入数据
     print('item_feature size of mem [M]', asizeof.asizeof(itm_d) / 1048576)  #
     print('get item features:', len(itm_d.keys()))
+
+    itm_stat_d = get_item_stat(args.item_stat)
+    itm_stat_s = pickle.dumps(itm_stat_d)
+    itm_stat_shm_size = len(itm_stat_s)
+    itm_stat_shm = shared_memory.SharedMemory(create=True, size=itm_stat_shm_size)
+    itm_stat_shm.buf[:itm_stat_shm_size] = itm_stat_s  # 写入数据
+    print('item_stat_feature size of mem [M]', asizeof.asizeof(itm_stat_d) / 1048576)  #
+    print('get item features:', len(itm_stat_d.keys()))
 
     i2i_d = get_i2i(args.i2i_part, args.i2i_s3, args.i2i_file)
     print('i2i_d size of mem [M]', asizeof.asizeof(i2i_d) / 1048576)  #
@@ -441,7 +478,9 @@ def main(args):
     args_list = get_file_list(args)
     proc_list = [multiprocessing.Process(target=build_tfrecord, args=(
         args[0], args[1], args[2], proc_id, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
-        hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size)) for proc_id, args in
+        hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size,
+        itm_stat_shm.name, itm_stat_shm_size
+    )) for proc_id, args in
                  enumerate(args_list)]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
@@ -474,15 +513,16 @@ if __name__ == '__main__':
     parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v20_savana_in_tfr/')
-    parser.add_argument('--item', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/%s/')
+    parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/%s/')
+    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s')
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=7)
     parser.add_argument('--u2cart_wish_file',
-                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/')
-    parser.add_argument('--hot_i2leaf', default='s3://algo-sg/rec/cn_rec_detail_recall_main_leaf2i_for_redis/')
-    parser.add_argument('--site_hot', default='s3://algo-sg/rec/cn_rec_detail_recall_site_hot_for_redis/')
+                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s')
+    parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/cn_rec_detail_recall_main_leaf2i_ds/ds=%s')
+    parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/cn_rec_detail_recall_site_hot/ds=%s')
     parser.add_argument('--v', default='')
 
     args = parser.parse_args()
@@ -490,11 +530,20 @@ if __name__ == '__main__':
     if args.range != '':
         try:
             for ds in args.range.split(','):
+                pre_ds = (datetime.strptime(ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
                 st = time.time()
                 args.ds = 'ds=' + ds
                 print('args.ds:', args.ds)
-                # item_feature = get_item_feature(args.item % args.ds)
+                args.item_file = args.item_file % args.ds
+                args.item_stat = args.item_stat % pre_ds
                 args.i2i_s3 = args.i2i_s3 % (args.v, args.ds)
+                args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
+                args.hot_i2leaf = args.hot_i2leaf % pre_ds
+                args.site_hot = args.site_hot % pre_ds
+                print('i2i_s3', args.i2i_s3)
+                print('u2cart_wish_file', args.u2cart_wish_file)
+                print('hot_i2leaf', args.hot_i2leaf)
+                print('site_hot', args.site_hot)
                 main(args)
                 print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
         except Exception:
@@ -506,5 +555,15 @@ if __name__ == '__main__':
         st = time.time()
         args.i2i_s3 = args.i2i_s3 % (args.v, args.ds[3:])
         print('args.ds:', args.ds)
+        pre_ds = (datetime.strptime(args.ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
+        args.item_file = args.item_file % args.ds
+        args.item_stat = args.item_stat % pre_ds
+        args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
+        args.hot_i2leaf = args.hot_i2leaf % pre_ds
+        args.site_hot = args.site_hot % pre_ds
+        print('i2i_s3', args.i2i_s3)
+        print('u2cart_wish_file', args.u2cart_wish_file)
+        print('hot_i2leaf', args.hot_i2leaf)
+        print('site_hot', args.site_hot)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
