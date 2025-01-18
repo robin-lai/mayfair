@@ -523,14 +523,13 @@ if __name__ == '__main__':
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s')
     parser.add_argument('--i2i_s3',
-                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
+                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s')
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/cn_rec_detail_recall_main_leaf2i_ds/ds=%s')
     parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/cn_rec_detail_recall_site_hot/ds=%s')
-    parser.add_argument('--v', default='')
 
     args = parser.parse_args()
     debug = args.debug
@@ -543,7 +542,7 @@ if __name__ == '__main__':
                 print('args.ds:', args.ds)
                 args.item_file = args.item_file % args.ds
                 args.item_stat = args.item_stat % pre_ds
-                args.i2i_s3 = args.i2i_s3 % (args.v, args.ds)
+                args.i2i_s3 = args.i2i_s3 % args.ds
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
@@ -560,7 +559,7 @@ if __name__ == '__main__':
             # print('data:',t)
     else:
         st = time.time()
-        args.i2i_s3 = args.i2i_s3 % (args.v, args.ds)
+        args.i2i_s3 = args.i2i_s3 % args.ds
         print('args.ds:', args.ds)
         pre_ds = (datetime.strptime(args.ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
         args.item_file = args.item_file % args.ds
