@@ -431,7 +431,8 @@ def get_item_stat(file):
     ret = {}
     pt = parquet.read_table(file).to_pylist()
     for e in pt:
-        ret[int(e['goods_id'])] = e
+        if e['goods_id'] is not None:
+            ret[int(e['goods_id'])] = e
     return ret
 
 
