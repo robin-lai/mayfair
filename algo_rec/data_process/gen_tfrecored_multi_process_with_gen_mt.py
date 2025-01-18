@@ -483,7 +483,7 @@ def main(args):
 
     args_list = get_file_list(args)
     proc_list = [multiprocessing.Process(target=build_tfrecord, args=(
-        args[0], args[1], args[2], proc_id, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
+        args[0], args[1], args[2], i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
         hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size,
         itm_stat_shm.name, itm_stat_shm_size
     )) for proc_id, args in
