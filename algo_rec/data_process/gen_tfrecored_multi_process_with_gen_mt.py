@@ -110,9 +110,9 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
         tgt_id = int(tt['goods_id'])
         if tgt_id in site_hot_d['Savana_IN']:
             mt.append('hot')
-        if tgt_id in hot_i2leaf_d[tt['main_cate_id']]:
+        if tt['main_cate_id'] in hot_i2leaf_d and tgt_id in hot_i2leaf_d[tt['main_cate_id']]:
             mt.append('hot_i2leaf')
-        if tgt_id in u2cart_wish_d[tt['uuid']]:
+        if tt['uuid'] in u2cart_wish_d and tgt_id in u2cart_wish_d[tt['uuid']]:
             mt.append('u2i_f')  # u2icart_wish
         if main_goods in i2i_d:
             if tgt_id in i2i_d[main_goods]:
