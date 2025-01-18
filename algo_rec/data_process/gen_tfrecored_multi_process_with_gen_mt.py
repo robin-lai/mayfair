@@ -247,7 +247,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
             if int(t['goods_id']) in itm_stat_d:
                 feature.update({name: floats_fea(itm_stat_d[int(t['goods_id'])][name])})
             else:
-                feature.update({name: floats_fea(item_stat_int[name])})
+                feature.update({name: floats_fea(item_stat_double[name])})
         for name in item_features_int.keys():
             feature.update({name: ints_fea(t[name])})
         for name in item_stat_int.keys():
