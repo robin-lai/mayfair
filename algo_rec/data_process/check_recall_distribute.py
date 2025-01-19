@@ -38,7 +38,7 @@ def recall_ana(d):
 def main(args):
     file_ll = get_bucket_files('./tmp/', args.stat_file)
     d = {}
-    for file in file_ll:
+    for file in file_ll[1:]: # first is base dir
         with open(file, 'rb') as fin:
             d.update(pickle.load(fin))
     recall_ana(d)
