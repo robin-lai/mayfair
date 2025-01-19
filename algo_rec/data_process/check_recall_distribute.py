@@ -24,10 +24,14 @@ def get_bucket_files(local_dir, buket):
 def recall_ana(d):
     recall = {}
     n = 0
+    not_recall_n = 0
     for i in d.keys():
         s_len = len(d[i]['s'])
         n += s_len
         print(f"s_len:{s_len}")
+        if len(d[i]['s']) < 1:
+            not_recall_n += 1
+
         for ss in d[i]['s']:
             for s in ss:
                if s in recall:

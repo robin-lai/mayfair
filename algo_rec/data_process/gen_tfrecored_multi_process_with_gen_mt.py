@@ -108,7 +108,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         mt_w = []
         main_goods = int(tt['main_goods_id'])
         tgt_id = int(tt['goods_id'])
-        main_cate_id = int(tt['main_cate_id'])
+        main_cate_id = str(tt['main_cate_id'])
         if tgt_id in site_hot_d['Savana_IN']:
             mt.append('hot')
         if main_cate_id in hot_i2leaf_d and tgt_id in hot_i2leaf_d[main_cate_id]:
@@ -399,7 +399,7 @@ def get_hot_i2leaf(txt_dir):
             lines = infile.readlines()
             for line in lines:
                 k, v = line.split(chr(1))
-                hot_i2leaf_d[int(k.split('|')[1])] = {int(tt): 1 for tt in [e.split(chr(4))[0] for e in v.split(chr(2))]}
+                hot_i2leaf_d[str(k.split('|')[1])] = {int(tt): 1 for tt in [e.split(chr(4))[0] for e in v.split(chr(2))]}
     return hot_i2leaf_d
 
 
