@@ -531,8 +531,7 @@ if __name__ == '__main__':
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_main_leaf2i_ds/ds=%s/')
     parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_site_hot/ds=%s/')
-    parser.add_argument('--stat_file', default='cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
-
+    parser.add_argument('--stat_file', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
     args = parser.parse_args()
     debug = args.debug
     if args.range != '':
