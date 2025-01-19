@@ -15,7 +15,7 @@ def get_bucket_files(local_dir, buket):
     ll = []
     for file in file_list:
         local_file = local_dir + file
-        s3_file = s3_buk + buket + file
+        s3_file = s3_buk + file
         os.system('aws s3 cp %s %s' % (s3_file, local_file))
         ll.append(local_file)
     return ll
