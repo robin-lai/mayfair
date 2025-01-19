@@ -59,9 +59,6 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                    hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size,
                    itm_stat_shm_n, itm_stat_shm_size
                    ):
-    # shm_i2i = shared_memory.SharedMemory(name=shm_i2i_name)
-    # sd_i2i = bytes(shm_i2i.buf[:shm_i2i_size])
-    # i2i_d = pickle.loads(sd_i2i)  # 反序列化为嵌套字典
     itm_shm = shared_memory.SharedMemory(name=itm_shm_n)
     itm_s = bytes(itm_shm.buf[:itm_shm_size])
     itm_d = pickle.loads(itm_s)  # 反序列化为嵌套字典
@@ -215,12 +212,12 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                                 "prop_main_material": "", "prop_pattern": "",
                                 "prop_style": "", "prop_quantity": "", "prop_fitness": ""
                                 }
-        item_stat_double = {'pctr_1d': -1.0, 'pcart_1d': -1.0, 'pwish_1d': -1.0, 'pcvr_1d': -1.0, 'pctr_3d': -1.0,
-                                'pcart_3d': -1.0, 'pwish_3d': -1.0, 'pcvr_3d': -1.0, 'pctr_5d': -1.0, 'pcart_5d': -1.0,
-                                'pwish_5d': -1.0, 'pcvr_5d': -1.0, 'pctr_7d': -1.0, 'pcart_7d': -1.0, 'pwish_7d': -1.0,
-                                'pcvr_7d': -1.0, 'pctr_14d': -1.0, 'pcart_14d': -1.0, 'pwish_14d': -1.0,
-                                'pcvr_14d': -1.0, 'pctr_30d': -1.0, 'pcart_30d': -1.0, 'pwish_30d': -1.0,
-                                'pcvr_30d': -1.0}
+        item_stat_double =  {'pctr_1d_smooth': -1.0, 'pcart_1d_smooth': -1.0, 'pwish_1d_smooth': -1.0, 'pcvr_1d_smooth': -1.0, 'pctr_3d_smooth': -1.0,
+                                'pcart_3d_smooth': -1.0, 'pwish_3d_smooth': -1.0, 'pcvr_3d_smooth': -1.0, 'pctr_5d_smooth': -1.0, 'pcart_5d_smooth': -1.0,
+                                'pwish_5d_smooth': -1.0, 'pcvr_5d_smooth': -1.0, 'pctr_7d_smooth': -1.0, 'pcart_7d_smooth': -1.0, 'pwish_7d_smooth': -1.0,
+                                'pcvr_7d_smooth': -1.0, 'pctr_14d_smooth': -1.0, 'pcart_14d_smooth': -1.0, 'pwish_14d_smooth': -1.0,
+                                'pcvr_14d_smooth': -1.0, 'pctr_30d_smooth': -1.0, 'pcart_30d_smooth': -1.0, 'pwish_30d_smooth': -1.0,
+                                'pcvr_30d_smooth': -1.0}
         item_stat_int = {'pv_1d': -1, 'ipv_1d': -1, 'cart_1d': -1, 'wish_1d': -1, 'pay_1d': -1, 'pv_3d': -1,
                              'ipv_3d': -1, 'cart_3d': -1, 'wish_3d': -1, 'pay_3d': -1, 'pv_5d': -1, 'ipv_5d': -1,
                              'cart_5d': -1, 'wish_5d': -1, 'pay_5d': -1, 'pv_7d': -1, 'ipv_7d': -1, 'cart_7d': -1,
@@ -508,6 +505,8 @@ if __name__ == '__main__':
         epilog='gentfr-help')
     parser.add_argument('--ds', type=str,
                         default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
+    parser.add_argument('--pre_ds', type=str,
+                        default=(datetime.today() - timedelta(days=3)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
@@ -515,7 +514,7 @@ if __name__ == '__main__':
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/ds=%s')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/ds=%s')
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
-    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
+    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat_bayes_smooth/ds=%s/')
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
@@ -534,6 +533,8 @@ if __name__ == '__main__':
                 st = time.time()
                 args.ds = 'ds=' + ds
                 print('args.ds:', args.ds)
+                args.pre_ds = pre_ds
+                print('args.pre_ds:', args.pre_ds)
                 args.item_file = args.item_file % args.ds
                 args.item_stat = args.item_stat % pre_ds
                 args.i2i_s3 = args.i2i_s3 % args.ds
@@ -562,6 +563,8 @@ if __name__ == '__main__':
         args.i2i_s3 = args.i2i_s3 % args.ds
         print('args.ds:', args.ds)
         pre_ds = (datetime.strptime(args.ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
+        args.pre_ds = pre_ds
+        print('args.pre_ds:', args.pre_ds)
         args.item_file = args.item_file % args.ds
         args.item_stat = args.item_stat % pre_ds
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
