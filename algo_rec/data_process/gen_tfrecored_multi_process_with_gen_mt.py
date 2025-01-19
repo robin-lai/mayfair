@@ -17,6 +17,9 @@ from datetime import datetime,date, timedelta
 from pympler import asizeof
 
 import math
+import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 
 def chunks(lst, n):
@@ -54,7 +57,7 @@ def cross_fea(v1_list, v2_list, n=1):
     return bytes_fea(v3_list, n, True)
 
 
-def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
+def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,stat_file,
                    itm_shm_n, itm_shm_size, i2i_shm_n, i2i_shm_size, u2cart_wish_shm_n, u2cart_wish_shm_size,
                    hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size,
                    itm_stat_shm_n, itm_stat_shm_size
@@ -100,7 +103,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                             return (True, i2i_d[trig][tgt_id])
         return (False, 0.0)
 
-    def build_mt(tt, feature):
+    def build_mt(tt, feature, stat_d):
         mt = []
         mt_w = []
         main_goods = int(tt['main_goods_id'])
@@ -151,8 +154,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
                 feature['mt_hot_i2leaf'] = ints_fea([1])
             if ele[0] == 'u2i_f':
                 feature['mt_u2i_f'] = ints_fea([1])
-        # if len(mt) > 1:
-        #     print('feature', feature)
+        stat_d['s'].append(mt)
         feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
             value=[bytes(v, encoding="utf8") for v in mt]))
         feature['mt_w'] = floats_fea(mt_w)
@@ -259,6 +261,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
         for name in user_seq_string.keys():
             feature.update({name: bytes_fea(t[name], n=20)})
 
+    stat_d = {"sample_id":[], "s":[]}
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         st = time.time()
         pt = parquet.read_table(pt_file).to_pylist()
@@ -271,7 +274,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
             # try:
             if int(t['pos_idx']) >= 200:
                 continue
-            build_mt(t, feature)
+            stat_d['sample_id'].append(t['sample_id'])
+            build_mt(t, feature, stat_d)
             build_feature(t, feature)
             build_seq_on(t['seq_on'], feature)
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
@@ -291,6 +295,10 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,
         print('upload from %s to %s' % (tfr_local_file, tfr_s3_file))
         os.system('aws s3 cp %s %s' % (tfr_local_file, tfr_s3_file))
         os.system('rm %s' % tfr_local_file)
+    local_stat_file = './tmp/%s.pkl'%str(proc_id)
+    with open(local_stat_file, 'wb') as fout:
+        pickle.dump(stat_d, fout)
+    os.system('aws s3 cp %s %s' % (local_stat_file, stat_file + '%s.pkl'%(str(proc_id))))
 
 
 def get_file_list(args):
@@ -471,13 +479,13 @@ def main(args):
     site_hot_shm = shared_memory.SharedMemory(create=True, size=site_hot_shm_size)
     site_hot_shm.buf[:site_hot_shm_size] = site_hot_s  # 写入数据
 
-    args_list = get_file_list(args)
+    file_list = get_file_list(args)
     proc_list = [multiprocessing.Process(target=build_tfrecord, args=(
-        args[0], args[1], args[2],itm_shm.name, itm_shm_size, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
+        fll[0], fll[1], fll[2],proc_id, args.stat_file, itm_shm.name, itm_shm_size, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
         hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size,
         itm_stat_shm.name, itm_stat_shm_size
-    )) for proc_id, args in
-                 enumerate(args_list)]
+    )) for proc_id, fll in
+                 enumerate(file_list)]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
     fail_cnt = sum([p.exitcode for p in proc_list])
@@ -523,6 +531,7 @@ if __name__ == '__main__':
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_main_leaf2i_ds/ds=%s/')
     parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_site_hot/ds=%s/')
+    parser.add_argument('--stat_file', default='cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
 
     args = parser.parse_args()
     debug = args.debug
@@ -537,12 +546,13 @@ if __name__ == '__main__':
                 print('args.pre_ds:', args.pre_ds)
                 args.item_file = args.item_file % args.ds
                 args.item_stat = args.item_stat % pre_ds
-                args.i2i_s3 = args.i2i_s3 % args.ds
+                args.i2i_s3 = args.i2i_s3 % args.pre_ds
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
                 args.dir_pt = args.dir_pt % args.ds
                 args.dir_tfr = args.dir_tfr % args.ds
+                args.stat_file = args.stat_file % args.ds
                 print('dir_pt', args.dir_pt)
                 print('dir_tfr', args.dir_tfr)
                 print('item_file', args.item_file)
@@ -560,13 +570,13 @@ if __name__ == '__main__':
             # print('data:',t)
     else:
         st = time.time()
-        args.i2i_s3 = args.i2i_s3 % args.ds
         print('args.ds:', args.ds)
         pre_ds = (datetime.strptime(args.ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
         args.pre_ds = pre_ds
         print('args.pre_ds:', args.pre_ds)
         args.item_file = args.item_file % args.ds
         args.item_stat = args.item_stat % pre_ds
+        args.i2i_s3 = args.i2i_s3 % args.pre_ds
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
         args.hot_i2leaf = args.hot_i2leaf % pre_ds
         args.site_hot = args.site_hot % pre_ds
