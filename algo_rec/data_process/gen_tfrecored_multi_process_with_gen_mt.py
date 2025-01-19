@@ -599,4 +599,4 @@ if __name__ == '__main__':
         print('stat_file', args.stat_file)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
-# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &
+# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7

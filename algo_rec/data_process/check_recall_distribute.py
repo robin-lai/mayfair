@@ -23,7 +23,9 @@ def get_bucket_files(local_dir, buket):
 
 def recall_ana(d):
     recall = {}
+    clk_recall = {}
     n = 0
+    clk_n = 0
     not_recall_n = 0
     for i in d.keys():
         s_len = len(d[i]['s'])
@@ -32,14 +34,23 @@ def recall_ana(d):
         if len(d[i]['s']) < 1:
             not_recall_n += 1
 
-        for ss in d[i]['s']:
+        for ss, is_clk in zip(d[i]['s'], d[i]['is_clk']):
             for s in ss:
-               if s in recall:
-                   recall[s] += 1
-               else:
-                   recall[s] = 0
+                if int(is_clk) == 1:
+                    clk_n += 1
+                    if s in clk_recall:
+                        clk_recall[s] += 1
+                    else:
+                        clk_recall[s] = 0
+                if s in recall:
+                    recall[s] += 1
+                else:
+                    recall[s] = 0
+    print(f"not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
     for k, v in recall.items():
-        print(f"s:{k}, v:{v} n:{n} ratio:{v / n}")
+        print(f"曝光口径 s:{k}, v:{v} n:{n} ratio:{v / n}")
+    for k, v in clk_recall.items():
+        print(f"点击口径 s:{k}, v:{v} n:{clk_n} ratio:{v / clk_n}")
 
 
 def main(args):
