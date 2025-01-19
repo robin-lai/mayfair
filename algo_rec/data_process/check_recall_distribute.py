@@ -35,7 +35,7 @@ def recall_ana(d):
                else:
                    recall[s] = 0
     for k, v in recall.items():
-        print(f"s:{k}, ratio:{v / n}")
+        print(f"s:{k}, v:{v} n:{n} ratio:{v / n}")
 
 
 def main(args):
