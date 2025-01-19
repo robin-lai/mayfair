@@ -18,6 +18,7 @@ def get_bucket_files(local_dir, buket):
         s3_file = s3_buk + file
         os.system('aws s3 cp %s %s' % (s3_file, local_file))
         ll.append(local_file)
+    print(f"file list {ll}")
     return ll
 
 def recall_ana(d):
