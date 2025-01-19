@@ -552,7 +552,7 @@ if __name__ == '__main__':
             for ds in args.range.split(','):
                 pre_ds = (datetime.strptime(ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
                 st = time.time()
-                args.ds = 'ds=' + ds
+                args.ds = ds
                 print('args.ds:', args.ds)
                 args.pre_ds = pre_ds
                 print('args.pre_ds:', args.pre_ds)
@@ -608,3 +608,4 @@ if __name__ == '__main__':
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
 # python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118  > run.log 2>&1 &
