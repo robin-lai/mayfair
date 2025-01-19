@@ -591,4 +591,4 @@ if __name__ == '__main__':
         print('site_hot', args.site_hot)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
-# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250117 --sample_num=1 --thread=1
+# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &
