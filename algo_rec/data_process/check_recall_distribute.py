@@ -50,3 +50,4 @@ if __name__ == '__main__':
         epilog='')
     parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=20250114/')
     args = parser.parse_args()
+    main(args)
