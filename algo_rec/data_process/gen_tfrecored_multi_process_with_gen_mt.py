@@ -215,12 +215,12 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                                 "prop_main_material": "", "prop_pattern": "",
                                 "prop_style": "", "prop_quantity": "", "prop_fitness": ""
                                 }
-        item_stat_double =  {'pctr_1d_smooth': -1.0, 'pcart_1d_smooth': -1.0, 'pwish_1d_smooth': -1.0, 'pcvr_1d_smooth': -1.0, 'pctr_3d_smooth': -1.0,
-                                'pcart_3d_smooth': -1.0, 'pwish_3d_smooth': -1.0, 'pcvr_3d_smooth': -1.0, 'pctr_5d_smooth': -1.0, 'pcart_5d_smooth': -1.0,
-                                'pwish_5d_smooth': -1.0, 'pcvr_5d_smooth': -1.0, 'pctr_7d_smooth': -1.0, 'pcart_7d_smooth': -1.0, 'pwish_7d_smooth': -1.0,
-                                'pcvr_7d_smooth': -1.0, 'pctr_14d_smooth': -1.0, 'pcart_14d_smooth': -1.0, 'pwish_14d_smooth': -1.0,
-                                'pcvr_14d_smooth': -1.0, 'pctr_30d_smooth': -1.0, 'pcart_30d_smooth': -1.0, 'pwish_30d_smooth': -1.0,
-                                'pcvr_30d_smooth': -1.0}
+        item_stat_double =  {'pctr_1d': -1.0, 'pcart_1d': -1.0, 'pwish_1d': -1.0, 'pcvr_1d': -1.0, 'pctr_3d': -1.0,
+                                'pcart_3d': -1.0, 'pwish_3d': -1.0, 'pcvr_3d': -1.0, 'pctr_5d': -1.0, 'pcart_5d': -1.0,
+                                'pwish_5d': -1.0, 'pcvr_5d': -1.0, 'pctr_7d': -1.0, 'pcart_7d': -1.0, 'pwish_7d': -1.0,
+                                'pcvr_7d': -1.0, 'pctr_14d': -1.0, 'pcart_14d': -1.0, 'pwish_14d': -1.0,
+                                'pcvr_14d': -1.0, 'pctr_30d': -1.0, 'pcart_30d': -1.0, 'pwish_30d': -1.0,
+                                'pcvr_30d': -1.0}
         item_stat_int = {'pv_1d': -1, 'ipv_1d': -1, 'cart_1d': -1, 'wish_1d': -1, 'pay_1d': -1, 'pv_3d': -1,
                              'ipv_3d': -1, 'cart_3d': -1, 'wish_3d': -1, 'pay_3d': -1, 'pv_5d': -1, 'ipv_5d': -1,
                              'cart_5d': -1, 'wish_5d': -1, 'pay_5d': -1, 'pv_7d': -1, 'ipv_7d': -1, 'cart_7d': -1,
@@ -245,14 +245,22 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
             feature.update({name: bytes_fea(t[name])})
         for name in item_stat_double.keys():
             if int(t['goods_id']) in itm_stat_d:
-                feature.update({name: floats_fea(itm_stat_d[int(t['goods_id'])][name])})
+                raw_v = itm_stat_d[int(t['goods_id'])][name]
+                if raw_v is not None:
+                    feature.update({name: floats_fea(raw_v)})
+                else:
+                    feature.update({name: floats_fea(item_stat_double[name])})
             else:
                 feature.update({name: floats_fea(item_stat_double[name])})
         for name in item_features_int.keys():
             feature.update({name: ints_fea(t[name])})
         for name in item_stat_int.keys():
             if int(t['goods_id']) in itm_stat_d:
-                feature.update({name: ints_fea(itm_stat_d[int(t['goods_id'])][name])})
+                raw_v = itm_stat_d[int(t['goods_id'])][name]
+                if raw_v is not None:
+                    feature.update({name: ints_fea(raw_v)})
+                else:
+                    feature.update({name: ints_fea(item_stat_int[name])})
             else:
                 feature.update({name: ints_fea(item_stat_int[name])})
         for name in user_int.keys():
@@ -527,7 +535,7 @@ if __name__ == '__main__':
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/ds=%s')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/ds=%s')
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
-    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat_bayes_smooth/ds=%s/')
+    parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
     parser.add_argument('--i2i_s3',
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
