@@ -560,6 +560,7 @@ if __name__ == '__main__':
                 print('u2cart_wish_file', args.u2cart_wish_file)
                 print('hot_i2leaf', args.hot_i2leaf)
                 print('site_hot', args.site_hot)
+                print('stat_file', args.stat_file)
                 main(args)
                 print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
         except Exception:
@@ -581,6 +582,7 @@ if __name__ == '__main__':
         args.site_hot = args.site_hot % pre_ds
         args.dir_pt = args.dir_pt % args.ds
         args.dir_tfr = args.dir_tfr % args.ds
+        args.stat_file = args.stat_file % args.ds
         print('dir_pt', args.dir_pt)
         print('dir_tfr', args.dir_tfr)
         print('item_file', args.item_file)
@@ -589,6 +591,7 @@ if __name__ == '__main__':
         print('u2cart_wish_file', args.u2cart_wish_file)
         print('hot_i2leaf', args.hot_i2leaf)
         print('site_hot', args.site_hot)
+        print('stat_file', args.stat_file)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
 # python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &
