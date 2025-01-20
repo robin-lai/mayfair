@@ -22,7 +22,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from pathlib import Path
 print(sys.path)
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
 from algo_rec.utils.util import check_s3_file_exists
 
