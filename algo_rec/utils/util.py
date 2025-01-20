@@ -32,6 +32,22 @@ def pre_job_is_ready(job_name, pre_ds):
         else:
             return False
 
+import boto3
+from botocore.exceptions import ClientError
+
+def check_s3_file_exists(bucket_name, file_key):
+    s3 = boto3.client('s3')
+    print(f"{file_key} exists in {bucket_name}.")
+    try:
+        # Try to retrieve metadata of the file
+        s3.head_object(Bucket=bucket_name, Key=file_key)
+        return True  # File exists
+    except ClientError as e:
+        # If file does not exist, head_object will raise an exception
+        if e.response['Error']['Code'] == '404':
+            return False  # File does not exist
+        else:
+            raise  # Other errors
 
 def add_job_monitor(job_name, dd):
     s3_file = 's3://warehouse-algo/rec/job_monitor.json'

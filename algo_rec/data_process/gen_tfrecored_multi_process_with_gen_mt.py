@@ -20,6 +20,11 @@ import math
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+from pathlib import Path
+print(sys.path)
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+print(sys.path)
+from algo_rec.utils.util import check_s3_file_exists
 
 BUCKET = 'warehouse-algo'
 BUCKET_S3_PREFIX = "s3://warehouse-algo/"
@@ -354,64 +359,33 @@ def get_file_list(args):
     return args_list
 
 
-import boto3
-from botocore.exceptions import ClientError
-
-
-def check_s3_file_exists(bucket_name, file_key):
-    s3 = boto3.client('s3')
-    print(f"{file_key} exists in {bucket_name}.")
-    try:
-        # Try to retrieve metadata of the file
-        s3.head_object(Bucket=bucket_name, Key=file_key)
-        return True  # File exists
-    except ClientError as e:
-        # If file does not exist, head_object will raise an exception
-        if e.response['Error']['Code'] == '404':
-            return False  # File does not exist
-        else:
-            raise  # Other errors
-
-
-# Usage
-# bucket_name = 'my-bucket'
-# file_key = 'my-folder/myfile.txt'
-
-
-
-
 def get_i2i(i2i_part, i2i_s3, i2i_file):
     i2i_d = {}
     i2i_file_ll = []
-    try:
-        for i in range(i2i_part):
-            s3_file = BUCKET_S3_PREFIX + i2i_s3 + i2i_file % str(i)
-            if check_s3_file_exists(BUCKET, i2i_s3 + i2i_file % str(i)):
-                local_file = './' + i2i_file % str(i)
-                os.system('rm %s' % local_file)
-                os.system('aws s3 cp %s %s' % (s3_file, local_file))
-                i2i_file_ll.append(local_file)
-            else:
-                print(f"{s3_file} does not exist.")
+    for i in range(i2i_part):
+        s3_file = BUCKET_S3_PREFIX + i2i_s3 + i2i_file % str(i)
+        if check_s3_file_exists(BUCKET, i2i_s3 + i2i_file % str(i)):
+            local_file = './' + i2i_file % str(i)
+            os.system('rm %s' % local_file)
+            os.system('aws s3 cp %s %s' % (s3_file, local_file))
+            i2i_file_ll.append(local_file)
+        else:
+            print(f"{s3_file} does not exist.")
 
-        for file in i2i_file_ll:
-            with open(file, 'r') as fin:
-                lines = fin.readlines()
-                for line in lines:
-                    k, v = line.split(chr(1))
-                    tmp_d = {}
-                    for tt in v.split(chr(2)):
-                        tokens = tt.split(chr(4))
-                        if len(tokens) == 2:
-                            tmp_d[int(tokens[0])] = tokens[1]
-                        # else:
-                        #     print('error data:', tt)
-                    i2i_d[int(k.split(chr(4))[1])] = tmp_d
-        print('read i2i end, num:', len(i2i_d.keys()))
-    except Exception:
-            print("-" * 60)
-            traceback.print_exc(file=sys.stdout)
-            print("-" * 60)
+    for file in i2i_file_ll:
+        with open(file, 'r') as fin:
+            lines = fin.readlines()
+            for line in lines:
+                k, v = line.split(chr(1))
+                tmp_d = {}
+                for tt in v.split(chr(2)):
+                    tokens = tt.split(chr(4))
+                    if len(tokens) == 2:
+                        tmp_d[int(tokens[0])] = tokens[1]
+                    # else:
+                    #     print('error data:', tt)
+                i2i_d[int(k.split(chr(4))[1])] = tmp_d
+    print('read i2i end, num:', len(i2i_d.keys()))
     return i2i_d
 
 
