@@ -1,6 +1,6 @@
 # encoding:utf-8
 import argparse
-import gc, datetime,time
+import gc, datetime, time
 import os
 
 import boto3
@@ -11,11 +11,13 @@ from aws_auth_init import *
 
 import sys
 from pathlib import Path
+
 print(sys.path)
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
 from algo_rec.utils.util import add_job_monitor
+
 # steup up
 s3_cli = boto3.client('s3')
 sm_sess = sagemaker.Session()
@@ -24,8 +26,10 @@ sm_cli = boto3.client('sagemaker')
 role = get_execution_role()
 print('role:', role)
 
+
 def ts2date(ts, fmt='%Y%m%d', offset=3600 * 8):
     return time.strftime(fmt, time.localtime(ts + offset))
+
 
 def main(args):
     # Basic config
@@ -47,7 +51,7 @@ def main(args):
         hps['warm_start_from'] = model_dir_s3_pre
     if args.mode == 'infer':
         hps['pred_local'] = args.model_name + '_' + args.eval_ds + '.pkl'
-        hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s.pkl'%(args.model_name, args.eval_ds)
+        hps['pred_s3'] = 's3://warehouse-algo/rec/model_pred/%s_%s.pkl' % (args.model_name, args.eval_ds)
     if args.site_code is not None:
         hps['site_code'] = args.site_code
         print('set site_code to:', args.site_code)
@@ -80,16 +84,17 @@ def main(args):
     #     return time.strftime(fmt, time.localtime(ts + offset))
 
     train_params = {
-	    'inputs': {
-	    	'train': 's3://warehouse-algo/rec/%s/ds=%s'%(args.sample, args.train_ds),
-	    	'eval': 's3://warehouse-algo/rec/%s/ds=%s'%(args.sample, args.eval_ds)
-	    },
-	    'job_name': job_name
+        'inputs': {
+            'train': 's3://warehouse-algo/rec/%s/ds=%s' % (args.sample, args.train_ds),
+            'eval': 's3://warehouse-algo/rec/%s/ds=%s' % (args.sample, args.eval_ds)
+        },
+        'job_name': job_name
     }
     print('Train params: ', train_params)
     sg_estimator.fit(**train_params)
     if args.mode == 'train':
-        os.system('aws s3 cp --recursive %s %s' % (model_dir_s3, model_dir_s3_prefix + 'model')) # cp can create dest dir,// is wrong
+        os.system('aws s3 cp --recursive %s %s' % (
+        model_dir_s3, model_dir_s3_prefix + 'model'))  # cp can create dest dir,// is wrong
     del sg_estimator
     gc.collect()
     # alert(ctx)
@@ -102,15 +107,16 @@ if __name__ == '__main__':
     today = datetime.date.today().strftime('%Y%m%d')
     parse.add_argument('--task', type=str, default='mtl')
     parse.add_argument('--mode', type=str, default='train')
-    parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v20_savana_in_tfr")
+    parse.add_argument('--sample', type=str, default="cn_rec_detail_sample_v30_savana_in_tfr")
     parse.add_argument('--site_code', type=str, default=None)
     parse.add_argument('--range', type=str, default='')
-    parse.add_argument('--train_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+    parse.add_argument('--train_ds', type=str,
+                       default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parse.add_argument('--eval_ds', type=str, default='20241210eval')
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=3)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
-    parse.add_argument('--model_name', type=str, default='mtl_seq_esmm')
+    parse.add_argument('--model_name', type=str, default='mtl_seq_esmm_v2')
     parse.add_argument('--model_dir', type=str, default='prod_model')
     parse.add_argument('--warm_start_from', type=str, default='NEWEST')
     parse.add_argument('--initialize', type=str, default='zero')
@@ -118,13 +124,13 @@ if __name__ == '__main__':
     args = parse.parse_args()
     if args.range != '':
         ds_range = args.range.split(',')
-        for i in range(1,len(ds_range)):
-            args.train_ds=ds_range[i]
-            args.pre_ds=ds_range[i-1]
+        for i in range(1, len(ds_range)):
+            args.train_ds = ds_range[i]
+            args.pre_ds = ds_range[i - 1]
             print('train ds:', args.train_ds)
             st = time.time()
             main(args)
-            print('end train ds:%s cost:%s' % (args.train_ds, str(time.time()-st)))
+            print('end train ds:%s cost:%s' % (args.train_ds, str(time.time() - st)))
     else:
         print('eval ds:', args.eval_ds)
         st = time.time()

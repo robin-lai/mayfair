@@ -11,6 +11,7 @@ import json
 from pyarrow import parquet
 import tensorflow as tf
 import sys
+
 print(tf.__version__)
 if '2' not in tf.__version__:
     print('use tf2')
@@ -25,11 +26,14 @@ import pickle
 from sklearn.metrics import roc_auc_score
 
 import math
+
+
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     c = math.ceil(len(lst) / n)
     for i in range(0, len(lst), c):
         yield lst[i:i + c]
+
 
 ID = 'sample_id'
 SCORE = 'probabilities'
@@ -45,77 +49,78 @@ tmp_dir_data = tmp_dir + 'data/'
 
 debug = False
 
-def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
 
+def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
     def _parse_fea(data):
-       feature_describe = {
-           "ctr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
-           , "cvr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
-           , "show_7d": v1.FixedLenFeature(1, tf.int64, 0)
-           , "click_7d": v1.FixedLenFeature(1, tf.int64, 0)
-           , "cart_7d": v1.FixedLenFeature(1, tf.int64, 0)
-           , "ord_total": v1.FixedLenFeature(1, tf.int64, 0)
-           , "pay_total": v1.FixedLenFeature(1, tf.int64, 0)
-           , "ord_7d": v1.FixedLenFeature(1, tf.int64, 0)
-           , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
+        feature_describe = {
+            "ctr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
+            , "cvr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
+            , "show_7d": v1.FixedLenFeature(1, tf.int64, 0)
+            , "click_7d": v1.FixedLenFeature(1, tf.int64, 0)
+            , "cart_7d": v1.FixedLenFeature(1, tf.int64, 0)
+            , "ord_total": v1.FixedLenFeature(1, tf.int64, 0)
+            , "pay_total": v1.FixedLenFeature(1, tf.int64, 0)
+            , "ord_7d": v1.FixedLenFeature(1, tf.int64, 0)
+            , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
 
-           , "is_rel_cate": v1.FixedLenFeature(1, tf.int64, 0)
-           , "is_rel_cate2": v1.FixedLenFeature(1, tf.int64, 0)
-           , "is_rel_cate3": v1.FixedLenFeature(1, tf.int64, 0)
-           , "is_rel_cate4": v1.FixedLenFeature(1, tf.int64, 0)
-           , "sales_price": v1.FixedLenFeature(1, tf.int64, 0)
+            , "is_rel_cate": v1.FixedLenFeature(1, tf.int64, 0)
+            , "is_rel_cate2": v1.FixedLenFeature(1, tf.int64, 0)
+            , "is_rel_cate3": v1.FixedLenFeature(1, tf.int64, 0)
+            , "is_rel_cate4": v1.FixedLenFeature(1, tf.int64, 0)
+            , "sales_price": v1.FixedLenFeature(1, tf.int64, 0)
 
-           , "main_goods_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "main_cate_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "main_cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "main_cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "main_cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "main_goods_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "main_cate_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "main_cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "main_cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "main_cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
 
-           , "prop_seaon": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_length": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_main_material": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_pattern": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_style": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_quantity": v1.FixedLenFeature(1, tf.string, "-1")
-           , "prop_fitness": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_seaon": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_length": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_main_material": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_pattern": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_style": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_quantity": v1.FixedLenFeature(1, tf.string, "-1")
+            , "prop_fitness": v1.FixedLenFeature(1, tf.string, "-1")
 
-           , "last_login_device": v1.FixedLenFeature(1, tf.string, "-1")
-           , "last_login_brand": v1.FixedLenFeature(1, tf.string, "-1")
-           , "register_brand": v1.FixedLenFeature(1, tf.string, "-1")
+            , "last_login_device": v1.FixedLenFeature(1, tf.string, "-1")
+            , "last_login_brand": v1.FixedLenFeature(1, tf.string, "-1")
+            , "register_brand": v1.FixedLenFeature(1, tf.string, "-1")
 
-           , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
-           , "country": v1.FixedLenFeature(1, tf.string, '-1')
+            , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
+            , "country": v1.FixedLenFeature(1, tf.string, '-1')
 
-           # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-           # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-           # , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           # , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           , "highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-           , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-           "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
-           , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
-           , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
-       }
-       if 'v20' in args.tfr_s3:
-           feature_describe.update({
-               "client_type": v1.FixedLenFeature(1, tf.string, "-1")
-           })
-       if 'mask' in args.model_name:
-           feature_describe.update({
-               "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
-               "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
-           })
+            # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+            # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
+            # , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            # , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+            "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
+            , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
+            , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
+        }
+        if 'v20' in args.tfr_s3:
+            feature_describe.update({
+                "client_type": v1.FixedLenFeature(1, tf.string, "-1")
+            })
+        if 'mask' in args.model_name:
+            feature_describe.update({
+                "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+                "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            })
 
-       features = tf.io.parse_single_example(data, features=feature_describe)
-       return features
-    os.system('mkdir -p %s'%tmp_dir_data)
+        features = tf.io.parse_single_example(data, features=feature_describe)
+        return features
+
+    os.system('mkdir -p %s' % tmp_dir_data)
     score = {}
     score[ID] = []
     score[CTR] = []
@@ -135,30 +140,32 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
         ds = ds.batch(batch_size)
         item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                                 "cate_level3_id": "", "cate_level4_id": "", "country": ""
-            ,"prop_seaon":"-1","prop_length":"-1","prop_main_material":"-1", "prop_pattern":"-1","prop_style":"-1"
-                                ,"prop_quantity":"-1","prop_fitness":"-1",
-                                "main_goods_id":"-1", "main_cate_id":"-1","main_cate_level2_id":"-1","main_cate_level3_id":"-1"
-                                ,"main_cate_level4_id":"-1"
+            , "prop_seaon": "-1", "prop_length": "-1", "prop_main_material": "-1", "prop_pattern": "-1",
+                                "prop_style": "-1"
+            , "prop_quantity": "-1", "prop_fitness": "-1",
+                                "main_goods_id": "-1", "main_cate_id": "-1", "main_cate_level2_id": "-1",
+                                "main_cate_level3_id": "-1"
+            , "main_cate_level4_id": "-1"
                                 }
         item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
         item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
                              "pay_7d": 0,
-                             "is_rel_cate":0, "is_rel_cate2":0, "is_rel_cate3":0,"is_rel_cate4":0, "sales_price":0,
+                             "is_rel_cate": 0, "is_rel_cate2": 0, "is_rel_cate3": 0, "is_rel_cate4": 0,
+                             "sales_price": 0,
                              }
         user_seq_string = {"highLevelSeqListGoods": [""] * 20,
                            "highLevelSeqListCateId": [""] * 20, "lowerLevelSeqListGoods": [""] * 20,
                            "lowerLevelSeqListCateId": [""] * 20,
-                           "last_login_device":"-1",
-                           "last_login_brand":"-1",
-                           "register_brand":"-1",
+                           "last_login_device": "-1",
+                           "last_login_brand": "-1",
+                           "register_brand": "-1",
                            }
 
         if 'v20' in args.tfr_s3:
-            user_seq_string.update({  "client_type":""})
+            user_seq_string.update({"client_type": ""})
         if 'mask' in args.model_name:
-            item_features_int.update({  "highLevelSeqList_len": 0,
-                             "lowerLevelSeqList_len": 0})
-
+            item_features_int.update({"highLevelSeqList_len": 0,
+                                      "lowerLevelSeqList_len": 0})
 
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
@@ -204,9 +211,10 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file,site_code):
             #     score[CTCVR].extend(ctcvr)
         # print('rm file:',file_suffix)
         print('proc %s process file:%s / %s' % (str(proc), str(file_n), str(len(tfr_list))))
-        os.system('rm %s'%file_suffix)
+        os.system('rm %s' % file_suffix)
     with open(pkl_file, 'wb') as fout:
         pickle.dump(score, fout)
+
 
 def auc_fun(label, pre):
     new_data = [[p, l] for p, l in zip(pre, label)]
@@ -226,7 +234,8 @@ def auc_fun(label, pre):
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
 
-def gauc_fun(pred_d,label_idx, pre_idx, type):
+
+def gauc_fun(pred_d, label_idx, pre_idx, type):
     gauc = {}
     gauc_l = []
     none_auc = 0
@@ -250,11 +259,11 @@ def gauc_fun(pred_d,label_idx, pre_idx, type):
     gauc = np.mean(gauc_l)
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
     gaucpp = np.percentile(gauc_l, pp)
-    print('none_auc num %s of all %s :%s'%(str(gneg),type, str(gnum)))
-    print('%s num:%s have auc'%(type, str(gpos)))
-    print('type:%s'%type, gauc)
-    print('type:%s percentle:'%type, gaucpp)
-    return  gnum, gpos, gneg,gauc, gaucpp
+    print('none_auc num %s of all %s :%s' % (str(gneg), type, str(gnum)))
+    print('%s num:%s have auc' % (type, str(gpos)))
+    print('type:%s' % type, gauc)
+    print('type:%s percentle:' % type, gaucpp)
+    return gnum, gpos, gneg, gauc, gaucpp
 
 
 def main(args):
@@ -267,12 +276,12 @@ def main(args):
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
     if args.sample_num is not None:
         print('sample file num:', args.sample_num)
-        file_list = ['s3://%s/%s'%(BUCKET, v) for v in file_list][0:args.sample_num]
+        file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list][0:args.sample_num]
     else:
         file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list]
     print('file list num in dir', len(file_list))
     shuffle(file_list)
-    file_batch = list(chunks(file_list,  args.proc))
+    file_batch = list(chunks(file_list, args.proc))
 
     # download model
     s3_model = prod_model + args.model_name + args.model_version
@@ -287,14 +296,14 @@ def main(args):
     jobs = []
     predict_files = []
     for thread_idx, tfr_list in enumerate(file_batch):
-        pkl_file = '%s/predict_part_%s.pkl'%(str(predict_local),str(thread_idx))
+        pkl_file = '%s/predict_part_%s.pkl' % (str(predict_local), str(thread_idx))
         predict_files.append(pkl_file)
-        p = multiprocessing.Process(target=process_tfr, args=(thread_idx, tfr_list, args.batch_size, model_local,pkl_file,args.site_code ))
+        p = multiprocessing.Process(target=process_tfr,
+                                    args=(thread_idx, tfr_list, args.batch_size, model_local, pkl_file, args.site_code))
         jobs.append(p)
         p.start()
     for proc in jobs:
         proc.join()
-
 
     ed = time.time()
     print('multi predict done cost:', str(ed - st))
@@ -310,12 +319,11 @@ def main(args):
                     merge_score[k].extend(v)
                 else:
                     merge_score[k] = v
-    print('end merge score cost: %s'%(str(ed - st)))
+    print('end merge score cost: %s' % (str(ed - st)))
     dump_file = './' + args.model_name + '_' + args.model_version.split('/')[-1] + '.pkl'
     with open(dump_file, 'wb') as fout:
         pickle.dump(merge_score, fout)
     print('write pred score2file:', dump_file)
-
 
     model_info = {}
     st = time.time()
@@ -352,12 +360,12 @@ def main(args):
     is_clk = merge_score[CLK]
     avg_pred_ctr = np.mean(pctr)
     avg_label_clk = np.mean(is_clk)
-    print('N:',len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
+    print('N:', len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
     auc = roc_auc_score(list(is_clk), list(pctr))
     print('ctr-auc:', auc)
     ed = time.time()
     auc_ctr_d['n'] = str(len(pctr))
-    auc_ctr_d['n+'] =  str(np.sum(is_clk))
+    auc_ctr_d['n+'] = str(np.sum(is_clk))
     auc_ctr_d['n-'] = str(len(pctr) - np.sum(is_clk))
     auc_ctr_d['pred'] = str(avg_pred_ctr)
     auc_ctr_d['label'] = str(avg_label_clk)
@@ -369,7 +377,8 @@ def main(args):
     pred = []
     uuid_pred = {}
     req_pred = {}
-    for id, clk, pay, ctr, cvr in zip(merge_score['sample_id'], merge_score['is_clk'], merge_score['is_pay'], merge_score['ctr'], merge_score['cvr']):
+    for id, clk, pay, ctr, cvr in zip(merge_score['sample_id'], merge_score['is_clk'], merge_score['is_pay'],
+                                      merge_score['ctr'], merge_score['cvr']):
         # "concat(bhv.country,'|',bhv.scene_code,'|',bhv.client_type,'|',bhv.uuid,'|',bhv.pssid,'|',bhv.recid,'|',bhv.main_goods_id,'|',bhv.goods_id)ASsample_id,"
         token = str(id).split('|')
         uuid, reqid = token[3], token[5]
@@ -388,13 +397,14 @@ def main(args):
     label = [e[2] for e in pred]
     pre = [e[4] for e in pred]
     auc_all = auc_fun(label, pre)
-    print('N:', len(pred), 'label_mean:', np.mean(label), 'pred_mean:', np.mean(pre), 'auc-all-ctr:',auc_all)
+    print('N:', len(pred), 'label_mean:', np.mean(label), 'pred_mean:', np.mean(pre), 'auc-all-ctr:', auc_all)
     label_cvr = [e[3] for e in pred if e[2] == 1]
     pre_cvr = [e[5] for e in pred if e[2] == 1]
     auc_all_cvr = auc_fun(label_cvr, pre_cvr)
-    print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',auc_all_cvr)
+    print('N:', len(label_cvr), 'label_mean:', np.mean(label_cvr), 'pred_mean:', np.mean(pre_cvr), 'auc-all-ctr:',
+          auc_all_cvr)
     auc_cvr_d['n'] = str(len(label_cvr))
-    auc_cvr_d['n+'] =  str(np.sum(is_pay))
+    auc_cvr_d['n+'] = str(np.sum(is_pay))
     auc_cvr_d['n-'] = str(len(label_cvr) - np.sum(is_pay))
     auc_cvr_d['pred'] = str(np.mean(pre_cvr))
     auc_cvr_d['label'] = str(np.mean(label_cvr))
@@ -404,7 +414,7 @@ def main(args):
     print('uuid num:', len(uuid_pred.keys()))
     print('recid num:', len(req_pred.keys()))
     gauc_ctr_user_d = copy.deepcopy(model_info)
-    ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc_fun(uuid_pred, 0,3, 'u-ctr-gauc')
+    ugnum, ugpos, ugneg, ugauc, ugaucpp = gauc_fun(uuid_pred, 0, 3, 'u-ctr-gauc')
     gauc_ctr_user_d['n'] = str(ugnum)
     gauc_ctr_user_d['n+'] = str(ugpos)
     gauc_ctr_user_d['n-'] = str(ugneg)
@@ -413,7 +423,7 @@ def main(args):
     gauc_ctr_user_d['type'] = 'uuid_gauc'
 
     gauc_ctr_req_d = copy.deepcopy(model_info)
-    qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc_fun(req_pred, 0,3, 'q-ctr-gauc')
+    qgnum, qgpos, qgneg, qgauc, qgaucpp = gauc_fun(req_pred, 0, 3, 'q-ctr-gauc')
     gauc_ctr_req_d['n'] = str(qgnum)
     gauc_ctr_req_d['n+'] = str(qgpos)
     gauc_ctr_req_d['n-'] = str(qgneg)
@@ -431,7 +441,7 @@ def main(args):
         js = json.load(fin)
     auc_list.extend(list(js))
     with open('./auc.json', 'w') as fout:
-        json.dump(auc_list, fout,sort_keys=True)
+        json.dump(auc_list, fout, sort_keys=True)
     os.system("aws s3 cp %s %s" % (auc_local_file, args.auc_file))
 
     # pprint.pprint(json.dumps(auc_list))
@@ -439,6 +449,7 @@ def main(args):
     #     pickle.dump(auc_list, fout)
     # with open(auc_local_file, 'rb') as fin:
     #     auc_list = pickle.load(fin)
+
 
 def get_model_version(prefix):
     import boto3
@@ -452,13 +463,15 @@ def get_model_version(prefix):
     print(model_version)
     return model_version[0]
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog='predict',
         description='predict',
         epilog='predict-use tf2.0')
     parser.add_argument('--model_name', default='mtl_seq_esmm')
-    parser.add_argument('--ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+    parser.add_argument('--ds', type=str,
+                        default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='./part-00000-1186234f-fa44-44a8-9aff-08bcf2c5fb26-c000')
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v20_savana_in_tfr/ds=%s/')
@@ -470,10 +483,10 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     args.tfr_s3 = args.tfr_s3 % args.ds
-    version = get_model_version('rec/prod_model/prod_mtl_seq_on_esmm_v20_mask_savana_in_fix/ds=%s/model/'%args.ds)
+    version = get_model_version('rec/prod_model/prod_mtl_seq_on_esmm_v20_mask_savana_in_fix/ds=%s/model/' % args.ds)
     args.model_version = args.model_version % (args.ds, version)
     debug = args.debug
     st = time.time()
     main(args)
     ed = time.time()
-    print('cost', str(ed-st))
+    print('cost', str(ed - st))
