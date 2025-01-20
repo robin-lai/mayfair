@@ -386,7 +386,7 @@ def get_i2i(i2i_part, i2i_s3, i2i_file):
     try:
         for i in range(i2i_part):
             s3_file = BUCKET_S3_PREFIX + i2i_s3 + i2i_file % str(i)
-            if check_s3_file_exists(BUCKET, i2i_s3):
+            if check_s3_file_exists(BUCKET, i2i_s3 + i2i_file % str(i)):
                 local_file = './' + i2i_file % str(i)
                 os.system('rm %s' % local_file)
                 os.system('aws s3 cp %s %s' % (s3_file, local_file))
