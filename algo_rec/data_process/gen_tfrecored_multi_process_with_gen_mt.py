@@ -21,6 +21,9 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+BUCKET = 'warehouse-algo'
+BUCKET_S3_PREFIX = "s3://warehouse-algo/"
+
 
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -316,15 +319,13 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
 
 def get_file_list(args):
     s3_cli = boto3.client('s3')
-    BUCKET = 'warehouse-algo'
-    s3_buk = "s3://warehouse-algo/"
     s3_obj = "rec/"
     local_data = "/home/sagemaker-user/mayfair/algo_rec/data/"
-    path_pt = s3_buk + s3_obj + args.dir_pt
+    path_pt = BUCKET_S3_PREFIX + s3_obj + args.dir_pt
     path_pt_suffix = s3_obj + args.dir_pt
     path_tfr_local = local_data + args.dir_tfr
     path_tfr_local_base = local_data + args.dir_tfr
-    path_tfr_s3 = s3_buk + s3_obj + args.dir_tfr
+    path_tfr_s3 = BUCKET_S3_PREFIX + s3_obj + args.dir_tfr
     os.system('rm -rf %s' % path_tfr_local_base)
     os.system('mkdir -p %s' % path_tfr_local)
     # get files
@@ -353,16 +354,45 @@ def get_file_list(args):
     return args_list
 
 
+import boto3
+from botocore.exceptions import ClientError
+
+
+def check_s3_file_exists(bucket_name, file_key):
+    s3 = boto3.client('s3')
+    print(f"{file_key} exists in {bucket_name}.")
+    try:
+        # Try to retrieve metadata of the file
+        s3.head_object(Bucket=bucket_name, Key=file_key)
+        return True  # File exists
+    except ClientError as e:
+        # If file does not exist, head_object will raise an exception
+        if e.response['Error']['Code'] == '404':
+            return False  # File does not exist
+        else:
+            raise  # Other errors
+
+
+# Usage
+# bucket_name = 'my-bucket'
+# file_key = 'my-folder/myfile.txt'
+
+
+
+
 def get_i2i(i2i_part, i2i_s3, i2i_file):
     i2i_d = {}
     i2i_file_ll = []
     try:
         for i in range(i2i_part):
-            s3_file = i2i_s3 + i2i_file % str(i)
-            local_file = './' + i2i_file % str(i)
-            os.system('rm %s' % local_file)
-            os.system('aws s3 cp %s %s' % (s3_file, local_file))
-            i2i_file_ll.append(local_file)
+            s3_file = BUCKET_S3_PREFIX + i2i_s3 + i2i_file % str(i)
+            if check_s3_file_exists(BUCKET, i2i_s3):
+                local_file = './' + i2i_file % str(i)
+                os.system('rm %s' % local_file)
+                os.system('aws s3 cp %s %s' % (s3_file, local_file))
+                i2i_file_ll.append(local_file)
+            else:
+                print(f"{s3_file} does not exist.")
 
         for file in i2i_file_ll:
             with open(file, 'r') as fin:
@@ -538,7 +568,7 @@ if __name__ == '__main__':
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
     parser.add_argument('--i2i_s3',
-                        default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
+                        default='rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
