@@ -448,3 +448,4 @@ if __name__ == '__main__':
 # nohup python -u swing_multi_process.py --pre_ds=20241222,20241223,20241224,20241225,20241226,20241227 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=8 wait
 # error ds 20241228
 # 10内存会满
+# nohup python -u swing_multi_process.py --pre_ds=20250117,20250118,20250119 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=7

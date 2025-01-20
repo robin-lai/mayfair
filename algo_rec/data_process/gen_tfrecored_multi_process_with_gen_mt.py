@@ -550,6 +550,7 @@ if __name__ == '__main__':
     if args.range != '':
         try:
             for ds in args.range.split(','):
+                args = parser.parse_args() # 要重新初始化
                 pre_ds = (datetime.strptime(ds, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
                 st = time.time()
                 args.ds = ds
@@ -607,5 +608,5 @@ if __name__ == '__main__':
         print('stat_file', args.stat_file)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
-# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118  > run.log 2>&1 &
+# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7, 20250111
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250112,20250113,20250114,20250115,20250116,20250117,20250118  > run.log 2>&1 &
