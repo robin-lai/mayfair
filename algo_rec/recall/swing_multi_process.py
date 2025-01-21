@@ -399,7 +399,7 @@ if __name__ == '__main__':
     parser.add_argument('--alph', type=float, default=1.0)
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
-    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+    parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation%s/ds=%s')
     parser.add_argument('--s3_dir', type=str, default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s_%s_%s_%s/')
     parser.add_argument('--swing_ana_file', type=str, default='swing_result%s_%s.csv')
