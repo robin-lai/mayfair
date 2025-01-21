@@ -215,3 +215,9 @@ ml.r5.xlarge	4	32GiB
 
 python swing_result2bi.py --swing_result=s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106_1.0_0.6_0.5/swing_result_20250106.csv --version=swing_alph1_beta06_ubeta05 file没有
 python swing_result2bi.py --swing_result=s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106_1.0_0.7_0.5/swing_result_20250106.csv --version=swing_alph1_beta07_ubeta05
+
+
+# prod_v2
+## train
+python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v2  --task=mtl --train_ds=20250119 --warm_start_from=NEW --instance_count=1
+

@@ -112,7 +112,7 @@ if __name__ == '__main__':
     parse.add_argument('--range', type=str, default='')
     parse.add_argument('--train_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
-    parse.add_argument('--eval_ds', type=str, default='20241210eval')
+    parse.add_argument('--eval_ds', type=str, default='20250119eval')
     parse.add_argument('--pre_ds', type=str,
                        default=(datetime.date.today() - datetime.timedelta(days=3)).strftime('%Y%m%d'))
     # parse.add_argument('--model_name', type=str, default='prod-ctr-seq-off-din-v0-test')
