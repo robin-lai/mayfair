@@ -58,7 +58,7 @@ def main(args):
 
     sg_estimator = TensorFlow(
         entry_point='run_rec_model.py',
-        dependencies=['aws_auth_init.py'],
+        dependencies=['aws_auth_init.py','build_feature_columns.py','feature_serv_describe.py','din_mask_esmm.py'],
         role=role,
         input_mode="Pipe",
         instance_count=args.instance_count,
