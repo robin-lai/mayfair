@@ -9,6 +9,6 @@ os.system('aws s3 cp %s %s' % (s3_file, local_file))
 pt = parquet.read_table(local_file)
 pt2 = parquet.read_table(local_file).to_pylist()
 
-print(f"pt mem size mem [M]", asizeof.asizeof(pt) / 1048576)
-print(f"pt2 mem size mem [M]", asizeof.asizeof(pt2) / 1048576)
+print(f"pt mem size mem [M]", asizeof(pt) / 1048576)
+print(f"pt2 mem size mem [M]", asizeof(pt2) / 1048576)
 
