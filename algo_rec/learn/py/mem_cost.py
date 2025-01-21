@@ -12,3 +12,6 @@ pt2 = parquet.read_table(local_file).to_pylist()
 print(f"pt mem size mem [M]", asizeof(pt) / 1048576)
 print(f"pt2 mem size mem [M]", asizeof(pt2) / 1048576)
 
+# s3 70M
+# pt mem size mem [M] 730.4778442382812
+# pt2 mem size mem [M] 1302.785888671875
