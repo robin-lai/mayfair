@@ -530,9 +530,9 @@ if __name__ == '__main__':
         description='gentfr',
         epilog='gentfr-help')
     parser.add_argument('--ds', type=str,
-                        default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
+                        default=(datetime.today() - timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--pre_ds', type=str,
-                        default=(datetime.today() - timedelta(days=3)).strftime('%Y%m%d'))
+                        default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
     parser.add_argument('--thread', type=int, default=15)
