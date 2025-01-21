@@ -204,5 +204,14 @@ nohup python -u run_rec_model_sg_di_prod_v1_mask.py --pre_ds=20241227-20250105  
 
 # recall
 nohup python -u swing_multi_process.py --pre_ds=20250112,20250111,20250110,20250109,20250107,20250104,20250103,20250102,20250101
+nohup python -u swing_multi_process.py --pre_ds=20250111,20250110,20250109,20250107,20250104,20250103,20250102,20250101
 
-                                            
+
+FileNotFoundError: warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20250102
+
+python swing_result2bi.py --swing_result=s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106_1.0_0.6/swing_result_20250106.csv --version=swing_alph1_beta06
+size of mem [M] 477.8872833251953  item内容表内存大小。
+ml.r5.xlarge	4	32GiB
+
+python swing_result2bi.py --swing_result=s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106_1.0_0.6_0.5/swing_result_20250106.csv --version=swing_alph1_beta06_ubeta05 file没有
+python swing_result2bi.py --swing_result=s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106_1.0_0.7_0.5/swing_result_20250106.csv --version=swing_alph1_beta07_ubeta05

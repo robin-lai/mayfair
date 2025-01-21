@@ -1,0 +1,267 @@
+{
+  "request_id": "7f135615-8e21-489a-b38b-1b9791355b82-1736502600936",
+  "sssid": "3596fb26-d281-4133-968c-b199435ffee1-1736502514666",
+  "sssInfo": {
+    "start_time": 1736502514666
+  },
+  "tssid": "d9060f6d-1ef5-47f4-8ea6-8f6f0b8706d7-1736502514666",
+  "time": 1736502600936,
+  "version": "6.6.1",
+  "app": {
+    "type": "h5",
+    "shell": "unknown",
+    "estimate": {
+      "quota": 10307921511,
+      "usage": 0,
+      "isPrivate": false
+    },
+    "channel": "",
+    "launcher_referrer": {
+      "referrer": "https://www.savana.com/search/result/check%20long%20coat?source=3"
+    },
+    "version": "7.32.0",
+    "country": "in"
+  },
+  "device": {
+    "device_key": "___X_42a829e2-09d1-45fb-990c-e6435877df1e-1736502513443",
+    "os": "ios",
+    "os_version": "unknown",
+    "ram_size": 4294967296,
+    "screen_height": 844,
+    "screen_width": 390,
+    "scale": 3,
+    "language": "en-IN"
+  },
+  "network": {
+    "wifi": false,
+    "speed": 3488
+  },
+  "utm": {
+    "us": "facebook",
+    "uc": "120213899856640165_120213899856660165_120213899856720165",
+    "um": "ppc",
+    "un": "",
+    "ut": "",
+    "uo": "dpa"
+  },
+  "user": {
+    "user_id": null,
+    "short_link_uid": "C9D4BAC494EF48728AD4F8D46C45FFE0",
+    "user_no": "911696819"
+  },
+  "events": [
+    {
+      "start_time": 1736502576887,
+      "code": "app-648ac9bf",
+      "target_type": "btn:categoryIcon",
+      "scene": "navBar",
+      "extend": {
+        "uba": {
+          "ec": "NAVBAR",
+          "el": "button:categoryIcon"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:home",
+      "code": "app-198b8c97",
+      "scene": "navBar",
+      "goods_id": "1521832",
+      "extend": {
+        "uba": {
+          "ec": "TOP:Goods:Detail:btn:home",
+          "el": "btn:home:1521832"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:share",
+      "scene": "goods:shareBtn",
+      "goods_id": "1521832",
+      "extend": {
+        "uba": {
+          "ec": "GOODS:1521832",
+          "el": "button:share"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:share",
+      "code": "app-912178a6",
+      "goods_id": "1521832",
+      "scene": "body:list:item",
+      "extend": {
+        "uba": {
+          "ec": "GOODS:1521832",
+          "el": "button:share"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:bag",
+      "code": "app-47b8fee1",
+      "scene": "navBar",
+      "goods_id": "1521832",
+      "extend": {
+        "uba": {
+          "ec": "TOP:Goods:Detail:btn:bag",
+          "el": "btn:bag:1521832"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:wish",
+      "code": "app-b9bc58e2",
+      "scene": "goods:wishBtn",
+      "goods_id": "1521832",
+      "extend": {
+        "isAdd": false,
+        "promotionId": 2508,
+        "itemTrack": "{\"recMissReason\":6,\"skcGroups\":[{\"pgId\":354187,\"skcId\":253930}],\"recGoodsSize\":[\"XS\",\"S\"],\"bucketId\":\"size_recommend_exp_1121_bucket_0003\",\"recByOrder\":false,\"recCatSizeType\":1,\"recUseRule\":true}",
+        "uba": {
+          "ec": "TOADDHEART:1521832",
+          "el": "button:toAddHeart:Click"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:kustomer",
+      "code": "app-49b87582",
+      "goods_id": "1521832",
+      "scene": "navBar",
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576887,
+      "target_type": "btn:addToBag",
+      "code": "app-ddf44d2e",
+      "scene": "goods:bar",
+      "goods_id": "1521832",
+      "extend": {
+        "promotionId": 2508,
+        "itemTrack": "{\"skcId\":253930,\"pgId\":354187,\"bucketId\":\"\"}",
+        "colorId": 1,
+        "uba": {
+          "ec": "GOODS:1521832:bar",
+          "el": "button:addToBag",
+          "ev": "goods:bar"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576948,
+      "target_type": "page",
+      "code": "app-1f4a7ef2",
+      "scene": "goods:imageDetail",
+      "extend": {
+        "uba": {
+          "ec": "GOODS:imageDetail",
+          "el": "page"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    },
+    {
+      "start_time": 1736502576948,
+      "target_type": "color:img",
+      "code": "app-4eb0f80b",
+      "scene": "goods:skcSelect",
+      "goods_id": "1521832",
+      "biz_id": 1,
+      "item_index": 0,
+      "extend": {
+        "uba": {
+          "ec": "GOODS:imageDetail",
+          "el": "color:1521832:1"
+        }
+      },
+      "event_type": "show",
+      "end_time": 1736502600936
+    }
+  ],
+  "extend": {
+    "grey": {
+      "address.page.new": true,
+      "message.box": true,
+      "search.by.picture": true,
+      "one.bee.flow.tracking": false,
+      "kol.new.activity": true,
+      "one.bee.disable-perf": false,
+      "one.address.navabar.savebutton": true,
+      "webp.image": true,
+      "one.bee.disable-p3": false,
+      "one.setting.language.switch": false,
+      "one.bee.disable-p2": false,
+      "one.chat.header": true,
+      "one.bee.disable-p0": false,
+      "one.w2a.recommend": true,
+      "vip.price": false,
+      "comment.ab": false,
+      "one.setting.card.manage": false,
+      "search.page.new": true,
+      "one.setting.site.uk": true,
+      "one.brand.upgrade": true,
+      "buyer.guide.category": true,
+      "one.guide.position.back": true,
+      "size.ab": true,
+      "one.riskControl.shield": false,
+      "one.detail.find.similar": true,
+      "one.quickLogin.google": true,
+      "global.app.arms": false,
+      "order.component": true,
+      "one.bee.img.sampling": false,
+      "one.ssr.page": true,
+      "home.webp": true,
+      "ad.detail.banner": true,
+      "one.bee.use-uba": false,
+      "one.riskControl.bureau": false,
+      "one.global.fe.arms": false,
+      "kol.data": false,
+      "one.cs.verloop": true,
+      "one.global.app.arms": false,
+      "one.goods.info.align.new": true,
+      "login.register.new": true,
+      "one.cs.chat": false,
+      "cart.list.component": true,
+      "one.image.score.config": true,
+      "one.bee.img.error": false,
+      "buyer.basic.address.suggest": false,
+      "one.global.app.arms.custom": false,
+      "buyer.search.track": true,
+      "trade.not.login.check": false
+    }
+  },
+  "page": {
+    "start_time": 1736502576137,
+    "end_time": 1736502600936,
+    "path": "/details/1521832",
+    "pre_path": "/login",
+    "url": "https://www.savana.com/details/belted-wool-blend-coat-1521832?vid=1&skcPGs=253930-354187",
+    "advertex": "pgType=1&fbclid=PAZXh0bgNhZW0BMABhZGlkAasV57A1lEUBprJ6d9jBMkqtcjXKww4bZwhdtkUHwcklnbNVLzXrbx_dH7v2xLYVCNq-ng_aem_vfNdmEvyu6rwRB8XwcFi2A&site_source_name=ig&utm_campaign=120213899856640165_120213899856660165_120213899856720165&detail_type=dpa&biz_type=ppc&utm_medium=ppc&channel=facebook&vid=16&ad_id=120213899856720165&short_link_uid=C9D4BAC494EF48728AD4F8D46C45FFE0&media_type=image&adset_id=120213899856660165&placement=Instagram_Explore&campaign_id=120213899856640165&utm_source=facebook&ucid=ACC3E3916D114490BC0F295CC3A3CA66&short_key=wnx16l&utm_content=dpa&openApp=1",
+    "pssid": "5672d7ec-b10d-4e8e-bf23-8f42a49392b6-1736502583507",
+    "jump_count": 16
+  },
+  "env": "prod"
+}

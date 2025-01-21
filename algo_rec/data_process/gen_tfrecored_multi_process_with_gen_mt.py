@@ -614,4 +614,7 @@ if __name__ == '__main__':
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
 # python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7, 20250111
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250112,20250113,20250114,20250115,20250116,20250117,20250118  > run.log 2>&1 &
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119  > run.log 2>&1 & done
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109 > run.log 2>&1 & done
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20241217,20241218,20241219,20241220,20241221,20241222,20241223,20241224> run.log 2>&1 & done
+# python gen_tfrecored_multi_process_with_gen_mt.py --range=20241225,20241226,20241227,20241228,20241229,20241230,20241231,20250108,20250109 > run.log 2>&1 & done
