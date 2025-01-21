@@ -1,5 +1,6 @@
 # encoding:utf-8
 import tensorflow as tf
+
 def build_feature_columns():
     # cate-seq
     cate1_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level1_id", hash_bucket_size=100)
@@ -67,6 +68,12 @@ def build_feature_columns():
     is_rel_cate3_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate3", num_buckets=3, default_value=0)
     is_rel_cate4_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate4", num_buckets=3, default_value=0)
     sales_price_fc = tf.feature_column.categorical_column_with_identity("sales_price", num_buckets=20, default_value=0)
+    mt_i2i_main_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_main", num_buckets=3, default_value=0), 8)
+    mt_i2i_main_score = tf.feature_column.numeric_column(key="mt_i2i_main_score", default=-1, dtype=tf.float32)
+    mt_i2i_long_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_long", num_buckets=3, default_value=0), 8)
+    mt_i2i_long_score = tf.feature_column.numeric_column(key="mt_i2i_long_score", default=-1, dtype=tf.float32)
+    mt_i2i_short_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_short", num_buckets=3, default_value=0), 8)
+    mt_i2i_short_score = tf.feature_column.numeric_column(key="mt_i2i_short_score", default=-1, dtype=tf.float32)
 
     is_rel_cate_emb = tf.feature_column.embedding_column(is_rel_cate_fc, 8)
     is_rel_cate2_emb = tf.feature_column.embedding_column(is_rel_cate2_fc, 8)
@@ -74,7 +81,8 @@ def build_feature_columns():
     is_rel_cate4_emb = tf.feature_column.embedding_column(is_rel_cate4_fc, 8)
     sales_price_emb = tf.feature_column.embedding_column(sales_price_fc, 8)
 
-    numric_cols_emb = [is_rel_cate_emb, is_rel_cate2_emb, is_rel_cate3_emb, is_rel_cate4_emb, sales_price_emb]
+    numric_cols_emb = [is_rel_cate_emb, is_rel_cate2_emb, is_rel_cate3_emb, is_rel_cate4_emb, sales_price_emb,
+                       mt_i2i_main_emb,mt_i2i_main_score,mt_i2i_long_emb,mt_i2i_long_score,mt_i2i_short_emb,mt_i2i_short_score]
 
     pv_1d_emb = tf.feature_column.embedding_column(
         tf.feature_column.bucketized_column(tf.feature_column.numeric_column(key="pv_1d"),
