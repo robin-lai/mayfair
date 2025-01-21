@@ -439,6 +439,7 @@ if __name__ == '__main__':
         # add_job_monitor('tfr', job_d)
         print('final cost:', ed-st)
 
+
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
 # nohup python -u swing_multi_process.py --pre_ds=20250107 --beta=0.7 --ubeta=0.5 --alph=1.0 --p=10  cpu vs mem: 6:8 r5.4x  6440s
