@@ -140,3 +140,5 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
         # add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
+# python run_rec_model_sg_di.py --instance_count=1  --warm_start_from=NEW --train_ds=20250119
+# python run_rec_model_sg_di.py  --instance_count=3 --warm_start_from=NEW --train_ds=20241218-20241231
