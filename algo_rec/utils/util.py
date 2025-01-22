@@ -61,3 +61,23 @@ def add_job_monitor(job_name, dd):
     js[job_name].append(d)
     put_job_file2s3(js, s3_file, local_file)
     print('add %s status done'%job_name, d)
+
+def alert_phone(msg):
+    msg = str(msg)
+    max_size = 1000
+    if len(msg) > max_size:
+        msg = msg[:(max_size - 10)] + ' ...Over'
+    sns_cli = boto3.client('sns')
+    for phone_number in [15101598314]:
+        sns_cli.publish(PhoneNumber='+86%s' % phone_number, Message=msg)
+
+import requests
+def alert_feishu(msg, at_all=True):
+    at_str = '<at user_id="all"></at>' if at_all else ''
+    x = requests.post('https://open.feishu.cn/open-apis/bot/v2/hook/683a24d1-d923-45d0-879c-c09d20fae770',
+                     headers={'Content-Type': 'application/json'},
+                     json={'msg_type': 'text', 'content': {'text': at_str + str(msg)}},
+    )
+    print('Alert by Feishu', x)
+
+alert_phone('Hello World!')
