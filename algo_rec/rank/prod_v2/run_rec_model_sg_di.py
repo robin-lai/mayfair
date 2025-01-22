@@ -16,7 +16,7 @@ print(sys.path)
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
-from algo_rec.utils.util import add_job_monitor
+from algo_rec.utils.util import add_job_monitor, alert_feishu
 
 # steup up
 s3_cli = boto3.client('s3')
@@ -140,6 +140,7 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
         # add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
+    alert_feishu(f"train ds:{args.train_ds} complete, please check model")
 # python run_rec_model_sg_di.py --instance_count=1  --warm_start_from=NEW --train_ds=20250119
 # python run_rec_model_sg_di.py  --instance_count=3 --warm_start_from=NEW --train_ds=20241218-20241231
 # python run_rec_model_sg_di.py  --instance_count=3 --warm_start_from=NEWEST --pre_ds=20241218-20241231 --train_ds=20250101-20250119

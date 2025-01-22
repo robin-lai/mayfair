@@ -74,4 +74,4 @@ def alert_feishu(msg, at_all=True):
     )
     print('Alert by Feishu', x)
 
-alert_feishu("hello world")
+# alert_feishu("hello world")

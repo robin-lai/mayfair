@@ -100,8 +100,7 @@ def main(args):
         time.sleep(15 * 2)
     train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn)
     eval_spec = tf.estimator.EvalSpec(
-        input_fn=eval_input_fn
-        , throttle_secs=300, steps=100)
+        input_fn=eval_input_fn, steps=None)
 
     if args.mode == 'infer':
         print('begin predict', '#' * 80)
