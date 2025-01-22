@@ -40,6 +40,7 @@ def chunks(lst, n):
 
 
 ID = 'sample_id'
+mt = 'mt'
 SCORE = 'probabilities'
 CTR = 'ctr'
 CVR = 'cvr'

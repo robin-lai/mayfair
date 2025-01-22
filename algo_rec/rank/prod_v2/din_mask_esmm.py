@@ -20,7 +20,9 @@ class DIN_MASK_ESMM(tf.estimator.Estimator):
             cate_cols_emb_input = tf.feature_column.input_layer(features, cate_cols_emb)
             numric_cols_emb = params["feature_columns"]["numric_cols_emb"]
             numric_cols_emb_input = tf.feature_column.input_layer(features, numric_cols_emb)
-            input_layer = [numric_cols_emb_input, cate_cols_emb_input]
+            cate_cols_share_emb = params["feature_columns"]["cate_cols_share_emb"]
+            cate_cols_share_emb_input = tf.feature_column.input_layer(features, cate_cols_share_emb)
+            input_layer = [numric_cols_emb_input, cate_cols_emb_input, cate_cols_share_emb_input]
 
 
             if 'seq_mask_on' in params['version']:
