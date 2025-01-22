@@ -3,33 +3,36 @@ import tensorflow as tf
 
 def build_feature_columns():
     # cate-seq
-    # cate1_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level1_id", hash_bucket_size=100)
-    cate2_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level2_id", hash_bucket_size=400)
-    cate3_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level3_id", hash_bucket_size=1000)
-    cate4_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level4_id", hash_bucket_size=2000)
-    cate_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_id", hash_bucket_size=4000)
-    goods_id_fc = tf.feature_column.categorical_column_with_hash_bucket(key="goods_id", hash_bucket_size=200000)
+    cate2_fc_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="cate_level2_id", hash_bucket_size=400),8)
+    cate3_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="cate_level3_id", hash_bucket_size=1000),8)
+    cate4_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="cate_level4_id", hash_bucket_size=2000),8)
+    cate_fc_emb =   tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="cate_id", hash_bucket_size=4000),8)
+    goods_id_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="goods_id", hash_bucket_size=200000),32)
 
-    m_cate2_fc = tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level2_id", hash_bucket_size=400)
-    m_cate3_fc = tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level3_id", hash_bucket_size=1000)
-    m_cate4_fc = tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level4_id", hash_bucket_size=2000)
-    m_cate_fc = tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_id", hash_bucket_size=4000)
-    m_goods_id_fc = tf.feature_column.categorical_column_with_hash_bucket(key="main_goods_id", hash_bucket_size=200000)
+    m_cate2_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level2_id", hash_bucket_size=400),8)
+    m_cate3_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level3_id", hash_bucket_size=1000),8)
+    m_cate4_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_level4_id", hash_bucket_size=2000),8)
+    m_cate_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="main_cate_id", hash_bucket_size=4000),8)
+    m_goods_id_fc_emb =  tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_hash_bucket(key="main_goods_id", hash_bucket_size=200000),32)
+
+    id_col_emb = [cate2_fc_emb,cate3_fc_emb, cate4_fc_emb,cate_fc_emb,
+                  goods_id_fc_emb,m_cate2_fc_emb,m_cate3_fc_emb,m_cate4_fc_emb,
+                  m_cate_fc_emb,m_goods_id_fc_emb]
 
     mt_fc = tf.feature_column.categorical_column_with_vocabulary_list(
         key='mt', vocabulary_list=('hot', 'hot_i2leaf', 'u2i_f', 'i2i_main', 'i2i_short', 'i2i_long', ''),
         num_oov_buckets=2)
     mt_emb = tf.feature_column.embedding_column(mt_fc, 16)
 
-    cate2_share_emb = tf.feature_column.shared_embedding_columns([cate2_fc, m_cate2_fc], dimension=16)
-    cate3_share_emb = tf.feature_column.shared_embedding_columns([cate3_fc, m_cate3_fc], dimension=16)
-    cate4_share_emb = tf.feature_column.shared_embedding_columns([cate4_fc, m_cate4_fc], dimension=16)
-    cate_share_emb = tf.feature_column.shared_embedding_columns([cate_fc, m_cate_fc], dimension=16)
-    goods_share_emb = tf.feature_column.shared_embedding_columns([goods_id_fc, m_goods_id_fc], dimension=32)
+    # cate2_share_emb = tf.feature_column.shared_embedding_columns([cate2_fc, m_cate2_fc], dimension=16)
+    # cate3_share_emb = tf.feature_column.shared_embedding_columns([cate3_fc, m_cate3_fc], dimension=16)
+    # cate4_share_emb = tf.feature_column.shared_embedding_columns([cate4_fc, m_cate4_fc], dimension=16)
+    # cate_share_emb = tf.feature_column.shared_embedding_columns([cate_fc, m_cate_fc], dimension=16)
+    # goods_share_emb = tf.feature_column.shared_embedding_columns([goods_id_fc, m_goods_id_fc], dimension=32)
     # cate1_emb = tf.feature_column.embedding_column(cate1_fc, 16)
 
-    cate_cols_share_emb = [cate2_share_emb, cate3_share_emb, cate4_share_emb, cate_share_emb,
-                           goods_share_emb]
+    # cate_cols_share_emb = [cate2_share_emb, cate3_share_emb, cate4_share_emb, cate_share_emb,
+    #                        goods_share_emb]
 
     prop_seaon_fc = tf.feature_column.categorical_column_with_hash_bucket(key="prop_seaon", hash_bucket_size=30)
     prop_length_fc = tf.feature_column.categorical_column_with_hash_bucket(key="prop_length", hash_bucket_size=30)
@@ -331,5 +334,6 @@ def build_feature_columns():
          pcvr_30d_emb])
 
     return {"cate_cols_emb": cate_cols_emb, "numric_cols_emb": numric_cols_emb,
-            "cate_cols_share_emb": cate_cols_share_emb
+            # "cate_cols_share_emb": cate_cols_share_emb
+            "id_col_emb": id_col_emb
             }
