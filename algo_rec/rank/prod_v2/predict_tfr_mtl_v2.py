@@ -14,7 +14,7 @@ import sys
 
 from rope.base.builtins import get_file
 
-from feature_serv_describe import feature_describe_pred
+from feature_serv_describe_tfv2 import feature_describe_pred
 
 print(tf.__version__)
 if '2' not in tf.__version__:
