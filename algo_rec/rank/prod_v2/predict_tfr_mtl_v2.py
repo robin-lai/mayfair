@@ -1,6 +1,6 @@
 import argparse
 from heapq import merge
-from datetime import datetime
+from datetime import datetime,timedelta
 import pprint
 import pyarrow as pa
 import copy
@@ -399,7 +399,7 @@ if __name__ == '__main__':
         epilog='predict-use tf2.0')
     parser.add_argument('--model_name', default='mtl_seq_esmm')
     parser.add_argument('--ds', type=str,
-                        default=(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+                        default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='')
     parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=%s/')
