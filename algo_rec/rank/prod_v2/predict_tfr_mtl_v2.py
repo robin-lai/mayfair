@@ -373,6 +373,7 @@ def compute_metrics(merge_score):
 
 
 def get_model_version(prefix):
+    print(f"prefix:{prefix}")
     import boto3
     s3_cli = boto3.client('s3')
     BUCKET = 'warehouse-algo'
