@@ -99,7 +99,7 @@ feature_spec_serve = {
 
     "goods_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="goods_id"),
     "cate_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_id"),
-    "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
+    # "cate_level1_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level1_id"),
     "cate_level2_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level2_id"),
     "cate_level3_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level3_id"),
     "cate_level4_id": tf.placeholder(dtype=tf.string, shape=[None, 1], name="cate_level4_id"),
@@ -205,7 +205,7 @@ feature_describe = {
 
     , "cate_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "goods_id": tf.FixedLenFeature(1, tf.string, "-1")
-    , "cate_level1_id": tf.FixedLenFeature(1, tf.string, "-1")
+    # , "cate_level1_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "cate_level2_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "cate_level3_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "cate_level4_id": tf.FixedLenFeature(1, tf.string, "-1")

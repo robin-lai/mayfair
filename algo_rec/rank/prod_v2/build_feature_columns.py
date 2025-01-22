@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def build_feature_columns():
     # cate-seq
-    cate1_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level1_id", hash_bucket_size=100)
+    # cate1_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level1_id", hash_bucket_size=100)
     cate2_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level2_id", hash_bucket_size=400)
     cate3_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level3_id", hash_bucket_size=1000)
     cate4_fc = tf.feature_column.categorical_column_with_hash_bucket(key="cate_level4_id", hash_bucket_size=2000)
@@ -26,9 +26,9 @@ def build_feature_columns():
     cate4_share_emb = tf.feature_column.shared_embedding_columns([cate4_fc, m_cate4_fc], dimension=16)
     cate_share_emb = tf.feature_column.shared_embedding_columns([cate_fc, m_cate_fc], dimension=16)
     goods_share_emb = tf.feature_column.shared_embedding_columns([goods_id_fc, m_goods_id_fc], dimension=32)
-    cate1_emb = tf.feature_column.embedding_column(cate1_fc, 16)
+    # cate1_emb = tf.feature_column.embedding_column(cate1_fc, 16)
 
-    cate_cols_share_emb = [cate1_emb, cate2_share_emb, cate3_share_emb, cate4_share_emb, cate_share_emb,
+    cate_cols_share_emb = [cate2_share_emb, cate3_share_emb, cate4_share_emb, cate_share_emb,
                            goods_share_emb]
 
     prop_seaon_fc = tf.feature_column.categorical_column_with_hash_bucket(key="prop_seaon", hash_bucket_size=30)
