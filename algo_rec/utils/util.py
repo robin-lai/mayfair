@@ -3,6 +3,9 @@ import os
 import datetime
 import json
 
+from tensorboard.plugins.debugger_v2.debug_data_provider import alerts_run_tag_filter
+
+
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     c = math.ceil(len(lst) / n)
@@ -80,4 +83,5 @@ def alert_feishu(msg, at_all=True):
     )
     print('Alert by Feishu', x)
 
+alert_feishu("hello world")
 alert_phone('Hello World!')
