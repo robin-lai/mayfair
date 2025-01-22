@@ -69,7 +69,7 @@ feature_spec_serve = {
     "mt_i2i_main_score": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_i2i_main_score"),
     "mt_i2i_long_score": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_i2i_long_score"),
     "mt_i2i_short_score": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_i2i_short_score"),
-    "mt": tf.placeholder(dtype=tf.string, shape=[None, 6], name="mt"),
+    # "mt": tf.placeholder(dtype=tf.string, shape=[None, 6], name="mt"),
     # "mt_u2i_f": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_u2i_f"),
 
 "is_rel_cate": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="is_rel_cate"),
@@ -182,7 +182,7 @@ feature_describe = {
     , "mt_hot_i2leaf": tf.FixedLenFeature(1, tf.int64, 0)
     , "mt_hot": tf.FixedLenFeature(1, tf.int64, 0)
     # , "mt_u2i_f": tf.FixedLenFeature(1, tf.int64, 0)
-    , "mt": tf.FixedLenFeature(6, tf.string, default_value=[""] * 6)
+    # , "mt": tf.FixedLenFeature(6, tf.string, default_value=[""] * 6)
 
 , "main_goods_id": tf.FixedLenFeature(1, tf.string, "-1")
     , "main_cate_id": tf.FixedLenFeature(1, tf.string, "-1")

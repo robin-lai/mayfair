@@ -19,10 +19,10 @@ def build_feature_columns():
                   goods_id_fc_emb,m_cate2_fc_emb,m_cate3_fc_emb,m_cate4_fc_emb,
                   m_cate_fc_emb,m_goods_id_fc_emb]
 
-    mt_fc = tf.feature_column.categorical_column_with_vocabulary_list(
-        key='mt', vocabulary_list=('hot', 'hot_i2leaf', 'u2i_f', 'i2i_main', 'i2i_short', 'i2i_long', ''),
-        num_oov_buckets=2)
-    mt_emb = tf.feature_column.embedding_column(mt_fc, 16)
+    # mt_fc = tf.feature_column.categorical_column_with_vocabulary_list(
+    #     key='mt', vocabulary_list=('hot', 'hot_i2leaf', 'u2i_f', 'i2i_main', 'i2i_short', 'i2i_long', ''),
+    #     num_oov_buckets=2)
+    # mt_emb = tf.feature_column.embedding_column(mt_fc, 16)
 
     # cate2_share_emb = tf.feature_column.shared_embedding_columns([cate2_fc, m_cate2_fc], dimension=16)
     # cate3_share_emb = tf.feature_column.shared_embedding_columns([cate3_fc, m_cate3_fc], dimension=16)
