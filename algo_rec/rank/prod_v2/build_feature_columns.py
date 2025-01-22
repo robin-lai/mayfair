@@ -29,7 +29,7 @@ def build_feature_columns():
     cate1_emb = tf.feature_column.embedding_column(cate1_fc, 16)
 
     cate_cols_share_emb = [cate1_emb, cate2_share_emb, cate3_share_emb, cate4_share_emb, cate_share_emb,
-                           goods_share_emb, mt_emb]
+                           goods_share_emb]
 
     prop_seaon_fc = tf.feature_column.categorical_column_with_hash_bucket(key="prop_seaon", hash_bucket_size=30)
     prop_length_fc = tf.feature_column.categorical_column_with_hash_bucket(key="prop_length", hash_bucket_size=30)
@@ -60,7 +60,7 @@ def build_feature_columns():
 
     cate_cols_emb = [prop_seaon_emb, prop_length_emb, prop_main_material_emb, prop_pattern_emb, prop_style_emb,
                      prop_quantity_emb, prop_fitness_emb
-        , last_login_device_emb, last_login_brand_emb, register_brand_emb]
+        , last_login_device_emb, last_login_brand_emb, register_brand_emb,mt_emb]
 
     # int col
     is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=0)
