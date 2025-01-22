@@ -1,3 +1,5 @@
+import os
+
 import tensorflow as tf
 import argparse
 import tensorflow.compat.v1 as v1
@@ -72,8 +74,9 @@ def main(args):
         }
         features = tf.io.parse_single_example(data, features=feature_describe)
         return features
-
-    ds = tf.data.TFRecordDataset(args.file)
+    local_file = args.file.split('/')[-1]
+    os.system('aws s3 cp %s %s' % (args.file, local_file))
+    ds = tf.data.TFRecordDataset(local_file)
     ds = ds.map(parse).batch(args.batch_size)
     print(list(ds.as_numpy_iterator())[0:args.n])
     # [{'is_clk': array([[1],
@@ -90,7 +93,7 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--file',type=str, default='./tfrecord/part-00000-18b4c5ae-0eba-41d2-b246-79e7f457ee3d-c000')
+    parser.add_argument('--file',type=str, default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=20250119/part-00000-54de2875-3f5d-4542-aeaf-07d25d9d5be7-c000')
     parser.add_argument('--n',type=int, default=10)
     parser.add_argument('--batch_size',type=int, default=10)
     args = parser.parse_args()
