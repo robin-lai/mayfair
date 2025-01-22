@@ -412,6 +412,7 @@ if __name__ == '__main__':
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
     args.tfr_s3 = args.tfr_s3 % args.ds
+    print(f"tfr_s3:{args.tfr_s3}")
     version = get_model_version('rec/prod_model/%s/ds=%s/model/' % (args.model_name, args.ds))
     args.model_version = args.model_version % (args.ds, version)
     debug = args.debug
