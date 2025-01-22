@@ -63,7 +63,7 @@ def build_feature_columns():
 
     cate_cols_emb = [prop_seaon_emb, prop_length_emb, prop_main_material_emb, prop_pattern_emb, prop_style_emb,
                      prop_quantity_emb, prop_fitness_emb
-        , last_login_device_emb, last_login_brand_emb, register_brand_emb,mt_emb]
+        , last_login_device_emb, last_login_brand_emb, register_brand_emb]
 
     # int col
     is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=0)
