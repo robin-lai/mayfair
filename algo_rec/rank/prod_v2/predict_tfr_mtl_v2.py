@@ -115,7 +115,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.int64)
                 if 'tf.float32' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
-            print(f"feed_dict fts num:{len(feed_dict)}")
+            # print(f"feed_dict fts num:{len(feed_dict)}")
             if debug:
                 print('feed_dict:', feed_dict)
             res = predictor(**feed_dict)
