@@ -28,6 +28,7 @@ import time
 import numpy as np
 import pickle
 from sklearn.metrics import roc_auc_score
+import tensorflow.compat.v1 as v1
 
 import math
 
@@ -58,12 +59,12 @@ debug = False
 def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
     def _parse_fea(data):
         feature_describe_pred.update(
-            {"highLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-             "highLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-             "lowerLevelSeqListGoods": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-             "lowerLevelSeqListCateId": tf.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-             "highLevelSeqList_len": tf.FixedLenFeature(1, tf.int64, default_value=0),
-             "lowerLevelSeqList_len": tf.FixedLenFeature(1, tf.int64, default_value=0),
+            {"highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+             "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+             "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+             "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+             "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+             "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
              }
         )
 
