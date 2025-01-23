@@ -405,7 +405,7 @@ if __name__ == '__main__':
                         default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='')
-    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=%s/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=20250101/')
     parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.json')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
@@ -413,8 +413,8 @@ if __name__ == '__main__':
     parser.add_argument('--site_code', type=str, default=None)
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
-    args.tfr_s3 = args.tfr_s3 % args.ds
-    print(f"tfr_s3:{args.tfr_s3}")
+    # args.tfr_s3 = args.tfr_s3 % args.ds
+    # print(f"tfr_s3:{args.tfr_s3}")
     version = get_model_version('rec/prod_model/%s/ds=%s/model/' % (args.model_name, args.ds))
     args.model_version = args.model_version % (args.ds, version)
     debug = args.debug
