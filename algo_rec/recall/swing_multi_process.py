@@ -14,6 +14,9 @@ import datetime
 import numpy as np
 import sys
 from pathlib import Path
+
+from algo_rec.utils.util import alert_feishu
+
 # print(sys.path)
 # sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
 # sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
@@ -139,6 +142,7 @@ def swing(*args):
     beta = args[5]
     alph = args[6]
     ubeta = args[7]
+    row_n = args[8]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -206,7 +210,6 @@ def swing(*args):
             tgt = [e for e in tgt if float(e[1]) > 0]
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
-            row_n = 100
             for ele in tgt:
                 row_n -= 1
                 if row_n == 0:
@@ -372,7 +375,7 @@ def main(args, item_feature):
         st = time.time()
         outfile = './swing_rec_%s_part_%s'
         s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta]) for i in range(args.p)]
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta, args.row_n]) for i in range(args.p)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
@@ -397,6 +400,7 @@ if __name__ == '__main__':
     parser.add_argument('--beta', type=float, default=0.6)
     parser.add_argument('--ubeta', type=float, default=0.5)
     parser.add_argument('--alph', type=float, default=1.0)
+    parser.add_argument('--row_n', type=int, default=300)
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
@@ -424,6 +428,7 @@ if __name__ == '__main__':
             # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
             # add_job_monitor('tfr', job_d)
             print('final cost:', ed - st)
+            alert_feishu(f"swing_i2i_recll complete ds:{args.pre_ds}")
     else:
         args.in_file = args.in_file % (args.v, args.pre_ds)
         args.s3_dir = args.s3_dir % (args.v, args.pre_ds, str(args.alph), str(args.beta), str(args.ubeta))
@@ -438,6 +443,7 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost":str(ed-st)}
         # add_job_monitor('tfr', job_d)
         print('final cost:', ed-st)
+        alert_feishu(f"swing_i2i_recll complete ds:{args.pre_ds}")
 
 
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
