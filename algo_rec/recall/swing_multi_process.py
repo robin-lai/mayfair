@@ -14,12 +14,10 @@ import datetime
 import numpy as np
 import sys
 from pathlib import Path
-
+print(sys.path)
+sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
+print(sys.path)
 from algo_rec.utils.util import alert_feishu
-
-# print(sys.path)
-# sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
-# sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
 import gc
 

@@ -24,7 +24,7 @@ from pathlib import Path
 print(sys.path)
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
-from algo_rec.utils.util import check_s3_file_exists
+from algo_rec.utils.util import check_s3_file_exists, alert_feishu
 
 BUCKET = 'warehouse-algo'
 BUCKET_S3_PREFIX = "s3://warehouse-algo/"
@@ -614,6 +614,7 @@ if __name__ == '__main__':
         print('stat_file', args.stat_file)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
+    alert_feishu(f"gen tfr complete ds:{args.ds}")
 # python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7, 20250111
 # python gen_tfrecored_multi_process_with_gen_mt.py --range=20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119  > run.log 2>&1 & done
 # python gen_tfrecored_multi_process_with_gen_mt.py --range=20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109 > run.log 2>&1 & done
