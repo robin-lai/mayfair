@@ -15,7 +15,7 @@ print(sys.path)
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
-from algo_rec.utils.util import add_job_monitor
+from algo_rec.utils.util import alert_feishu
 # steup up
 s3_cli = boto3.client('s3')
 sm_sess = sagemaker.Session()
@@ -133,3 +133,5 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
         # add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
+    alert_feishu(f"train ds:{args.train_ds} complete, please check model")
+    # 1227-0105
