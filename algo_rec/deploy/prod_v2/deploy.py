@@ -2253,7 +2253,7 @@ def main(args):
     if 'edp' in args.pipeline:
         print('start edp')
         if args.region == 'in':
-            args.s3_tar_file = in_rec_buk + args.tar_name
+            args.s3_tar_file = in8_rec_buk + args.tar_name
         if args.region == 'sg':
             args.s3_tar_file = sg_rec_buk + args.tar_name
         create_edp(args)
