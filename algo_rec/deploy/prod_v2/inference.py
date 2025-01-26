@@ -140,8 +140,8 @@ def get_infer_json_from_request(d):
                 example_base[name] = [str(main_item[name])]
 
         mt_context = {}
-        mt_context.update(itemContextMap)
-        mt_context.update(itemContextMapAddAfter)
+        mt_context.update({k:[v] for k, v in itemContextMap.items()})
+        mt_context.update({k: [v] for k, v in itemContextMapAddAfter.items()})
         for goods_id in d['goodsIdList']:
             example = {}
             example.update(example_base)
@@ -203,7 +203,7 @@ def get_infer_json_from_request(d):
                     if s_str != '':
                         s_ll = s_str.split(',')
                         for token in s_ll:
-                            example['mt_' + token] = 1
+                            example['mt_' + token] = [1]
 
             ll.append(example)
         ipt["instances"] = ll
