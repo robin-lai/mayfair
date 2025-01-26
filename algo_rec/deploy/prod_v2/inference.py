@@ -139,7 +139,7 @@ def get_infer_json_from_request(d):
             else:
                 example_base[name] = [str(main_item[name])]
 
-        mt_context = {}
+        mt_context = {"sales_price":[0]}
         mt_context.update({k:[v] for k, v in itemContextMap.items()})
         mt_context.update({k: [v] for k, v in itemContextMapAddAfter.items()})
         for goods_id in d['goodsIdList']:
