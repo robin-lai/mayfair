@@ -4,7 +4,7 @@ import sys
 import time
 
 sys.path.append('/home/sagemaker-user/mayfair')
-from algo_rec.deploy.constant import *
+from algo_rec.deploy.old_deploy.constant import *
 from pyarrow import parquet
 import argparse
 

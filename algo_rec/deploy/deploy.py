@@ -4,33 +4,67 @@ import argparse
 import json
 import os
 import pickle
+
 from pyarrow import parquet
 import boto3
 import sagemaker
 from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
+import datetime
 
-todell_dir = '/home/sagemaker-user/todell/tmp'
-deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/'
-deploy_pkg_dir = deploy_dir + 'pkg/'
-deploy_tmp_dir = deploy_dir + 'tmp/'
-deploy_code_dir = deploy_pkg_dir + 'code/'
-deploy_data_dir = deploy_tmp_dir + 'data/'
 
-# item features
-fts_item_s3_text_dir = 's3://algo-sg/rec/cn_rec_detail_feature_item_base_for_redis/'
-fts_item_local_text_dir = deploy_data_dir + 'cn_rec_detail_feature_item_base_for_redis/'
-fts_item_pickle = deploy_pkg_dir + 'item_features.pkl'
-
-# fts_user_seq_off_s3 = 's3://algo-sg/rec/cn_rec_detail_feature_user_seq_v2_for_redis/ds=20241201/'
-# fts_user_seq_off_pickle = deploy_pkg_dir + 'user_seq_off_features.pkl'
-
-# config
-rec_buk = 's3://warehouse-algo/rec/'
-in_rec_buk = 's3://algo-rec/rec/model_online/'
-sg_rec_buk = 's3://algo-sg/rec/model_online/'
-in_s3_tar_file = ""
-sg_s3_tar_file = ""
+request = {
+    "signature_name": "serving_default",
+    "city": "Menbai",
+    "country": "IN",
+    "debug": "",
+    "parentGoodsId": "111307",
+    "featureMap": {
+        "userFeatures": {
+            "high_level_seq": [
+                "1327692",
+                "1402902",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ],
+            "low_level_seq": [
+                "1327692",
+                "1402902",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ],
+            "user_feature_context": {
+                "register_brand": "other",
+                "last_login_device": "huawei",
+                "last_login_brand": "huawei"
+            }
+        }
+    },
+    "goodsIdList": [
+        "1327692",
+        "1402902",
+        "1459992",
+        "1477842"
+    ],
+    "ip": "127.0.0.1",
+    "platform": "H5",
+    "province": "Menbai",
+    "scene": "detail_rec",
+    "userId": "23221",
+    "userNo": "2321",
+    "uuid": "fxleyu",
+    "version": "8.2.2"
+}
 
 # endpoint = 'ctr-model-debug1121'
 
@@ -62,9 +96,10 @@ def convert_text2pkl(text_dir):
 def convert_user_seq2pkl(pt_file):
     pt = parquet.read_table(pt_file)
     m = {}
-    for t in zip(pt['uuid'],pt['seq_goods_id'], pt['seq_cate_id']):
-        m[t[0]] = {'seq_goods_id': t[1], 'seq_cate_id':t[2]}
+    for t in zip(pt['uuid'], pt['seq_goods_id'], pt['seq_cate_id']):
+        m[t[0]] = {'seq_goods_id': t[1], 'seq_cate_id': t[2]}
     return m
+
 
 def pkg(args):
     print('init dir')
@@ -95,6 +130,19 @@ def pkg(args):
     with open(fts_item_pickle, 'wb') as fout:
         pickle.dump(item_fts_dict, fout)
 
+    # item_stat
+    os.system('aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.edp_version), fts_item_stat_local_text_dir))
+    def get_item_stat(file):
+        ret = {}
+        pt = parquet.read_table(file).to_pylist()
+        for e in pt:
+            if e['goods_id'] is not None:
+                ret[int(e['goods_id'])] = e
+        return ret
+    item_stat_fts_dict = get_item_stat(fts_item_stat_local_text_dir)
+    with open(fts_item_stat_pickle, 'wb') as fout:
+        pickle.dump(item_stat_fts_dict, fout)
+
     # user_seq_off_dict = convert_user_seq2pkl(fts_user_seq_off_s3)
     # with open(fts_user_seq_off_pickle, 'wb') as fout:
     #     pickle.dump(user_seq_off_dict, fout)
@@ -106,9 +154,13 @@ def pkg(args):
     in_s3_tar_file = in_rec_buk + args.tar_name
     print('upload %s to %s' % (tar_file, in_s3_tar_file))
     os.system('aws s3 cp %s %s' % (tar_file, in_s3_tar_file))
+    in8_s3_tar_file = in8_rec_buk + args.tar_name
+    print('upload %s to %s' % (tar_file, in8_s3_tar_file))
+    os.system('aws s3 cp %s %s' % (tar_file, in8_s3_tar_file))
     sg_s3_tar_file = sg_rec_buk + args.tar_name
     print('upload %s to %s' % (tar_file, sg_s3_tar_file))
     os.system('aws s3 cp %s %s' % (tar_file, sg_s3_tar_file))
+
 
 def alert(msg):
     print(msg)
@@ -120,6 +172,7 @@ def alert(msg):
     sns_cli = boto3.client('sns')
     for phone_number in [13521039521, ]:
         sns_cli.publish(PhoneNumber='+86%s' % phone_number, Message=msg)
+
 
 def wait_edp_inservice(edp_name, wait_window=3600, wait_interval=10):
     begin = time.time()
@@ -140,6 +193,7 @@ def wait_edp_inservice(edp_name, wait_window=3600, wait_interval=10):
         print('Endpoint %s inservice now, finished.' % edp_name)
         break
 
+
 def create_edp(args):
     s3_cli = boto3.client('s3')
     sm_sess = sagemaker.Session()
@@ -153,14 +207,10 @@ def create_edp(args):
     #                         instance_count=1,
     #                         retry_times=0):
     # If an endpoint could describe, it exists, and can not be created by deploy.
-    instance_type=args.instance_type
-    instance_count=1
-    retry_times=0
-    try:
-        print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
-        return
-    except:
-        pass
+    instance_type = args.instance_type
+    instance_count = 1
+    retry_times = 0
+    # print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
 
     # edp_model_name = endpoint_name + '-' + str(random.randint(10000, 19999))
     variant_name = "Variant-xlarge-1"  # start from 1, incr 1 when updating.
@@ -203,354 +253,941 @@ def create_edp(args):
     print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
     wait_edp_inservice(args.endpoint)
 
-def request_edp(args):
-    inputs_seq = {
-        "cate_level1_id": ["1"],
-        "cate_level2_id": ["1"],
-        "cate_level3_id": ["1"],
-        "cate_level4_id": ["1"],
-        "country": ["IN"],
-        "ctr_7d": [0.1],
-        "cvr_7d": [0.1],
-        "show_7d": [100],
-        "click_7d": [100],
-        "cart_7d": [100],
-        "ord_total": [100],
-        "pay_total": [100],
-        "ord_7d": [100],
-        "pay_7d": [100],
-        "seq_goods_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                         "18",
-                         "19", "20"],
-        "goods_id": ["1"],
-        "seq_cate_id": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-                        "18",
-                        "19", "20"],
-        "cate_id": ["1"],
-    }
+def update_edp(args):
+    s3_cli = boto3.client('s3')
+    sm_sess = sagemaker.Session()
+    print('aws region:', sm_sess.boto_region_name)
+    sm_cli = boto3.client('sagemaker')
+    role = get_execution_role()
+    print('role:', role)
+    instance_type = args.instance_type
+    # print(s3_cli.describe_endpoint(EndpointName=args.endpoint))
+    endpoint_info = sm_cli.describe_endpoint(EndpointName=args.endpoint)
+    print(endpoint_info)
+    model_name = args.model_name + '_' + args.edp_version
+    model_name = model_name.replace('_', '-')
+    variant_name = "V-%s" % model_name
+    endpoint_config_name = 'cf-%s' % model_name
 
-    inputs_no_seq = {
-        "cate_level1_id": ["1"],
-        "cate_level2_id": ["1"],
-        "cate_level3_id": ["1"],
-        "cate_level4_id": ["1"],
-        "country": ["IN"],
-        "ctr_7d": [0.1],
-        "cvr_7d": [0.1],
-        "show_7d": [100],
-        "click_7d": [100],
-        "cart_7d": [100],
-        "ord_total": [100],
-        "pay_total": [100],
-        "ord_7d": [100],
-        "pay_7d": [100]
-    }
-
-    ipt4 = {"signature_name": "serving_default", "instances": [inputs_seq, inputs_seq]}
-    sg_client = boto3.client("sagemaker-runtime")
-    print('inp-json-dump', json.dumps(ipt4))
-    # endpoint = 'ctr-model-debug1121'
-
-    res = sg_client.invoke_endpoint(
-        EndpointName=args.endpoint,
-        Body=json.dumps(ipt4),
-        # Body=json.dumps(ipt4).encode('utf-8'),
-        # .encode('utf-8'),
-        # Body=ipt4,
-        ContentType="application/json"
+    img = sagemaker.image_uris.retrieve(
+        framework='tensorflow',
+        version='1.15.3',
+        region=sm_sess.boto_region_name,
+        image_scope='inference',
+        instance_type=instance_type
     )
-    print(res["Body"].read())
-    # res_json = json.loads(res["Body"].read())
+
+    print('in_s3_tar_file', args.s3_tar_file)
+    sm_sess.create_model(
+        name=model_name,
+        role=role,
+        container_defs={
+            "Image": img,
+            "ModelDataUrl": args.s3_tar_file,
+            'Environment': {
+                'TF_DISABLE_MKL': '1',
+                'TF_DISABLE_POOL_ALLOCATOR': '1',
+                # 'SAGEMAKER_SUBMIT_DIRECTORY': '/home/sagemaker-user/mayfair/algo_rec/deploy/tmp/code/',  # Directory inside the container
+                # 'SAGEMAKER_PROGRAM': 'inference.py',
+            },
+        }
+    )
+
+    variant1 = production_variant(
+        model_name=model_name,
+        instance_type=instance_type,
+        initial_instance_count=args.instance_count,
+        variant_name=variant_name,
+        initial_weight=1,
+    )
+
+    print(sm_cli.create_endpoint_config(
+        EndpointConfigName=endpoint_config_name,
+        ProductionVariants=[
+            variant1
+        ]
+    ))
+
+    print(sm_cli.update_endpoint(
+        EndpointName=args.endpoint,
+        EndpointConfigName=endpoint_config_name,
+    ))
+
+    # sm_sess.endpoint_from_production_variants(
+    #     name=args.endpoint, production_variants=[variant1],
+    #     tags=[{'Key': 'cost-team', 'Value': 'algorithm'}],
+    # )
+    print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
+    wait_edp_inservice(args.endpoint)
+
+
 
 def request_sagemaker(args):
-    request = {"signature_name": "serving_default", "city": "Menbai", "country": "IN", "debug": "",
-                "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20}},
-                "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
-                "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
 
-    req1 = {
-  "signature_name": "serving_default",
-  "instances": [
-    {
-      "goods_id": [
-        ""
-      ],
-      "cate_id": [
-        "748"
-      ],
-      "cate_level1_id": [
-        "2"
-      ],
-      "cate_level2_id": [
-        "12"
-      ],
-      "cate_level3_id": [
-        "79"
-      ],
-      "cate_level4_id": [
-        "748"
-      ],
-      "country": [
-        ""
-      ],
-      "show_7d": [
-        106063
-      ],
-      "click_7d": [
-        3594
-      ],
-      "cart_7d": [
-        104
-      ],
-      "ord_total": [
-        357
-      ],
-      "pay_total": [
-        314
-      ],
-      "ord_7d": [
-        6
-      ],
-      "pay_7d": [
-        5
-      ],
-      "ctr_7d": [
-        0.0338855208696718
-      ],
-      "cvr_7d": [
-        0.001669449081803005
-      ],
-      "highLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "highLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ],
-      "lowerLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "lowerLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ]
-    },
-    {
-      "goods_id": [
-        ""
-      ],
-      "cate_id": [
-        "449"
-      ],
-      "cate_level1_id": [
-        "2"
-      ],
-      "cate_level2_id": [
-        "12"
-      ],
-      "cate_level3_id": [
-        "74"
-      ],
-      "cate_level4_id": [
-        "449"
-      ],
-      "country": [
-        ""
-      ],
-      "show_7d": [
-        84521
-      ],
-      "click_7d": [
-        2124
-      ],
-      "cart_7d": [
-        211
-      ],
-      "ord_total": [
-        272
-      ],
-      "pay_total": [
-        247
-      ],
-      "ord_7d": [
-        29
-      ],
-      "pay_7d": [
-        28
-      ],
-      "ctr_7d": [
-        0.025129849386542988
-      ],
-      "cvr_7d": [
-        0.013653483992467044
-      ],
-      "highLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "highLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ],
-      "lowerLevelSeqListGoods": [
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692",
-        "1327692"
-      ],
-      "lowerLevelSeqListCateId": [
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748",
-        "748"
-      ]
+
+    req_row = {
+        "signature_name": "serving_default",
+        "instances": [
+            {
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "register_brand": ["other"],
+                "last_login_device": ["huawei"],
+                "last_login_brand": ["huawei"],
+                "main_goods_id": ["1402902"],
+                "main_cate_id": [
+                    "449"
+                ],
+                "main_cate_level2_id": [
+                    "12"
+                ],
+                "main_cate_level3_id": [
+                    "74"
+                ],
+                "main_cate_level4_id": [
+                    "449"
+                ],
+                "goods_id": [
+                    "1327692"
+                ],
+                "cate_id": [
+                    "748"
+                ],
+                "is_rel_cate": [
+                    0
+                ],
+                "cate_level1_id": [
+                    "2"
+                ],
+                "cate_level2_id": [
+                    "12"
+                ],
+                "is_rel_cate2": [
+                    1
+                ],
+                "cate_level3_id": [
+                    "79"
+                ],
+                "is_rel_cate3": [
+                    0
+                ],
+                "cate_level4_id": [
+                    "748"
+                ],
+                "is_rel_cate4": [
+                    0
+                ],
+                "country": [
+                    ""
+                ],
+                "prop_seaon": [
+                    "Summer"
+                ],
+                "prop_length": [
+                    "Maxi"
+                ],
+                "prop_main_material": [
+                    "Polyester"
+                ],
+                "prop_pattern": [
+                    "Solid"
+                ],
+                "prop_style": [
+                    "Sexy | Extravagant | Elegant"
+                ],
+                "prop_quantity": [
+                    "1"
+                ],
+                "prop_fitness": [
+                    "Regular Fit"
+                ],
+                "show_7d": [
+                    56152
+                ],
+                "click_7d": [
+                    1960
+                ],
+                "cart_7d": [
+                    51
+                ],
+                "ord_total": [
+                    363
+                ],
+                "pay_total": [
+                    320
+                ],
+                "ord_7d": [
+                    5
+                ],
+                "pay_7d": [
+                    5
+                ],
+                "sales_price": [
+                    0
+                ],
+                "ctr_7d": [
+                    0.03490525715913948
+                ],
+                "cvr_7d": [
+                    0.002551020408163265
+                ]
+            },
+            {
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "register_brand": ["other"],
+                "last_login_device": ["huawei"],
+                "last_login_brand": ["huawei"],
+                "main_goods_id": ["1402902"],
+                "main_cate_id": [
+                    "449"
+                ],
+                "main_cate_level2_id": [
+                    "12"
+                ],
+                "main_cate_level3_id": [
+                    "74"
+                ],
+                "main_cate_level4_id": [
+                    "449"
+                ],
+                "goods_id": [
+                    "1327692"
+                ],
+                "cate_id": [
+                    "748"
+                ],
+                "is_rel_cate": [
+                    0
+                ],
+                "cate_level1_id": [
+                    "2"
+                ],
+                "cate_level2_id": [
+                    "12"
+                ],
+                "is_rel_cate2": [
+                    1
+                ],
+                "cate_level3_id": [
+                    "79"
+                ],
+                "is_rel_cate3": [
+                    0
+                ],
+                "cate_level4_id": [
+                    "748"
+                ],
+                "is_rel_cate4": [
+                    0
+                ],
+                "country": [
+                    ""
+                ],
+                "prop_seaon": [
+                    "Summer"
+                ],
+                "prop_length": [
+                    "Maxi"
+                ],
+                "prop_main_material": [
+                    "Polyester"
+                ],
+                "prop_pattern": [
+                    "Solid"
+                ],
+                "prop_style": [
+                    "Sexy | Extravagant | Elegant"
+                ],
+                "prop_quantity": [
+                    "1"
+                ],
+                "prop_fitness": [
+                    "Regular Fit"
+                ],
+                "show_7d": [
+                    56152
+                ],
+                "click_7d": [
+                    1960
+                ],
+                "cart_7d": [
+                    51
+                ],
+                "ord_total": [
+                    363
+                ],
+                "pay_total": [
+                    320
+                ],
+                "ord_7d": [
+                    5
+                ],
+                "pay_7d": [
+                    5
+                ],
+                "sales_price": [
+                    0
+                ],
+                "ctr_7d": [
+                    0.03490525715913948
+                ],
+                "cvr_7d": [
+                    0.002551020408163265
+                ]
+            }
+        ]
     }
-  ]
-}
-    request['ipt'] = req1
-    request['debug'] = "1"
+    rec_col = {"signature_name": "serving_default", "inputs": {
+        "highLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "highLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "register_brand": ["other"],
+        "last_login_device":["huawei"],
+        "last_login_brand":["huawei"],
+        "main_goods_id": ["1402902"],
+        "main_cate_id": [
+            "449"
+        ],
+        "main_cate_level2_id": [
+            "12"
+        ],
+        "main_cate_level3_id": [
+            "74"
+        ],
+        "main_cate_level4_id": [
+            "449"
+        ],
+        "goods_id": [
+            ["1327692"]
+        ],
+        "cate_id": [
+            "748"
+        ],
+        "is_rel_cate": [
+            0
+        ],
+        "cate_level1_id": [
+            "2"
+        ],
+        "cate_level2_id": [
+            "12"
+        ],
+        "is_rel_cate2": [
+            1
+        ],
+        "cate_level3_id": [
+            "79"
+        ],
+        "is_rel_cate3": [
+            0
+        ],
+        "cate_level4_id": [
+            "748"
+        ],
+        "is_rel_cate4": [
+            0
+        ],
+        "country": [
+            ""
+        ],
+        "prop_seaon": [
+            "Summer"
+        ],
+        "prop_length": [
+            "Maxi"
+        ],
+        "prop_main_material": [
+            "Polyester"
+        ],
+        "prop_pattern": [
+            "Solid"
+        ],
+        "prop_style": [
+            "Sexy | Extravagant | Elegant"
+        ],
+        "prop_quantity": [
+            "1"
+        ],
+        "prop_fitness": [
+            "Regular Fit"
+        ],
+        "show_7d": [
+            56152
+        ],
+        "click_7d": [
+            1960
+        ],
+        "cart_7d": [
+            51
+        ],
+        "ord_total": [
+            363
+        ],
+        "pay_total": [
+            320
+        ],
+        "ord_7d": [
+            5
+        ],
+        "pay_7d": [
+            5
+        ],
+        "sales_price": [
+            0
+        ],
+        "ctr_7d": [
+            0.03490525715913948
+        ],
+        "cvr_7d": [
+            0.002551020408163265
+        ]
+    }}
+    rec_col2 = {"signature_name": "serving_default", "inputs": {
+        "highLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "highLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListGoods": [[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "1327692",
+            "1402902",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "lowerLevelSeqListCateId": [[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ],[
+            "748",
+            "449",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]],
+        "register_brand": ["other","other"],
+        "last_login_device": ["huawei","huawei"],
+        "last_login_brand": ["huawei","huawei"],
+        "main_goods_id": ["1402902","1402902"],
+        "main_cate_id": [
+            "449",  "449"
+        ],
+        "main_cate_level2_id": [
+            "12", "12"
+        ],
+        "main_cate_level3_id": [
+            "74" ,"74"
+        ],
+        "main_cate_level4_id": [
+            "449" ,"449"
+        ],
+        "goods_id": [
+            "1327692", "1327692"
+        ],
+        "cate_id": [
+            "748", "748"
+        ],
+        "is_rel_cate": [
+            0,0
+        ],
+        "cate_level1_id": [
+            "2","2"
+        ],
+        "cate_level2_id": [
+            "12", "12"
+        ],
+        "is_rel_cate2": [
+            1,1
+        ],
+        "cate_level3_id": [
+            "79","79"
+        ],
+        "is_rel_cate3": [
+            0,0
+        ],
+        "cate_level4_id": [
+            "748","748"
+        ],
+        "is_rel_cate4": [
+            0,0
+        ],
+        "country": [
+            "",""
+        ],
+        "prop_seaon": [
+            "Summer", "Summer"
+        ],
+        "prop_length": [
+            "Maxi", "Maxi"
+        ],
+        "prop_main_material": [
+            "Polyester", "Polyester"
+        ],
+        "prop_pattern": [
+            "Solid", "Solid"
+        ],
+        "prop_style": [
+            "Sexy",  "Sexy"
+        ],
+        "prop_quantity": [
+            "1", "1"
+        ],
+        "prop_fitness": [
+            "Regular Fit", "Regular Fit"
+        ],
+        "show_7d": [
+            56152, 56152
+        ],
+        "click_7d": [
+            1960,1960
+        ],
+        "cart_7d": [
+            51, 51
+        ],
+        "ord_total": [
+            363, 363
+        ],
+        "pay_total": [
+            320,320
+        ],
+        "ord_7d": [
+            5,5
+        ],
+        "pay_7d": [
+            5,5
+        ],
+        "sales_price": [
+            0,0
+        ],
+        "ctr_7d": [
+            0.03490525715913948, 0.03490525715913948
+        ],
+        "cvr_7d": [
+            0.002551020408163265, 0.002551020408163265
+        ]
+    }}
+
+    if args.debug=='1':
+        request['debug'] = "1"
+        if args.format == 'row':
+            request['ipt'] = req_row
+        elif args.format == 'col':
+            if args.col_num == 2:
+                request['ipt'] = rec_col2
+            else:
+                request['ipt'] = rec_col
+    elif args.debug=='log':
+        request['debug'] = "log"
+    else:
+        request['debug'] = ""
 
     sg_client = boto3.client("sagemaker-runtime")
 
@@ -579,10 +1216,6 @@ def request_sagemaker(args):
 
 import numpy as np
 def request_sagemaker_time(args):
-    request = {"signature_name": "serving_default", "city": "Menbai", "country": "IN", "debug": "",
-               "featureMap": {"userFeatures": {"high_level_seq": ["1327692"] * 20, "low_level_seq": ["1327692"] * 20}},
-               "goodsIdList": ["1327692", "1402902"], "ip": "127.0.0.1", "platform": "H5", "province": "Menbai",
-               "scene": "detail_rec", "userId": "23221", "userNo": "2321", "uuid": "fxleyu", "version": "8.2.2"}
     request['goodsIdList'] = ["1327692"] * args.goods_num
     cost = []
     sg_client = boto3.client("sagemaker-runtime")
@@ -590,7 +1223,7 @@ def request_sagemaker_time(args):
         print('req idx:', i)
         if i % 5 == 0:
             print('sleep 1s')
-            time.sleep(10)
+            time.sleep(1)
         st = time.time()
         res = sg_client.invoke_endpoint(
             EndpointName=args.endpoint,
@@ -602,7 +1235,7 @@ def request_sagemaker_time(args):
         )
         ed = time.time()
         cost.append(ed - st)
-    print('req:', args.n)
+    print('req:', args.req_num)
     print('goods_id_num:', args.goods_num)
     print('mean cost:', np.mean(cost), 'max cost:', np.max(cost), 'min cost:', np.min(cost))
 
@@ -622,14 +1255,20 @@ def main(args):
             args.s3_tar_file = sg_rec_buk + args.tar_name
         create_edp(args)
         print('end edp')
-    if 'req_edp' in args.pipeline:
-        print('start request edp')
-        request_edp(args)
-        print('end request edp')
+    # if 'req_edp' in args.pipeline:
+    #     print('start request edp')
+    #     request_edp(args)
+    #     print('end request edp')
     if 'req_sg' in args.pipeline:
         print('start request sagemaker')
         request_sagemaker(args)
         print('end request sagemaker')
+    if 'update' in args.pipeline:
+        print('start update edp')
+        args.s3_tar_file = in8_rec_buk + args.tar_name
+        update_edp(args)
+        print('end update edp')
+
     if 'time' in args.pipeline:
         request_sagemaker_time(args)
 
@@ -641,21 +1280,54 @@ if __name__ == '__main__':
         prog='deploy',
         description='deploy',
         epilog='deploy')
-    parser.add_argument('--pipeline', default='pkg,edp,req_sg')
-    parser.add_argument('--endpoint', default='test-edp-model')
-    parser.add_argument('--region', default='sg')
-    parser.add_argument('--edp_version', default='v0')
+    parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
+    parser.add_argument('--model_name', default='mtl_seq_esmm_v2')
+    parser.add_argument('--region', default='in')
+    parser.add_argument('--edp_version', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
-    parser.add_argument('--model_name', default='prod_mtl_seq_on_esmm_v0')
-    parser.add_argument('--model_version', default='/ds=20241203/model/')
-    parser.add_argument('--tar_name', default='prod_mtl_seq_on_esmm_v0_v1.tar.gz')
-    parser.add_argument('--instance_type', default='ml.r5.large')
+    parser.add_argument('--endpoint', default='edp-prod-mtl-%s')
+    parser.add_argument('--model_version', default='/ds=%s/model/')
+    parser.add_argument('--tar_name', default='%s_%s.tar.gz')
+    parser.add_argument('--debug', default='')
+    parser.add_argument('--format', default='col')
+    parser.add_argument('--col_num',type=int, default=1)
+    parser.add_argument('--instance_type', default='ml.r5.xlarge')
     parser.add_argument('--req_num', type=int,  default=10000)
+    parser.add_argument('--instance_count', type=int,  default=2)
     parser.add_argument('--goods_num', type=int,  default=100)
-
     args = parser.parse_args()
-    args.endpoint = 'edp-' + args.model_name.replace('_', '-') + '-' + args.edp_version
+    args.tar_name= args.tar_name % (args.model_name, args.edp_version)
+    args.model_version = args.model_version % args.edp_version
+    args.endpoint = args.endpoint % args.model_name.replace('_','-')
+    # if args.pipeline == 'update_edp':
+    #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
+    # else:
+    #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     print('endpoint:', args.endpoint)
+    deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/%s/'%args.model_name
+    todell_dir = '/home/sagemaker-user/todell/tmp'
+    deploy_pkg_dir = deploy_dir + 'pkg/'
+    deploy_tmp_dir = deploy_dir + 'tmp/'
+    deploy_code_dir = deploy_pkg_dir + 'code/'
+    deploy_data_dir = deploy_tmp_dir + 'data/'
+
+    # item features
+    fts_item_s3_text_dir = 's3://algo-sg/rec/cn_rec_detail_feature_item_base_for_redis/'
+    fts_item_local_text_dir = deploy_data_dir + 'cn_rec_detail_feature_item_base_for_redis/'
+    fts_item_pickle = deploy_pkg_dir + 'item_features.pkl'
+
+    fts_item_stat_s3_text_dir = 's3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/'
+    fts_item_stat_local_text_dir = deploy_data_dir + 'cn_rec_detail_feature_item_stat/'
+    fts_item_stat_pickle = deploy_pkg_dir + 'item_stat_features.pkl'
+
+    # fts_user_seq_off_s3 = 's3://algo-sg/rec/cn_rec_detail_feature_user_seq_v2_for_redis/ds=20241201/'
+    # fts_user_seq_off_pickle = deploy_pkg_dir + 'user_seq_off_features.pkl'
+
+    # config
+    rec_buk = 's3://warehouse-algo/rec/'
+    in_rec_buk = 's3://algo-rec/rec/model_online/'
+    in8_rec_buk = 's3://mayfair-algo-in/rec/model_online/'
+    sg_rec_buk = 's3://algo-sg/rec/model_online/'
+    in_s3_tar_file = ""
+    sg_s3_tar_file = ""
     main(args)
-
-
