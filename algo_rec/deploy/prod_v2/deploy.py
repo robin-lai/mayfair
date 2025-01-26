@@ -103,7 +103,7 @@ def convert_user_seq2pkl(pt_file):
 
 def pkg(args):
     print('init dir')
-    code_file = deploy_dir + 'inference.py'
+    code_file = code_raw_dir + 'inference.py'
     os.system('rm -rf %s' % deploy_pkg_dir)
     os.system('rm -rf %s' % deploy_tmp_dir)
     os.system('mkdir -p %s' % deploy_pkg_dir)
@@ -1305,6 +1305,7 @@ if __name__ == '__main__':
     #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     print('endpoint:', args.endpoint)
     deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/%s/'%args.model_name
+    code_raw_dir = './'
     todell_dir = '/home/sagemaker-user/todell/tmp'
     deploy_pkg_dir = deploy_dir + 'pkg/'
     deploy_tmp_dir = deploy_dir + 'tmp/'
