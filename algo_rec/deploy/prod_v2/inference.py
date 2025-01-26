@@ -10,15 +10,21 @@ import argparse
 # base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
 base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
+item_stat_fts_file = base_data_dir + 'item_stat_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
 item_features_string = {"goods_id": "", "cate_id": "", "cate_level1_id": "", "cate_level2_id": "",
                         "cate_level3_id": "",
                         "cate_level4_id": "", "country": "",
                         "prop_seaon": "", "prop_length": "", "prop_main_material": "", "prop_pattern": "",
                         "prop_style": "", "prop_quantity": "", "prop_fitness": ""}
-item_features_double = {"ctr_7d": 0.0, "cvr_7d": 0.0}
-item_features_int = {"show_7d": 0, "click_7d": 0, "cart_7d": 0, "ord_total": 0, "pay_total": 0, "ord_7d": 0,
-                     "pay_7d": 0, "sales_price": 0}
+
+itemContextMap = {"mt_i2i_main":0, "mt_i2i_long":0,"mt_i2i_short":0,"mt_hot_i2leaf":0,"mt_hot":0}
+itemContextMapAddAfter = {"mt_i2i_main_score":-1.0, "mt_i2i_long_score":-1.0, "mt_i2i_short_score":-1.0}
+
+item_features_double = {'pctr_1d': -1, 'pcart_1d': -1, 'pwish_1d': -1, 'pcvr_1d': -1, 'pctr_3d': -1, 'pcart_3d': -1, 'pwish_3d': -1, 'pcvr_3d': -1, 'pctr_5d': -1, 'pcart_5d': -1, 'pwish_5d': -1, 'pcvr_5d': -1, 'pctr_7d': -1, 'pcart_7d': -1, 'pwish_7d': -1, 'pcvr_7d': -1, 'pctr_14d': -1, 'pcart_14d': -1, 'pwish_14d': -1, 'pcvr_14d': -1, 'pctr_30d': -1, 'pcart_30d': -1, 'pwish_30d': -1, 'pcvr_30d': -1}
+
+item_features_int = {'pv_1d': -1, 'ipv_1d': -1, 'cart_1d': -1, 'wish_1d': -1, 'pay_1d': -1, 'pv_3d': -1, 'ipv_3d': -1, 'cart_3d': -1, 'wish_3d': -1, 'pay_3d': -1, 'pv_5d': -1, 'ipv_5d': -1, 'cart_5d': -1, 'wish_5d': -1, 'pay_5d': -1, 'pv_7d': -1, 'ipv_7d': -1, 'cart_7d': -1, 'wish_7d': -1, 'pay_7d': -1, 'pv_14d': -1, 'ipv_14d': -1, 'cart_14d': -1, 'wish_14d': -1, 'pay_14d': -1, 'pv_30d': -1, 'ipv_30d': -1, 'cart_30d': -1, 'wish_30d': -1, 'pay_30d': -1}
+
 user_seq_string = {"seq_goods_id": [""] * 20, "seq_cate_id": [""] * 20}
 user_seq_on_string = {"highLevelSeqListGoods": [""] * 20, "highLevelSeqListCateId": [""] * 20,
                       "lowerLevelSeqListGoods": [""] * 20, "lowerLevelSeqListCateId": [""] * 20}
@@ -30,6 +36,10 @@ seq_len = 20
 with open(item_fts_file, 'rb') as fin:
     item_dict = pickle.load(fin)
     print('item_dict num:', len(item_dict.keys()))
+
+with open(item_stat_fts_file, 'rb') as fin:
+    item_stat_dict = pickle.load(fin)
+    print('item_stat_dict num:', len(item_stat_dict.keys()))
 
 def request_check(d):
     if 'goodsIdList' not in d:
@@ -166,21 +176,23 @@ def get_infer_json_from_request(d):
                     example['is_rel_cate3'] = [0]
                     example['is_rel_cate4'] = [0]
             for name in item_features_int.keys():
-                if goods_id in item_dict:
-                    if name in item_dict[goods_id]:
-                        example[name] = [int(item_dict[goods_id][name])]
+                if goods_id in item_stat_dict:
+                    if name in item_stat_dict[goods_id]:
+                        example[name] = [int(item_stat_dict[goods_id][name])]
                     else:
                         example[name] = [int(item_features_int[name])]
                 else:
                     example[name] = [int(item_features_int[name])]
             for name in item_features_double.keys():
-                if goods_id in item_dict:
-                    if name in item_dict[goods_id]:
-                        example[name] = [float(item_dict[goods_id][name])]
+                if goods_id in item_stat_dict:
+                    if name in item_stat_dict[goods_id]:
+                        example[name] = [float(item_stat_dict[goods_id][name])]
                     else:
                         example[name] = [float(item_features_double[name])]
                 else:
                     example[name] = [float(item_features_double[name])]
+
+
 
             ll.append(example)
         ipt["instances"] = ll

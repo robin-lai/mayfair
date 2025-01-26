@@ -66,9 +66,6 @@ request = {
     "version": "8.2.2"
 }
 
-# endpoint = 'ctr-model-debug1121'
-
-
 def convert_text2pkl(text_dir):
     from os import listdir
     from os.path import isfile, join
