@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 import pickle
-
+import numpy as np
 from pyarrow import parquet
 import boto3
 import sagemaker
@@ -2215,9 +2215,6 @@ def request_sagemaker(args):
         }
         result.append(tmp)
     print('final ret:', result)
-
-
-import numpy as np
 
 
 def request_sagemaker_time(args):
