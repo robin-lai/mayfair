@@ -19,6 +19,7 @@ item_features_string = {"goods_id": "", "cate_id": "", "cate_level2_id": "",
                         "prop_style": "", "prop_quantity": "", "prop_fitness": ""}
 
 itemContextMap = {"mt_i2i_main":0, "mt_i2i_long":0,"mt_i2i_short":0,"mt_hot_i2leaf":0,"mt_hot":0}
+recall_map = {"u2i_short":"mt_i2i_short", "u2i_long":"mt_i2i_long", "hot":"mt_hot", "hot_i2leaf":"mt_hot_i2leaf", "i2i_main":"mt_i2i_main"}
 itemContextMapAddAfter = {"mt_i2i_main_score":-1.0, "mt_i2i_long_score":-1.0, "mt_i2i_short_score":-1.0}
 
 item_features_double = {'pctr_1d': -1, 'pcart_1d': -1, 'pwish_1d': -1, 'pcvr_1d': -1, 'pctr_3d': -1, 'pcart_3d': -1, 'pwish_3d': -1, 'pcvr_3d': -1, 'pctr_5d': -1, 'pcart_5d': -1, 'pwish_5d': -1, 'pcvr_5d': -1, 'pctr_7d': -1, 'pcart_7d': -1, 'pwish_7d': -1, 'pcvr_7d': -1, 'pctr_14d': -1, 'pcart_14d': -1, 'pwish_14d': -1, 'pcvr_14d': -1, 'pctr_30d': -1, 'pcart_30d': -1, 'pwish_30d': -1, 'pcvr_30d': -1}
@@ -203,7 +204,8 @@ def get_infer_json_from_request(d):
                     if s_str != '':
                         s_ll = s_str.split(',')
                         for token in s_ll:
-                            example['mt_' + token] = [1]
+                            if token in recall_map:
+                                example[recall_map[token]] = [1]
 
             ll.append(example)
         ipt["instances"] = ll
