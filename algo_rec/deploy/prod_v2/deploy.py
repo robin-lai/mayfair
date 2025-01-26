@@ -28,7 +28,7 @@ request = {
                 "",
                 "",
                 "",
-                "",
+                ""
             ],
             "low_level_seq": [
                 "1327692",
@@ -41,7 +41,7 @@ request = {
                 "",
                 "",
                 "",
-                "",
+                ""
             ],
             "user_feature_context": {
                 "register_brand": "other",
