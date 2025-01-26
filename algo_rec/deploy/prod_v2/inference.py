@@ -197,10 +197,12 @@ def get_infer_json_from_request(d):
 
             if 'itemContextMap' in d and goods_id in d['itemContextMap']:
                 s = d['itemContextMap'][goods_id]
-                if s != '':
-                    s_ll = s.split(',')
-                    for s_str in s_ll:
-                        example['mt_' + s_str] = 1
+                if s is not None and 's' in s:
+                    s_str = s.get('s')
+                    if s_str != '':
+                        s_ll = s_str.split(',')
+                        for token in s_ll:
+                            example['mt_' + token] = 1
 
             ll.append(example)
         ipt["instances"] = ll
