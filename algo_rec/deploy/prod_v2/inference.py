@@ -256,6 +256,7 @@ def output_handler(data, context):
     except Exception:
         print("-" * 60)
         logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
+        logging.info('[DEBUG] output_data2: %s %s', response_content_type, prediction)
         traceback.print_exc(file=sys.stdout)
         print("-" * 60)
             # print('data:',t)
