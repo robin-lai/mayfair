@@ -468,9 +468,7 @@ def request_sagemaker(args):
                 "is_rel_cate": [
                     1
                 ],
-                "cate_level1_id": [
-                    "2"
-                ],
+
                 "cate_level2_id": [
                     "12"
                 ],
@@ -815,9 +813,7 @@ def request_sagemaker(args):
                 "is_rel_cate": [
                     0
                 ],
-                "cate_level1_id": [
-                    "2"
-                ],
+
                 "cate_level2_id": [
                     "12"
                 ],
@@ -1162,9 +1158,7 @@ def request_sagemaker(args):
                 "is_rel_cate": [
                     0
                 ],
-                "cate_level1_id": [
-                    "2"
-                ],
+
                 "cate_level2_id": [
                     "11"
                 ],
@@ -1509,9 +1503,7 @@ def request_sagemaker(args):
                 "is_rel_cate": [
                     0
                 ],
-                "cate_level1_id": [
-                    "2"
-                ],
+
                 "cate_level2_id": [
                     "12"
                 ],
@@ -2298,7 +2290,7 @@ if __name__ == '__main__':
     parser.add_argument('--edp_version', type=str,
                         default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
-    parser.add_argument('--endpoint', default='edp1-%s')
+    parser.add_argument('--endpoint', default='edp2-%s')
     parser.add_argument('--model_version', default='/ds=%s/model/')
     parser.add_argument('--tar_name', default='%s_%s.tar.gz')
     parser.add_argument('--debug', default='')

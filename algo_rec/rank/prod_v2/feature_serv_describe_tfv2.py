@@ -98,15 +98,6 @@ feature_describe_pred = {
     , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
     , "country": v1.FixedLenFeature(1, tf.string, '-1')
 
-    # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-    # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
-    # , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-    # , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-    # , "highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-    # , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-    # , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-    # , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-
     , "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
     , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
     , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
