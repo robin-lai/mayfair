@@ -143,6 +143,7 @@ def pkg(args):
         return ret
 
     item_stat_fts_dict = get_item_stat(fts_item_stat_local_text_dir)
+    print(f"get item stat file ,key num:{len(item_stat_fts_dict)}")
     with open(fts_item_stat_pickle, 'wb') as fout:
         pickle.dump(item_stat_fts_dict, fout)
 
@@ -2290,7 +2291,7 @@ if __name__ == '__main__':
     parser.add_argument('--edp_version', type=str,
                         default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
-    parser.add_argument('--endpoint', default='edp2-%s')
+    parser.add_argument('--endpoint', default='edp3-%s')
     parser.add_argument('--model_version', default='/ds=%s/model/')
     parser.add_argument('--tar_name', default='%s_%s.tar.gz')
     parser.add_argument('--debug', default='')

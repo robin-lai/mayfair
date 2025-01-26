@@ -3,7 +3,7 @@ import copy
 import json
 import logging
 import pickle
-import os
+import os,sys,traceback
 import time
 import argparse
 
@@ -223,31 +223,42 @@ def input_handler(data, context):
 
     if context.request_content_type == "application/json":
         # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
-        print('edp-version:0126')
-        d = json.loads(data.read())
-        print('request', d)
-        if "debug" not in d:
-            d["debug"] = ""
-        if d["debug"] == '1':
-            print('debug=1 json_data', d)
-            # logging.info('debug=1 json_data',d["ipt"])
-            return json.dumps(d['ipt']).encode('utf-8')
-        st = time.time()
-        ipt = get_infer_json_from_request(d)
-        ed = time.time()
-        print('feature_process cost:', ed - st)
-        if d["debug"] == 'log':
-            print('req_input', ipt)
+        try:
+            print('edp-version:0126')
+            d = json.loads(data.read())
+            print('request', d)
+            if "debug" not in d:
+                d["debug"] = ""
+            if d["debug"] == '1':
+                print('debug=1 json_data', d)
+                # logging.info('debug=1 json_data',d["ipt"])
+                return json.dumps(d['ipt']).encode('utf-8')
+            st = time.time()
+            ipt = get_infer_json_from_request(d)
+            ed = time.time()
+            print('feature_process cost:', ed - st)
+            if d["debug"] == 'log':
+                print('req_input', ipt)
 
-        # logging.info('ipt data:%s', ipt)
-        ipt_encode = json.dumps(ipt).encode('utf-8')
-        return ipt_encode
+            # logging.info('ipt data:%s', ipt)
+            ipt_encode = json.dumps(ipt).encode('utf-8')
+            return ipt_encode
+        except Exception:
+            print("-" * 60)
+            traceback.print_exc(file=sys.stdout)
+            print("-" * 60)
 
 def output_handler(data, context):
-    # logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
     response_content_type = context.accept_header
     prediction = data.content
-    print('response', json.loads(prediction))
+    try:
+        print('response', json.loads(prediction))
+    except Exception:
+        print("-" * 60)
+        logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
+        traceback.print_exc(file=sys.stdout)
+        print("-" * 60)
+            # print('data:',t)
     return prediction, response_content_type
 
 def main(args):
