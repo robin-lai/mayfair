@@ -139,6 +139,9 @@ def get_infer_json_from_request(d):
             else:
                 example_base[name] = [str(main_item[name])]
 
+        mt_context = {}
+        mt_context.update(itemContextMap)
+        mt_context.update(itemContextMapAddAfter)
         for goods_id in d['goodsIdList']:
             example = {}
             example.update(example_base)
@@ -192,7 +195,12 @@ def get_infer_json_from_request(d):
                 else:
                     example[name] = [float(item_features_double[name])]
 
-
+            if 'itemContextMap' in d and goods_id in d['itemContextMap']:
+                s = d['itemContextMap'][goods_id]
+                if s != '':
+                    s_ll = s.split(',')
+                    for s_str in s_ll:
+                        example['mt_' + s_str] = 1
 
             ll.append(example)
         ipt["instances"] = ll
@@ -269,6 +277,9 @@ def main(args):
         "goodsIdList": [
             "1402902", "1327692"
         ],
+        "itemContextMap":{
+            "1402902":{"s":"i2i_long,i2i_short,hot,hot_i2leaf,i2i_main"}, "1327692":{"s":""}
+        },
         "ip": "127.0.0.1",
         "parentGoodsId": "1490152",
         "platform": "H5",
