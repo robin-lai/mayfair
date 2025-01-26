@@ -135,12 +135,12 @@ def pkg(args):
         'aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.edp_version), fts_item_stat_local_text_dir))
 
     def get_item_stat(file):
-        print(f"item_stat_file:{file}")
+        print(f"item_stat_file:{file} goodid key type is string")
         ret = {}
         pt = parquet.read_table(file).to_pylist()
         for e in pt:
             if e['goods_id'] is not None:
-                ret[int(e['goods_id'])] = e
+                ret[e['goods_id']] = e
         return ret
 
     item_stat_fts_dict = get_item_stat(fts_item_stat_local_text_dir)
