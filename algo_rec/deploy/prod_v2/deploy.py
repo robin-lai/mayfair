@@ -2302,7 +2302,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_version', default='/ds=%s/model/')
     parser.add_argument('--tar_name', default='%s_%s.tar.gz')
     parser.add_argument('--debug', default='')
-    parser.add_argument('--format', default='col')
+    parser.add_argument('--format', default='row')
     parser.add_argument('--col_num', type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
     parser.add_argument('--req_num', type=int, default=10000)
