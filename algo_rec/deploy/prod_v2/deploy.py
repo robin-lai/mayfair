@@ -12,7 +12,6 @@ from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
 import datetime
 
-
 request = {
     "signature_name": "serving_default",
     "city": "Menbai",
@@ -68,6 +67,7 @@ request = {
     "uuid": "fxleyu",
     "version": "8.2.2"
 }
+
 
 def convert_text2pkl(text_dir):
     from os import listdir
@@ -131,7 +131,9 @@ def pkg(args):
         pickle.dump(item_fts_dict, fout)
 
     # item_stat
-    os.system('aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.edp_version), fts_item_stat_local_text_dir))
+    os.system(
+        'aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.edp_version), fts_item_stat_local_text_dir))
+
     def get_item_stat(file):
         ret = {}
         pt = parquet.read_table(file).to_pylist()
@@ -139,6 +141,7 @@ def pkg(args):
             if e['goods_id'] is not None:
                 ret[int(e['goods_id'])] = e
         return ret
+
     item_stat_fts_dict = get_item_stat(fts_item_stat_local_text_dir)
     with open(fts_item_stat_pickle, 'wb') as fout:
         pickle.dump(item_stat_fts_dict, fout)
@@ -253,6 +256,7 @@ def create_edp(args):
     print(sm_cli.describe_endpoint(EndpointName=args.endpoint))
     wait_edp_inservice(args.endpoint)
 
+
 def update_edp(args):
     s3_cli = boto3.client('s3')
     sm_sess = sagemaker.Session()
@@ -321,10 +325,7 @@ def update_edp(args):
     wait_edp_inservice(args.endpoint)
 
 
-
 def request_sagemaker(args):
-
-
     req_row = {
         "signature_name": "serving_default",
         "instances": [
@@ -351,6 +352,9 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
+                "highLevelSeqList_len": [
+                    2
+                ],
                 "highLevelSeqListCateId": [
                     "748",
                     "449",
@@ -395,6 +399,9 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
+                "lowerLevelSeqList_len": [
+                    2
+                ],
                 "lowerLevelSeqListCateId": [
                     "748",
                     "449",
@@ -417,22 +424,41 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
-                "register_brand": ["other"],
-                "last_login_device": ["huawei"],
-                "last_login_brand": ["huawei"],
-                "main_goods_id": ["1402902"],
+                "last_login_device": [
+                    "huawei"
+                ],
+                "last_login_brand": [
+                    "huawei"
+                ],
+                "register_brand": [
+                    "other"
+                ],
+                "client_type": [
+                    ""
+                ],
+                "main_goods_id": [
+                    "111307"
+                ],
                 "main_cate_id": [
-                    "449"
+                    "748"
                 ],
                 "main_cate_level2_id": [
                     "12"
                 ],
                 "main_cate_level3_id": [
-                    "74"
+                    "79"
                 ],
                 "main_cate_level4_id": [
-                    "449"
+                    "748"
                 ],
+                "mt_i2i_main": 0,
+                "mt_i2i_long": 0,
+                "mt_i2i_short": 0,
+                "mt_hot_i2leaf": 0,
+                "mt_hot": 0,
+                "mt_i2i_main_score": -1.0,
+                "mt_i2i_long_score": -1.0,
+                "mt_i2i_short_score": -1.0,
                 "goods_id": [
                     "1327692"
                 ],
@@ -440,7 +466,7 @@ def request_sagemaker(args):
                     "748"
                 ],
                 "is_rel_cate": [
-                    0
+                    1
                 ],
                 "cate_level1_id": [
                     "2"
@@ -455,13 +481,13 @@ def request_sagemaker(args):
                     "79"
                 ],
                 "is_rel_cate3": [
-                    0
+                    1
                 ],
                 "cate_level4_id": [
                     "748"
                 ],
                 "is_rel_cate4": [
-                    0
+                    1
                 ],
                 "country": [
                     ""
@@ -487,35 +513,167 @@ def request_sagemaker(args):
                 "prop_fitness": [
                     "Regular Fit"
                 ],
-                "show_7d": [
-                    56152
+                "pv_1d": [
+                    -1
                 ],
-                "click_7d": [
-                    1960
+                "ipv_1d": [
+                    -1
+                ],
+                "cart_1d": [
+                    -1
+                ],
+                "wish_1d": [
+                    -1
+                ],
+                "pay_1d": [
+                    -1
+                ],
+                "pv_3d": [
+                    -1
+                ],
+                "ipv_3d": [
+                    -1
+                ],
+                "cart_3d": [
+                    -1
+                ],
+                "wish_3d": [
+                    -1
+                ],
+                "pay_3d": [
+                    -1
+                ],
+                "pv_5d": [
+                    -1
+                ],
+                "ipv_5d": [
+                    -1
+                ],
+                "cart_5d": [
+                    -1
+                ],
+                "wish_5d": [
+                    -1
+                ],
+                "pay_5d": [
+                    -1
+                ],
+                "pv_7d": [
+                    -1
+                ],
+                "ipv_7d": [
+                    -1
                 ],
                 "cart_7d": [
-                    51
+                    -1
                 ],
-                "ord_total": [
-                    363
-                ],
-                "pay_total": [
-                    320
-                ],
-                "ord_7d": [
-                    5
+                "wish_7d": [
+                    -1
                 ],
                 "pay_7d": [
-                    5
+                    -1
                 ],
-                "sales_price": [
-                    0
+                "pv_14d": [
+                    -1
                 ],
-                "ctr_7d": [
-                    0.03490525715913948
+                "ipv_14d": [
+                    -1
                 ],
-                "cvr_7d": [
-                    0.002551020408163265
+                "cart_14d": [
+                    -1
+                ],
+                "wish_14d": [
+                    -1
+                ],
+                "pay_14d": [
+                    -1
+                ],
+                "pv_30d": [
+                    -1
+                ],
+                "ipv_30d": [
+                    -1
+                ],
+                "cart_30d": [
+                    -1
+                ],
+                "wish_30d": [
+                    -1
+                ],
+                "pay_30d": [
+                    -1
+                ],
+                "pctr_1d": [
+                    -1.0
+                ],
+                "pcart_1d": [
+                    -1.0
+                ],
+                "pwish_1d": [
+                    -1.0
+                ],
+                "pcvr_1d": [
+                    -1.0
+                ],
+                "pctr_3d": [
+                    -1.0
+                ],
+                "pcart_3d": [
+                    -1.0
+                ],
+                "pwish_3d": [
+                    -1.0
+                ],
+                "pcvr_3d": [
+                    -1.0
+                ],
+                "pctr_5d": [
+                    -1.0
+                ],
+                "pcart_5d": [
+                    -1.0
+                ],
+                "pwish_5d": [
+                    -1.0
+                ],
+                "pcvr_5d": [
+                    -1.0
+                ],
+                "pctr_7d": [
+                    -1.0
+                ],
+                "pcart_7d": [
+                    -1.0
+                ],
+                "pwish_7d": [
+                    -1.0
+                ],
+                "pcvr_7d": [
+                    -1.0
+                ],
+                "pctr_14d": [
+                    -1.0
+                ],
+                "pcart_14d": [
+                    -1.0
+                ],
+                "pwish_14d": [
+                    -1.0
+                ],
+                "pcvr_14d": [
+                    -1.0
+                ],
+                "pctr_30d": [
+                    -1.0
+                ],
+                "pcart_30d": [
+                    -1.0
+                ],
+                "pwish_30d": [
+                    -1.0
+                ],
+                "pcvr_30d": [
+                    -1.0
                 ]
             },
             {
@@ -541,6 +699,9 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
+                "highLevelSeqList_len": [
+                    2
+                ],
                 "highLevelSeqListCateId": [
                     "748",
                     "449",
@@ -585,6 +746,9 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
+                "lowerLevelSeqList_len": [
+                    2
+                ],
                 "lowerLevelSeqListCateId": [
                     "748",
                     "449",
@@ -607,27 +771,46 @@ def request_sagemaker(args):
                     "",
                     ""
                 ],
-                "register_brand": ["other"],
-                "last_login_device": ["huawei"],
-                "last_login_brand": ["huawei"],
-                "main_goods_id": ["1402902"],
+                "last_login_device": [
+                    "huawei"
+                ],
+                "last_login_brand": [
+                    "huawei"
+                ],
+                "register_brand": [
+                    "other"
+                ],
+                "client_type": [
+                    ""
+                ],
+                "main_goods_id": [
+                    "111307"
+                ],
                 "main_cate_id": [
-                    "449"
+                    "748"
                 ],
                 "main_cate_level2_id": [
                     "12"
                 ],
                 "main_cate_level3_id": [
-                    "74"
+                    "79"
                 ],
                 "main_cate_level4_id": [
-                    "449"
+                    "748"
                 ],
+                "mt_i2i_main": 1,
+                "mt_i2i_long": 1,
+                "mt_i2i_short": 1,
+                "mt_hot_i2leaf": 1,
+                "mt_hot": 1,
+                "mt_i2i_main_score": -1.0,
+                "mt_i2i_long_score": -1.0,
+                "mt_i2i_short_score": -1.0,
                 "goods_id": [
-                    "1327692"
+                    "1402902"
                 ],
                 "cate_id": [
-                    "748"
+                    "449"
                 ],
                 "is_rel_cate": [
                     0
@@ -642,13 +825,13 @@ def request_sagemaker(args):
                     1
                 ],
                 "cate_level3_id": [
-                    "79"
+                    "74"
                 ],
                 "is_rel_cate3": [
                     0
                 ],
                 "cate_level4_id": [
-                    "748"
+                    "449"
                 ],
                 "is_rel_cate4": [
                     0
@@ -657,10 +840,10 @@ def request_sagemaker(args):
                     ""
                 ],
                 "prop_seaon": [
-                    "Summer"
+                    "Winter"
                 ],
                 "prop_length": [
-                    "Maxi"
+                    "Short"
                 ],
                 "prop_main_material": [
                     "Polyester"
@@ -669,7 +852,7 @@ def request_sagemaker(args):
                     "Solid"
                 ],
                 "prop_style": [
-                    "Sexy | Extravagant | Elegant"
+                    "Elegant | High Street"
                 ],
                 "prop_quantity": [
                     "1"
@@ -677,35 +860,861 @@ def request_sagemaker(args):
                 "prop_fitness": [
                     "Regular Fit"
                 ],
-                "show_7d": [
-                    56152
+                "pv_1d": [
+                    -1
                 ],
-                "click_7d": [
-                    1960
+                "ipv_1d": [
+                    -1
+                ],
+                "cart_1d": [
+                    -1
+                ],
+                "wish_1d": [
+                    -1
+                ],
+                "pay_1d": [
+                    -1
+                ],
+                "pv_3d": [
+                    -1
+                ],
+                "ipv_3d": [
+                    -1
+                ],
+                "cart_3d": [
+                    -1
+                ],
+                "wish_3d": [
+                    -1
+                ],
+                "pay_3d": [
+                    -1
+                ],
+                "pv_5d": [
+                    -1
+                ],
+                "ipv_5d": [
+                    -1
+                ],
+                "cart_5d": [
+                    -1
+                ],
+                "wish_5d": [
+                    -1
+                ],
+                "pay_5d": [
+                    -1
+                ],
+                "pv_7d": [
+                    -1
+                ],
+                "ipv_7d": [
+                    -1
                 ],
                 "cart_7d": [
-                    51
+                    -1
                 ],
-                "ord_total": [
-                    363
-                ],
-                "pay_total": [
-                    320
-                ],
-                "ord_7d": [
-                    5
+                "wish_7d": [
+                    -1
                 ],
                 "pay_7d": [
-                    5
+                    -1
                 ],
-                "sales_price": [
+                "pv_14d": [
+                    -1
+                ],
+                "ipv_14d": [
+                    -1
+                ],
+                "cart_14d": [
+                    -1
+                ],
+                "wish_14d": [
+                    -1
+                ],
+                "pay_14d": [
+                    -1
+                ],
+                "pv_30d": [
+                    -1
+                ],
+                "ipv_30d": [
+                    -1
+                ],
+                "cart_30d": [
+                    -1
+                ],
+                "wish_30d": [
+                    -1
+                ],
+                "pay_30d": [
+                    -1
+                ],
+                "pctr_1d": [
+                    -1.0
+                ],
+                "pcart_1d": [
+                    -1.0
+                ],
+                "pwish_1d": [
+                    -1.0
+                ],
+                "pcvr_1d": [
+                    -1.0
+                ],
+                "pctr_3d": [
+                    -1.0
+                ],
+                "pcart_3d": [
+                    -1.0
+                ],
+                "pwish_3d": [
+                    -1.0
+                ],
+                "pcvr_3d": [
+                    -1.0
+                ],
+                "pctr_5d": [
+                    -1.0
+                ],
+                "pcart_5d": [
+                    -1.0
+                ],
+                "pwish_5d": [
+                    -1.0
+                ],
+                "pcvr_5d": [
+                    -1.0
+                ],
+                "pctr_7d": [
+                    -1.0
+                ],
+                "pcart_7d": [
+                    -1.0
+                ],
+                "pwish_7d": [
+                    -1.0
+                ],
+                "pcvr_7d": [
+                    -1.0
+                ],
+                "pctr_14d": [
+                    -1.0
+                ],
+                "pcart_14d": [
+                    -1.0
+                ],
+                "pwish_14d": [
+                    -1.0
+                ],
+                "pcvr_14d": [
+                    -1.0
+                ],
+                "pctr_30d": [
+                    -1.0
+                ],
+                "pcart_30d": [
+                    -1.0
+                ],
+                "pwish_30d": [
+                    -1.0
+                ],
+                "pcvr_30d": [
+                    -1.0
+                ]
+            },
+            {
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "highLevelSeqList_len": [
+                    2
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqList_len": [
+                    2
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "last_login_device": [
+                    "huawei"
+                ],
+                "last_login_brand": [
+                    "huawei"
+                ],
+                "register_brand": [
+                    "other"
+                ],
+                "client_type": [
+                    ""
+                ],
+                "main_goods_id": [
+                    "111307"
+                ],
+                "main_cate_id": [
+                    "748"
+                ],
+                "main_cate_level2_id": [
+                    "12"
+                ],
+                "main_cate_level3_id": [
+                    "79"
+                ],
+                "main_cate_level4_id": [
+                    "748"
+                ],
+                "mt_i2i_main": 0,
+                "mt_i2i_long": 0,
+                "mt_i2i_short": 0,
+                "mt_hot_i2leaf": 0,
+                "mt_hot": 0,
+                "mt_i2i_main_score": -1.0,
+                "mt_i2i_long_score": -1.0,
+                "mt_i2i_short_score": -1.0,
+                "goods_id": [
+                    "1459992"
+                ],
+                "cate_id": [
+                    "329"
+                ],
+                "is_rel_cate": [
                     0
                 ],
-                "ctr_7d": [
-                    0.03490525715913948
+                "cate_level1_id": [
+                    "2"
                 ],
-                "cvr_7d": [
-                    0.002551020408163265
+                "cate_level2_id": [
+                    "11"
+                ],
+                "is_rel_cate2": [
+                    0
+                ],
+                "cate_level3_id": [
+                    "55"
+                ],
+                "is_rel_cate3": [
+                    0
+                ],
+                "cate_level4_id": [
+                    "329"
+                ],
+                "is_rel_cate4": [
+                    0
+                ],
+                "country": [
+                    ""
+                ],
+                "prop_seaon": [
+                    "Four Seasons"
+                ],
+                "prop_length": [
+                    ""
+                ],
+                "prop_main_material": [
+                    ""
+                ],
+                "prop_pattern": [
+                    "Alphabet | Solid"
+                ],
+                "prop_style": [
+                    "Elegant | Retro"
+                ],
+                "prop_quantity": [
+                    "1"
+                ],
+                "prop_fitness": [
+                    ""
+                ],
+                "pv_1d": [
+                    -1
+                ],
+                "ipv_1d": [
+                    -1
+                ],
+                "cart_1d": [
+                    -1
+                ],
+                "wish_1d": [
+                    -1
+                ],
+                "pay_1d": [
+                    -1
+                ],
+                "pv_3d": [
+                    -1
+                ],
+                "ipv_3d": [
+                    -1
+                ],
+                "cart_3d": [
+                    -1
+                ],
+                "wish_3d": [
+                    -1
+                ],
+                "pay_3d": [
+                    -1
+                ],
+                "pv_5d": [
+                    -1
+                ],
+                "ipv_5d": [
+                    -1
+                ],
+                "cart_5d": [
+                    -1
+                ],
+                "wish_5d": [
+                    -1
+                ],
+                "pay_5d": [
+                    -1
+                ],
+                "pv_7d": [
+                    -1
+                ],
+                "ipv_7d": [
+                    -1
+                ],
+                "cart_7d": [
+                    -1
+                ],
+                "wish_7d": [
+                    -1
+                ],
+                "pay_7d": [
+                    -1
+                ],
+                "pv_14d": [
+                    -1
+                ],
+                "ipv_14d": [
+                    -1
+                ],
+                "cart_14d": [
+                    -1
+                ],
+                "wish_14d": [
+                    -1
+                ],
+                "pay_14d": [
+                    -1
+                ],
+                "pv_30d": [
+                    -1
+                ],
+                "ipv_30d": [
+                    -1
+                ],
+                "cart_30d": [
+                    -1
+                ],
+                "wish_30d": [
+                    -1
+                ],
+                "pay_30d": [
+                    -1
+                ],
+                "pctr_1d": [
+                    -1.0
+                ],
+                "pcart_1d": [
+                    -1.0
+                ],
+                "pwish_1d": [
+                    -1.0
+                ],
+                "pcvr_1d": [
+                    -1.0
+                ],
+                "pctr_3d": [
+                    -1.0
+                ],
+                "pcart_3d": [
+                    -1.0
+                ],
+                "pwish_3d": [
+                    -1.0
+                ],
+                "pcvr_3d": [
+                    -1.0
+                ],
+                "pctr_5d": [
+                    -1.0
+                ],
+                "pcart_5d": [
+                    -1.0
+                ],
+                "pwish_5d": [
+                    -1.0
+                ],
+                "pcvr_5d": [
+                    -1.0
+                ],
+                "pctr_7d": [
+                    -1.0
+                ],
+                "pcart_7d": [
+                    -1.0
+                ],
+                "pwish_7d": [
+                    -1.0
+                ],
+                "pcvr_7d": [
+                    -1.0
+                ],
+                "pctr_14d": [
+                    -1.0
+                ],
+                "pcart_14d": [
+                    -1.0
+                ],
+                "pwish_14d": [
+                    -1.0
+                ],
+                "pcvr_14d": [
+                    -1.0
+                ],
+                "pctr_30d": [
+                    -1.0
+                ],
+                "pcart_30d": [
+                    -1.0
+                ],
+                "pwish_30d": [
+                    -1.0
+                ],
+                "pcvr_30d": [
+                    -1.0
+                ]
+            },
+            {
+                "highLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "highLevelSeqList_len": [
+                    2
+                ],
+                "highLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqListGoods": [
+                    "1327692",
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "lowerLevelSeqList_len": [
+                    2
+                ],
+                "lowerLevelSeqListCateId": [
+                    "748",
+                    "449",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "last_login_device": [
+                    "huawei"
+                ],
+                "last_login_brand": [
+                    "huawei"
+                ],
+                "register_brand": [
+                    "other"
+                ],
+                "client_type": [
+                    ""
+                ],
+                "main_goods_id": [
+                    "111307"
+                ],
+                "main_cate_id": [
+                    "748"
+                ],
+                "main_cate_level2_id": [
+                    "12"
+                ],
+                "main_cate_level3_id": [
+                    "79"
+                ],
+                "main_cate_level4_id": [
+                    "748"
+                ],
+                "mt_i2i_main": 0,
+                "mt_i2i_long": 0,
+                "mt_i2i_short": 0,
+                "mt_hot_i2leaf": 0,
+                "mt_hot": 0,
+                "mt_i2i_main_score": -1.0,
+                "mt_i2i_long_score": -1.0,
+                "mt_i2i_short_score": -1.0,
+                "goods_id": [
+                    "1477842"
+                ],
+                "cate_id": [
+                    "497"
+                ],
+                "is_rel_cate": [
+                    0
+                ],
+                "cate_level1_id": [
+                    "2"
+                ],
+                "cate_level2_id": [
+                    "12"
+                ],
+                "is_rel_cate2": [
+                    1
+                ],
+                "cate_level3_id": [
+                    "82"
+                ],
+                "is_rel_cate3": [
+                    0
+                ],
+                "cate_level4_id": [
+                    "497"
+                ],
+                "is_rel_cate4": [
+                    0
+                ],
+                "country": [
+                    ""
+                ],
+                "prop_seaon": [
+                    "Winter"
+                ],
+                "prop_length": [
+                    "Knee Length"
+                ],
+                "prop_main_material": [
+                    "Polyester"
+                ],
+                "prop_pattern": [
+                    "Solid"
+                ],
+                "prop_style": [
+                    "Minimalist | Casual"
+                ],
+                "prop_quantity": [
+                    "1"
+                ],
+                "prop_fitness": [
+                    "Oversized"
+                ],
+                "pv_1d": [
+                    -1
+                ],
+                "ipv_1d": [
+                    -1
+                ],
+                "cart_1d": [
+                    -1
+                ],
+                "wish_1d": [
+                    -1
+                ],
+                "pay_1d": [
+                    -1
+                ],
+                "pv_3d": [
+                    -1
+                ],
+                "ipv_3d": [
+                    -1
+                ],
+                "cart_3d": [
+                    -1
+                ],
+                "wish_3d": [
+                    -1
+                ],
+                "pay_3d": [
+                    -1
+                ],
+                "pv_5d": [
+                    -1
+                ],
+                "ipv_5d": [
+                    -1
+                ],
+                "cart_5d": [
+                    -1
+                ],
+                "wish_5d": [
+                    -1
+                ],
+                "pay_5d": [
+                    -1
+                ],
+                "pv_7d": [
+                    -1
+                ],
+                "ipv_7d": [
+                    -1
+                ],
+                "cart_7d": [
+                    -1
+                ],
+                "wish_7d": [
+                    -1
+                ],
+                "pay_7d": [
+                    -1
+                ],
+                "pv_14d": [
+                    -1
+                ],
+                "ipv_14d": [
+                    -1
+                ],
+                "cart_14d": [
+                    -1
+                ],
+                "wish_14d": [
+                    -1
+                ],
+                "pay_14d": [
+                    -1
+                ],
+                "pv_30d": [
+                    -1
+                ],
+                "ipv_30d": [
+                    -1
+                ],
+                "cart_30d": [
+                    -1
+                ],
+                "wish_30d": [
+                    -1
+                ],
+                "pay_30d": [
+                    -1
+                ],
+                "pctr_1d": [
+                    -1.0
+                ],
+                "pcart_1d": [
+                    -1.0
+                ],
+                "pwish_1d": [
+                    -1.0
+                ],
+                "pcvr_1d": [
+                    -1.0
+                ],
+                "pctr_3d": [
+                    -1.0
+                ],
+                "pcart_3d": [
+                    -1.0
+                ],
+                "pwish_3d": [
+                    -1.0
+                ],
+                "pcvr_3d": [
+                    -1.0
+                ],
+                "pctr_5d": [
+                    -1.0
+                ],
+                "pcart_5d": [
+                    -1.0
+                ],
+                "pwish_5d": [
+                    -1.0
+                ],
+                "pcvr_5d": [
+                    -1.0
+                ],
+                "pctr_7d": [
+                    -1.0
+                ],
+                "pcart_7d": [
+                    -1.0
+                ],
+                "pwish_7d": [
+                    -1.0
+                ],
+                "pcvr_7d": [
+                    -1.0
+                ],
+                "pctr_14d": [
+                    -1.0
+                ],
+                "pcart_14d": [
+                    -1.0
+                ],
+                "pwish_14d": [
+                    -1.0
+                ],
+                "pcvr_14d": [
+                    -1.0
+                ],
+                "pctr_30d": [
+                    -1.0
+                ],
+                "pcart_30d": [
+                    -1.0
+                ],
+                "pwish_30d": [
+                    -1.0
+                ],
+                "pcvr_30d": [
+                    -1.0
                 ]
             }
         ]
@@ -800,8 +1809,8 @@ def request_sagemaker(args):
             ""
         ]],
         "register_brand": ["other"],
-        "last_login_device":["huawei"],
-        "last_login_brand":["huawei"],
+        "last_login_device": ["huawei"],
+        "last_login_brand": ["huawei"],
         "main_goods_id": ["1402902"],
         "main_cate_id": [
             "449"
@@ -922,7 +1931,7 @@ def request_sagemaker(args):
             "",
             "",
             ""
-        ],[
+        ], [
             "1327692",
             "1402902",
             "",
@@ -965,7 +1974,7 @@ def request_sagemaker(args):
             "",
             "",
             ""
-        ],[
+        ], [
             "748",
             "449",
             "",
@@ -1008,7 +2017,7 @@ def request_sagemaker(args):
             "",
             "",
             ""
-        ],[
+        ], [
             "1327692",
             "1402902",
             "",
@@ -1051,7 +2060,7 @@ def request_sagemaker(args):
             "",
             "",
             ""
-        ],[
+        ], [
             "748",
             "449",
             "",
@@ -1073,21 +2082,21 @@ def request_sagemaker(args):
             "",
             ""
         ]],
-        "register_brand": ["other","other"],
-        "last_login_device": ["huawei","huawei"],
-        "last_login_brand": ["huawei","huawei"],
-        "main_goods_id": ["1402902","1402902"],
+        "register_brand": ["other", "other"],
+        "last_login_device": ["huawei", "huawei"],
+        "last_login_brand": ["huawei", "huawei"],
+        "main_goods_id": ["1402902", "1402902"],
         "main_cate_id": [
-            "449",  "449"
+            "449", "449"
         ],
         "main_cate_level2_id": [
             "12", "12"
         ],
         "main_cate_level3_id": [
-            "74" ,"74"
+            "74", "74"
         ],
         "main_cate_level4_id": [
-            "449" ,"449"
+            "449", "449"
         ],
         "goods_id": [
             "1327692", "1327692"
@@ -1096,31 +2105,31 @@ def request_sagemaker(args):
             "748", "748"
         ],
         "is_rel_cate": [
-            0,0
+            0, 0
         ],
         "cate_level1_id": [
-            "2","2"
+            "2", "2"
         ],
         "cate_level2_id": [
             "12", "12"
         ],
         "is_rel_cate2": [
-            1,1
+            1, 1
         ],
         "cate_level3_id": [
-            "79","79"
+            "79", "79"
         ],
         "is_rel_cate3": [
-            0,0
+            0, 0
         ],
         "cate_level4_id": [
-            "748","748"
+            "748", "748"
         ],
         "is_rel_cate4": [
-            0,0
+            0, 0
         ],
         "country": [
-            "",""
+            "", ""
         ],
         "prop_seaon": [
             "Summer", "Summer"
@@ -1135,7 +2144,7 @@ def request_sagemaker(args):
             "Solid", "Solid"
         ],
         "prop_style": [
-            "Sexy",  "Sexy"
+            "Sexy", "Sexy"
         ],
         "prop_quantity": [
             "1", "1"
@@ -1147,7 +2156,7 @@ def request_sagemaker(args):
             56152, 56152
         ],
         "click_7d": [
-            1960,1960
+            1960, 1960
         ],
         "cart_7d": [
             51, 51
@@ -1156,16 +2165,16 @@ def request_sagemaker(args):
             363, 363
         ],
         "pay_total": [
-            320,320
+            320, 320
         ],
         "ord_7d": [
-            5,5
+            5, 5
         ],
         "pay_7d": [
-            5,5
+            5, 5
         ],
         "sales_price": [
-            0,0
+            0, 0
         ],
         "ctr_7d": [
             0.03490525715913948, 0.03490525715913948
@@ -1175,7 +2184,7 @@ def request_sagemaker(args):
         ]
     }}
 
-    if args.debug=='1':
+    if args.debug == '1':
         request['debug'] = "1"
         if args.format == 'row':
             request['ipt'] = req_row
@@ -1184,7 +2193,7 @@ def request_sagemaker(args):
                 request['ipt'] = rec_col2
             else:
                 request['ipt'] = rec_col
-    elif args.debug=='log':
+    elif args.debug == 'log':
         request['debug'] = "log"
     else:
         request['debug'] = ""
@@ -1214,7 +2223,10 @@ def request_sagemaker(args):
         result.append(tmp)
     print('final ret:', result)
 
+
 import numpy as np
+
+
 def request_sagemaker_time(args):
     request['goodsIdList'] = ["1327692"] * args.goods_num
     cost = []
@@ -1283,28 +2295,29 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--model_name', default='mtl_seq_esmm_v2')
     parser.add_argument('--region', default='in')
-    parser.add_argument('--edp_version', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    parser.add_argument('--edp_version', type=str,
+                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--endpoint', default='edp1-%s')
     parser.add_argument('--model_version', default='/ds=%s/model/')
     parser.add_argument('--tar_name', default='%s_%s.tar.gz')
     parser.add_argument('--debug', default='')
     parser.add_argument('--format', default='col')
-    parser.add_argument('--col_num',type=int, default=1)
+    parser.add_argument('--col_num', type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
-    parser.add_argument('--req_num', type=int,  default=10000)
-    parser.add_argument('--instance_count', type=int,  default=2)
-    parser.add_argument('--goods_num', type=int,  default=100)
+    parser.add_argument('--req_num', type=int, default=10000)
+    parser.add_argument('--instance_count', type=int, default=2)
+    parser.add_argument('--goods_num', type=int, default=100)
     args = parser.parse_args()
-    args.tar_name= args.tar_name % (args.model_name, args.edp_version)
+    args.tar_name = args.tar_name % (args.model_name, args.edp_version)
     args.model_version = args.model_version % args.edp_version
-    args.endpoint = args.endpoint % args.model_name.replace('_','-')
+    args.endpoint = args.endpoint % args.model_name.replace('_', '-')
     # if args.pipeline == 'update_edp':
     #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     # else:
     #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     print('endpoint:', args.endpoint)
-    deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/%s/'%args.model_name
+    deploy_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/%s/' % args.model_name
     code_raw_dir = './'
     todell_dir = '/home/sagemaker-user/todell/tmp'
     deploy_pkg_dir = deploy_dir + 'pkg/'
