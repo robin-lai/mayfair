@@ -1,5 +1,5 @@
 # coding: utf-8
-
+import copy
 import json
 import logging
 import pickle
@@ -145,6 +145,7 @@ def get_infer_json_from_request(d):
         for goods_id in d['goodsIdList']:
             example = {}
             example.update(example_base)
+            example.update(copy.deepcopy(mt_context))
             for name in item_features_string.keys():
                 if goods_id in item_dict:
                     if name in item_dict[goods_id]:
