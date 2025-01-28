@@ -65,7 +65,7 @@ def cross_fea(v1_list, v2_list, n=1):
     return bytes_fea(v3_list, n, True)
 
 
-def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,stat_file,
+def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,stat_file,stat_flag,
                    itm_shm_n, itm_shm_size, i2i_shm_n, i2i_shm_size, u2cart_wish_shm_n, u2cart_wish_shm_size,
                    hot_i2leaf_shm_n, hot_i2leaf_shm_size, site_hot_shm_n, site_hot_shm_size,
                    itm_stat_shm_n, itm_stat_shm_size
@@ -111,7 +111,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                             return (True, i2i_d[trig][tgt_id])
         return (False, 0.0)
 
-    def build_mt(tt, feature, stat_d):
+    def build_mt(tt, feature, stat_d, stat_flag):
         mt = []
         mt_w = []
         main_goods = int(tt['main_goods_id'])
@@ -164,7 +164,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 feature['mt_hot_i2leaf'] = ints_fea([1])
             if ele[0] == 'u2i_f':
                 feature['mt_u2i_f'] = ints_fea([1])
-        stat_d['s'].append(mt)
+        if stat_flag:
+            stat_d['s'].append(mt)
         feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
             value=[bytes(v, encoding="utf8") for v in mt]))
         feature['mt_w'] = floats_fea(mt_w)
@@ -292,12 +293,13 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
             # try:
             if int(t['pos_idx']) >= 200:
                 continue
-            stat_d['sample_id'].append(t['sample_id'])
-            stat_d['is_clk'].append(t['is_clk'])
-            stat_d['is_cart'].append(t['is_cart'])
-            stat_d['is_wish'].append(t['is_wish'])
-            stat_d['is_pay'].append(t['is_pay'])
-            build_mt(t, feature, stat_d)
+            if stat_flag:
+                stat_d['sample_id'].append(t['sample_id'])
+                stat_d['is_clk'].append(t['is_clk'])
+                stat_d['is_cart'].append(t['is_cart'])
+                stat_d['is_wish'].append(t['is_wish'])
+                stat_d['is_pay'].append(t['is_pay'])
+            build_mt(t, feature, stat_d, stat_flag)
             build_feature(t, feature)
             build_seq_on(t['seq_on'], feature)
             sample = tf.train.Example(features=tf.train.Features(feature=feature))
@@ -317,10 +319,11 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         print('upload from %s to %s' % (tfr_local_file, tfr_s3_file))
         os.system('aws s3 cp %s %s' % (tfr_local_file, tfr_s3_file))
         os.system('rm %s' % tfr_local_file)
-    local_stat_file = './tmp/%s.pkl'%str(proc_id)
-    with open(local_stat_file, 'wb') as fout:
-        pickle.dump(stat_d, fout)
-    os.system('aws s3 cp %s %s' % (local_stat_file, stat_file + '%s.pkl'%(str(proc_id))))
+    if stat_flag:
+        local_stat_file = './tmp/%s.pkl'%str(proc_id)
+        with open(local_stat_file, 'wb') as fout:
+            pickle.dump(stat_d, fout)
+        os.system('aws s3 cp %s %s' % (local_stat_file, stat_file + '%s.pkl'%(str(proc_id))))
 
 
 def get_file_list(args):
@@ -500,7 +503,7 @@ def main(args):
 
     file_list = get_file_list(args)
     proc_list = [multiprocessing.Process(target=build_tfrecord, args=(
-        fll[0], fll[1], fll[2],proc_id, args.stat_file, itm_shm.name, itm_shm_size, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
+        fll[0], fll[1], fll[2],proc_id, args.stat_file,args.stat_flag, itm_shm.name, itm_shm_size, i2i_shm.name, i2i_shm_size, u2cart_wish_shm.name, u2cart_wish_shm_size,
         hot_i2leaf_shm.name, hot_i2leaf_shm_size, site_hot_shm.name, site_hot_shm_size,
         itm_stat_shm.name, itm_stat_shm_size
     )) for proc_id, fll in
@@ -551,6 +554,7 @@ if __name__ == '__main__':
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_main_leaf2i_ds/ds=%s/')
     parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_site_hot/ds=%s/')
     parser.add_argument('--stat_file', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
+    parser.add_argument('--stat_flag', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
     if args.range != '':
