@@ -23,7 +23,7 @@ with tf.io.TFRecordWriter("output.tfrecord") as writer:
 
     def parse(data):
         feature_describe = {
-            "mt": v1.FixedLenFeature([], tf.string, default_value=""),
+            "mt": v1.FixedLenFeature(1, tf.string, default_value=""),
 
         }
         features = tf.io.parse_single_example(data, features=feature_describe)
