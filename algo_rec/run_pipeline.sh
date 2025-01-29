@@ -13,7 +13,7 @@ elif [ $1 = "pred" ]; then
     python ./rank/prod_v2/predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v2 --ds=20250120-20250126 --pred_ds=20250127
 
 elif [ $1 = 'tfr_mt_d' ]; then
-    python ./data_process/gen_tfrecored_multi_process_with_gen_mt.py --thread=1 --sample_num=1
+    python -m pdb ./data_process/gen_tfrecored_multi_process_with_gen_mt.py --thread=1 --sample_num=1
 
 elif [ $1 = 'tfr_mt' ]; then
     python ./data_process/gen_tfrecored_multi_process_with_gen_mt.py
