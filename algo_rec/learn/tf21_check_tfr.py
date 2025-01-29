@@ -34,14 +34,20 @@ record = sample.SerializeToString()
 with tf.io.TFRecordWriter("output.tfrecord") as writer:
     writer.write(record)
 
-    def parse(data):
-        feature_describe = {
-            "mt": v1.FixedLenFeature(3, tf.string, default_value=[""] * 3),
+def parse(data):
+    feature_describe = {
+        "mt": v1.FixedLenFeature(3, tf.string, default_value=[""] * 3),
 
-        }
-        features = tf.io.parse_single_example(data, features=feature_describe)
-        return features
+    }
+    features = tf.io.parse_single_example(data, features=feature_describe)
+    return features
 
-    ds = tf.data.TFRecordDataset("output.tfrecord")
-    ds = ds.map(parse).batch(10)
-    print(list(ds.as_numpy_iterator()))
+ds = tf.data.TFRecordDataset("output.tfrecord")
+ds = ds.map(parse).batch(10)
+print(list(ds.as_numpy_iterator()))
+try:
+    example = tf.train.Example()
+    example.ParseFromString(ds.numpy())  # 解析 TFRecord
+    print(example)
+except Exception as e:
+    print(f"Error parsing record: {e}")
