@@ -44,10 +44,10 @@ def parse(data):
 
 ds = tf.data.TFRecordDataset("output.tfrecord")
 ds = ds.map(parse).batch(10)
-print(list(ds.as_numpy_iterator()))
+print('1', list(ds.as_numpy_iterator()))
 try:
     example = tf.train.Example()
     example.ParseFromString(ds.numpy())  # 解析 TFRecord
-    print(example)
+    print('2', example)
 except Exception as e:
     print(f"Error parsing record: {e}")
