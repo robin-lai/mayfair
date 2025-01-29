@@ -28,7 +28,7 @@ def main(args):
             #
             # , "main_goods_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "main_cate_id": v1.FixedLenFeature(1, tf.string, "-1")
-             "main_cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
+            #  "main_cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "main_cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "main_cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
             #
@@ -47,7 +47,7 @@ def main(args):
             #
             # , "cate_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "goods_id": v1.FixedLenFeature(1, tf.string, "-1")
-            , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
+            # , "cate_level1_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
             # , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -58,16 +58,16 @@ def main(args):
             # , "seq_cate_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
             # , "seq_goods_id": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
             # , "highLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-            , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-            # , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
-            , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
-            "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
-            "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
-            "mt_i2i_main": v1.FixedLenFeature(1, tf.int64, default_value=0),
-            "mt_i2i_main_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0),
-            "mt_i2i_long": v1.FixedLenFeature(1, tf.int64, default_value=0),
-            "mt_i2i_long_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0)
-            ,"mt": v1.FixedLenFeature(6, tf.string, default_value=[""] * 6),
+            # , "highLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            # # , "lowerLevelSeqListGoods": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20)
+            # , "lowerLevelSeqListCateId": v1.FixedLenFeature(20, tf.string, default_value=[""] * 20),
+            # "highLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            # "lowerLevelSeqList_len": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            # "mt_i2i_main": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            # "mt_i2i_main_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0),
+            # "mt_i2i_long": v1.FixedLenFeature(1, tf.int64, default_value=0),
+            # "mt_i2i_long_score": v1.FixedLenFeature(1, tf.float32, default_value=0.0)
+            "mt": v1.FixedLenFeature(6, tf.string, default_value=[""] * 6),
             # "is_clk": v1.FixedLenFeature(1, tf.int64, 0)
             # , "is_pay": v1.FixedLenFeature(1, tf.int64, 0)
             # , "sample_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -76,6 +76,16 @@ def main(args):
         return features
     local_file = args.file.split('/')[-1]
     os.system('aws s3 cp %s %s' % (args.file, local_file))
+
+    ds2 = tf.data.TFRecordDataset(local_file)
+    for raw_record in ds2.take(100):  # 读取前5条记录
+        try:
+            example = tf.train.Example()
+            example.ParseFromString(raw_record.numpy())  # 解析 TFRecord
+            print(example)
+        except Exception as e:
+            print(f"Error parsing record: {e}")
+
     ds = tf.data.TFRecordDataset(local_file)
     ds = ds.map(parse).batch(args.batch_size)
     print(list(ds.as_numpy_iterator())[0:args.n])
