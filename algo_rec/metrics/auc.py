@@ -38,6 +38,7 @@ def auc(label, pre):
             rank_sum += sum(score_index[i[0]]) / len(score_index[i[0]]) * 1.0
     pos = label.count(1)
     neg = label.count(0)
+    # print(f"pos num:{pos} neg num:{neg}")
     if not pos or not neg:
         return None
     return (rank_sum - (pos * (pos + 1) * 0.5)) / (pos * neg)
@@ -65,6 +66,27 @@ def gauc(pred_d,label_idx, pre_idx, type):
     print('type:%s'%type, np.mean(gauc_l))
     pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
     print('type:%s percentle:'%type, np.percentile(gauc_l, pp))
+
+
+def calc_auc(args):
+    # label = [0, 0, 0, 0 ]
+    # pred = [0.1, 0.2, 0.3, 0.4]
+    # print(f"label all neg: auc {auc(label, pred)}")
+    # label = [1, 1, 1, 1]
+    # pred = [0.1, 0.2, 0.3, 0.4]
+    # print(f"label all pos: auc {auc(label, pred)}")
+    # label = [0, 1, 1, 1]
+    # pred = [0.1, 0.2, 0.3, 0.4]
+    # print(f"label have pos and neg: auc {auc(label, pred)}")
+    label = [0, 1, 0, 1]
+    pred = [0.1, 0.2, 0.3, 0.4]
+    print(f"label have pos and neg: auc {auc(label, pred)}")
+    # label = [0, 0, 0, 1]
+    # pred = [0.9, 0.8, 0.7, 0.4]
+    # print(f"label have pos and neg: auc {auc(label, pred)}")
+    # label = [0, 0, 0, 1]
+    # pred = [0.0, 0.1, 0.2, 0.9]
+    # print(f"label have pos and neg: auc {auc(label, pred)}")
 
 
 def main(args):
@@ -152,6 +174,7 @@ if __name__ == '__main__':
     parser.add_argument('--file', type=str, default='')
     parser.add_argument('--sample', type=str, default='v10')
     args = parser.parse_args()
+    # calc_auc(args)
     main(args)
 
 
