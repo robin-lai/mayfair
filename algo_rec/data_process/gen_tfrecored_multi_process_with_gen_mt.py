@@ -546,7 +546,7 @@ if __name__ == '__main__':
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
     parser.add_argument('--i2i_s3',
-                        default='rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.7_0.5/')
+                        default='rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.6_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
