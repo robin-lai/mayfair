@@ -10,5 +10,5 @@ elif [ $1 = "pred_d" ]; then
 #    python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v2 --ds=20250101-20250119 --proc=1 --sample_num=1
     python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v2 --ds=20241218-20241231 --proc=1 --sample_num=1
 elif [ $1 = "pred" ]; then
-    python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v2 --ds=20241218-20241231
+    python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v2 --ds=2050120-20250126
 fi
