@@ -39,15 +39,6 @@ def chunks(lst, n):
     for i in range(0, len(lst), c):
         yield lst[i:i + c]
 
-
-ID = 'sample_id'
-mt = 'mt'
-SCORE = 'probabilities'
-CTR = 'ctr'
-CVR = 'cvr'
-CTCVR = 'ctcvr'
-CLK = 'is_clk'
-PAY = 'is_pay'
 prod_model = 's3://warehouse-algo/rec/prod_model/'
 pred_dir = 's3://warehouse-algo/rec/model_pred/'
 tmp_dir = '/home/sagemaker-user/tmp/'
@@ -73,12 +64,18 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
 
     os.system('mkdir -p %s' % tmp_dir_data)
     score = {}
-    score[ID] = []
-    score[CTR] = []
-    score[CVR] = []
-    # score[CTCVR] = []
-    score[CLK] = []
-    score[PAY] = []
+    def gen_col(score, idx, key):
+        id = idx[key].tolist()
+        id = [e[0] for e in id]
+        if key in score:
+            score[key].extend(id)
+        else:
+            score[key] = id
+    def gen_pred_col(score, res, key):
+        prob = res[key].numpy().tolist()
+        prob = [e[0] for e in prob]
+        score[key].extend(prob)
+        
     for file_n, file in enumerate(tfr_list):
         # print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
@@ -93,18 +90,11 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
         predictor = tf.saved_model.load(dir).signatures["serving_default"]
         for idx in ds.as_numpy_iterator():
             feed_dict = {}
-            id = idx[ID].tolist()
-            id = [e[0] for e in id]
-            score[ID].extend(id)
-
-            # is_clk
-            clk = idx[CLK].tolist()
-            clk = [e[0] for e in clk]
-            score[CLK].extend(clk)
-            # is_pay
-            pay = idx[PAY].tolist()
-            pay = [e[0] for e in pay]
-            score[PAY].extend(pay)
+            gen_col(score, idx, "sample_id")
+            gen_col(score, idx, "is_clk")
+            gen_col(score, idx, "is_pay")
+            gen_col(score, idx, "mt")
+            gen_col(score, idx, "cate_id")
 
             for name, v in feature_describe_pred.items():
                 if name in ['is_clk', 'is_pay', 'sample_id']:
@@ -122,18 +112,8 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             if debug:
                 print('red:', res)
 
-            prob = res[CTR].numpy().tolist()
-            prob = [e[0] for e in prob]
-            score[CTR].extend(prob)
-            # print('res', res)
-            cvr = res[CVR].numpy().tolist()
-            cvr = [e[0] for e in cvr]
-            score[CVR].extend(cvr)
-            # ctcvr
-            # if CTCVR in res:
-            #     ctcvr = res[CTCVR].numpy().tolist()
-            #     ctcvr = [e[0] for e in ctcvr]
-            #     score[CTCVR].extend(ctcvr)
+            gen_pred_col(score, res, "ctr")
+            gen_pred_col(score, res, "cvr")
         # print('rm file:',file_suffix)
         print('proc %s process file:%s / %s' % (str(proc), str(file_n), str(len(tfr_list))))
         os.system('rm %s' % file_suffix)
@@ -272,8 +252,8 @@ def compute_metrics(merge_score):
     # auc
     auc_ctr_d = copy.deepcopy(model_info)
     st = time.time()
-    pctr = merge_score[CTR]
-    is_clk = merge_score[CLK]
+    pctr = merge_score["ctr"]
+    is_clk = merge_score["is_clk"]
     avg_pred_ctr = np.mean(pctr)
     avg_label_clk = np.mean(is_clk)
     print('N:', len(pctr), 'avg_pred_ctr:', avg_pred_ctr, 'avg_label_clk:', avg_label_clk)
@@ -374,6 +354,57 @@ def compute_metrics(merge_score):
     #     auc_list = pickle.load(fin)
 
 
+def statistics_score(merge_score):
+    d  = {}
+    mt_d = {}
+        # {"pos_avg_score":0.0, "pos_n":0, "neg_avg_score":0.0, "neg_n":0}
+    pos_sum, neg_sum, pos_n, neg_n = 0, 0, 0, 0
+    pos_sum_pay, neg_sum_pay, pos_n_pay, neg_n_pay = 0, 0, 0, 0
+    for mt, is_clk, is_pay, ctr, cvr in zip(merge_score['mt'], merge_score['is_clk'], merge_score["is_pay"], merge_score['ctr'], merge_score['cvr']):
+        if int(is_clk) == 1:
+            pos_sum += ctr
+            pos_n += 1
+            if int(is_pay) == 1:
+                pos_sum_pay += cvr
+                pos_n_pay += 1
+            else:
+                neg_sum_pay += cvr
+                neg_n_pay += 1
+        else:
+            neg_sum += 1
+            neg_n += 1
+
+        for s in mt:
+            if s in mt_d:
+                mt_d[s]['pctr_sum'] += ctr
+                if is_clk == 1:
+                    mt_d[s]['pos_n'] += 1
+                else:
+                    mt_d[s]['neg_n'] += 1
+            else:
+                mt_d[s] = {"pctr_sum":ctr, "pos_n": 1 if is_clk == 1 else 0
+                        ,"neg_n": 1 if is_clk == 1 else 0}
+
+
+    d['pos_n'] = pos_n
+    d['neg_n'] = neg_n
+    d['pos_avg_score'] = round(pos_sum / pos_n, 5)
+    d['neg_avg_score'] = round(neg_sum / neg_n, 5)
+
+    d['pos_n_pay'] = pos_n_pay
+    d['neg_n_pay'] = neg_n_pay
+    d['pos_avg_score_pay'] = round(pos_sum_pay / pos_n_pay, 5)
+    d['neg_avg_score_pay'] = round(neg_sum_pay / neg_n_pay, 5)
+    
+    for k, v in mt_d.items():
+        n = v['pos_n'] + v['neg_n']
+        pctr = v['pctr_sum'] / n
+        ctr = v['pos_n'] / n
+        d[k] = {'pctr':pctr, 'ctr': ctr, 'pos_n': v['pos_n'], 'neg_n':v['neg_n'], 'n':n}
+    print("statistic score:")
+    print(d)
+
+
 def get_model_version(prefix):
     print(f"prefix:{prefix}")
     import boto3
@@ -393,6 +424,7 @@ def main(args):
     predict_files = multi_process(args, file_batch)
     merge_score = merge_pred_score(args, predict_files)
     compute_metrics(merge_score)
+    statistics_score(merge_score)
 
 
 if __name__ == '__main__':
