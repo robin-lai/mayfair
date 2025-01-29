@@ -47,7 +47,7 @@ ds = ds.map(parse).batch(10)
 print('1', list(ds.as_numpy_iterator()))
 
 ds2 = tf.data.TFRecordDataset("output.tfrecord")
-for raw_record in ds.take(5):  # 读取前5条记录
+for raw_record in ds2.take(5):  # 读取前5条记录
     try:
         example = tf.train.Example()
         example.ParseFromString(raw_record.numpy())  # 解析 TFRecord
