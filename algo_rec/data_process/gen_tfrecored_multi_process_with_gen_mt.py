@@ -168,8 +168,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
             stat_d['s'].append(mt)
         if debug:
             print('mt', mt)
-        feature['mt'] = tf.train.Feature(bytes_list=tf.train.BytesList(
-            value=[bytes(v, encoding="utf8") for v in mt]))
+        feature['mt'] =  bytes_fea(mt, n=6)
         feature['mt_w'] = floats_fea(mt_w)
 
     def build_seq_on(seq_on, feature):
