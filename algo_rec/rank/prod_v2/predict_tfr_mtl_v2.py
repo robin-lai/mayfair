@@ -367,7 +367,7 @@ def statistics_score(merge_score):
                 neg_sum_pay += cvr
                 neg_n_pay += 1
         else:
-            neg_sum += 1
+            neg_sum += ctr
             neg_n += 1
 
         for s in mt:
