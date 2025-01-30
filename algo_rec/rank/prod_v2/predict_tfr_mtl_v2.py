@@ -1,18 +1,12 @@
 import argparse
-from heapq import merge
 from datetime import datetime,timedelta
 import pprint
-import pyarrow as pa
 import copy
 import traceback
 from random import shuffle
 import json
-
-from pyarrow import parquet
 import tensorflow as tf
 import sys
-
-from rope.base.builtins import get_file
 
 from feature_serv_describe_tfv2 import feature_describe_pred
 
@@ -20,7 +14,6 @@ print(tf.__version__)
 if '2' not in tf.__version__:
     print('use tf2')
     sys.exit(0)
-import tensorflow.compat.v1 as v1
 import multiprocessing
 import boto3
 import os

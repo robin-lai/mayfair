@@ -59,7 +59,8 @@ feature_describe_pred = {
     "pcvr_30d": v1.FixedLenFeature(1, tf.float32, -1.0),
     "mt_i2i_main_score": v1.FixedLenFeature(1, tf.float32, -1.0),
     "mt_i2i_long_score": v1.FixedLenFeature(1, tf.float32, -1.0),
-    "mt_i2i_short_score": v1.FixedLenFeature(1, tf.float32, -1.0)
+    "mt_i2i_short_score": v1.FixedLenFeature(1, tf.float32, -1.0),
+    "mt": v1.FixedLenFeature(6, tf.string, default_value=[""] * 6)
 
     , "is_rel_cate": v1.FixedLenFeature(1, tf.int64, 0)
     , "is_rel_cate2": v1.FixedLenFeature(1, tf.int64, 0)
