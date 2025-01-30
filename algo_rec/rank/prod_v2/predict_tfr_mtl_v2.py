@@ -9,7 +9,6 @@ import tensorflow as tf
 import sys
 
 from feature_serv_describe_tfv2 import feature_describe_pred
-import pdb
 print(tf.__version__)
 if '2' not in tf.__version__:
     print('use tf2')
@@ -60,9 +59,10 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
     def gen_col_list(score, idx, key):
         id = idx[key].tolist()
         if key in score:
-            score[key].extend(id)
+            score[key].append(id)
         else:
-            score[key] = id
+            score[key] = []
+            score[key].append(id)
 
     def gen_col(score, idx, key):
         id = idx[key].tolist()
@@ -96,7 +96,6 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             gen_col(score, idx, "sample_id")
             gen_col(score, idx, "is_clk")
             gen_col(score, idx, "is_pay")
-            pdb.set_trace()
             gen_col_list(score, idx, "mt")
             gen_col(score, idx, "cate_id")
 
