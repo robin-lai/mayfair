@@ -78,7 +78,7 @@ def main(args):
     os.system('aws s3 cp %s %s' % (args.file, local_file))
 
     ds2 = tf.data.TFRecordDataset(local_file)
-    for raw_record in ds2.take(100):  # 读取前5条记录
+    for raw_record in ds2.take(2):  # 读取前5条记录
         try:
             example = tf.train.Example()
             example.ParseFromString(raw_record.numpy())  # 解析 TFRecord
@@ -86,9 +86,9 @@ def main(args):
         except Exception as e:
             print(f"Error parsing record: {e}")
 
-    # ds = tf.data.TFRecordDataset(local_file)
-    # ds = ds.map(parse).batch(args.batch_size)
-    # print(list(ds.as_numpy_iterator())[0:args.n])
+    ds = tf.data.TFRecordDataset(local_file)
+    ds = ds.map(parse).batch(args.batch_size)
+    print(list(ds.as_numpy_iterator())[0:args.n])
     # [{'is_clk': array([[1],
     #          [1]]),
     #   'is_pay': array([[0],
