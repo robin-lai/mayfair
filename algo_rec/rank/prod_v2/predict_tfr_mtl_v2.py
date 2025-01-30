@@ -379,6 +379,7 @@ def statistics_score(merge_score):
 
         for ll in mt:
             for s in ll:
+                if s == '':continue
                 if s in mt_d:
                     mt_d[s]['pctr_sum'] += ctr
                     if is_clk == 1:
