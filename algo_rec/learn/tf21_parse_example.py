@@ -86,9 +86,9 @@ def main(args):
         except Exception as e:
             print(f"Error parsing record: {e}")
 
-    ds = tf.data.TFRecordDataset(local_file)
-    ds = ds.map(parse).batch(args.batch_size)
-    print(list(ds.as_numpy_iterator())[0:args.n])
+    # ds = tf.data.TFRecordDataset(local_file)
+    # ds = ds.map(parse).batch(args.batch_size)
+    # print(list(ds.as_numpy_iterator())[0:args.n])
     # [{'is_clk': array([[1],
     #          [1]]),
     #   'is_pay': array([[0],
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--file',type=str, default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=20250128/part-00000-4e93eb14-9da8-475f-b889-7ff7ca761cfe-c000')
+    parser.add_argument('--file',type=str, default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=20250129/part-00005-e6afc2ce-f0f3-46bd-a574-d1b16ef7de74-c000')
     parser.add_argument('--n',type=int, default=10)
     parser.add_argument('--batch_size',type=int, default=10)
     args = parser.parse_args()
