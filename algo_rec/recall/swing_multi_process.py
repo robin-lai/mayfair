@@ -141,6 +141,7 @@ def swing(*args):
     alph = args[6]
     ubeta = args[7]
     row_n = args[8]
+    ltscore = args[9]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -205,7 +206,7 @@ def swing(*args):
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
-            tgt = [e for e in tgt if float(e[1]) > 0]
+            tgt = [e for e in tgt if float(e[1]) > ltscore]
             tgt.sort(key=lambda x: x[1], reverse=True)
             vs = []
             for ele in tgt:
@@ -373,7 +374,7 @@ def main(args, item_feature):
         st = time.time()
         outfile = './swing_rec_%s_part_%s'
         s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta, args.row_n]) for i in range(args.p)]
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta, args.row_n, args.ltscore]) for i in range(args.p)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
@@ -399,6 +400,7 @@ if __name__ == '__main__':
     parser.add_argument('--ubeta', type=float, default=0.5)
     parser.add_argument('--alph', type=float, default=1.0)
     parser.add_argument('--row_n', type=int, default=300)
+    parser.add_argument('--ltscore', type=float, default=0.0005)
     parser.add_argument('--p',type=int, default=7)
     parser.add_argument('--sample_num',type=int, default=None)
     parser.add_argument('--pre_ds', type=str, default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
