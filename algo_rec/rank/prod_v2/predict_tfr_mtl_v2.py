@@ -377,16 +377,17 @@ def statistics_score(merge_score):
             neg_sum += ctr
             neg_n += 1
 
-        for s in mt:
-            if s in mt_d:
-                mt_d[s]['pctr_sum'] += ctr
-                if is_clk == 1:
-                    mt_d[s]['pos_n'] += 1
+        for ll in mt:
+            for s in ll:
+                if s in mt_d:
+                    mt_d[s]['pctr_sum'] += ctr
+                    if is_clk == 1:
+                        mt_d[s]['pos_n'] += 1
+                    else:
+                        mt_d[s]['neg_n'] += 1
                 else:
-                    mt_d[s]['neg_n'] += 1
-            else:
-                mt_d[s] = {"pctr_sum":ctr, "pos_n": 1 if is_clk == 1 else 0
-                        ,"neg_n": 1 if is_clk == 1 else 0}
+                    mt_d[s] = {"pctr_sum":ctr, "pos_n": 1 if is_clk == 1 else 0
+                            ,"neg_n": 1 if is_clk == 1 else 0}
 
 
     d['pos_n'] = pos_n
