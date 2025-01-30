@@ -398,8 +398,15 @@ def statistics_score(merge_score):
 
     d['pos_n_pay'] = pos_n_pay
     d['neg_n_pay'] = neg_n_pay
-    d['pos_avg_score_pay'] = round(pos_sum_pay / pos_n_pay, 5)
-    d['neg_avg_score_pay'] = round(neg_sum_pay / neg_n_pay, 5)
+    if pos_n_pay == 0:
+        d['pos_avg_score_pay'] = 0
+    else:
+        d['pos_avg_score_pay'] = round(pos_sum_pay / pos_n_pay, 5)
+
+    if neg_n_pay == 0:
+        d['neg_avg_score_pay'] = 0
+    else:
+        d['neg_avg_score_pay'] = round(neg_sum_pay / neg_n_pay, 5)
     
     for k, v in mt_d.items():
         n = v['pos_n'] + v['neg_n']
