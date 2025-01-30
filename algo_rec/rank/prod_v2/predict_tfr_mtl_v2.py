@@ -57,6 +57,13 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
 
     os.system('mkdir -p %s' % tmp_dir_data)
     score = {}
+    def gen_col_list(score, idx, key):
+        id = idx[key].tolist()
+        if key in score:
+            score[key].extend(id)
+        else:
+            score[key] = id
+
     def gen_col(score, idx, key):
         id = idx[key].tolist()
         id = [e[0] for e in id]
@@ -89,7 +96,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             gen_col(score, idx, "sample_id")
             gen_col(score, idx, "is_clk")
             gen_col(score, idx, "is_pay")
-            gen_col(score, idx, "mt")
+            gen_col_list(score, idx, "mt")
             gen_col(score, idx, "cate_id")
 
             for name, v in feature_describe_pred.items():
