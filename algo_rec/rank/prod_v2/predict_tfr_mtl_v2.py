@@ -67,7 +67,10 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
     def gen_pred_col(score, res, key):
         prob = res[key].numpy().tolist()
         prob = [e[0] for e in prob]
-        score[key].extend(prob)
+        if key in score:
+            score[key].extend(prob)
+        else:
+            score[key] = prob
         
     for file_n, file in enumerate(tfr_list):
         # print('download file into tmp:',file)
