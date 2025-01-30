@@ -570,7 +570,7 @@ if __name__ == '__main__':
                 print('args.pre_ds:', args.pre_ds)
                 args.item_file = args.item_file % args.ds
                 args.item_stat = args.item_stat % pre_ds
-                args.i2i_s3 = args.i2i_s3 % args.pre_ds
+                args.i2i_s3 = args.i2i_s3 % '20250122'
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
@@ -601,7 +601,7 @@ if __name__ == '__main__':
         print('args.pre_ds:', args.pre_ds)
         args.item_file = args.item_file % args.ds
         args.item_stat = args.item_stat % pre_ds
-        args.i2i_s3 = args.i2i_s3 % args.pre_ds
+        args.i2i_s3 = args.i2i_s3 % '20250122'
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
         args.hot_i2leaf = args.hot_i2leaf % pre_ds
         args.site_hot = args.site_hot % pre_ds
