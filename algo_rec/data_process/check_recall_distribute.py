@@ -67,7 +67,10 @@ def recall_ana(d):
 def main(args):
     file_ll = get_bucket_files('./tmp/', args.stat_file)
     d = {}
-    for i, file in enumerate(file_ll[1:]): # first is base dir
+    for i, file in enumerate(file_ll): # first is base dir
+        if not str.endswith(file, '.pkl'):
+            print(f"file {file} not end with .pkl")
+            continue
         with open(file, 'rb') as fin:
             d[i] = pickle.load(fin)
     recall_ana(d)
