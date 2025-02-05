@@ -12,11 +12,20 @@ from aws_auth_init import *
 import sys
 from pathlib import Path
 
+import requests
+def alert_feishu(msg, at_all=True):
+    at_str = '<at user_id="all"></at>' if at_all else ''
+    x = requests.post('https://open.feishu.cn/open-apis/bot/v2/hook/bb04f4f5-cc78-495b-8b59-c91b669dd55b',
+                     headers={'Content-Type': 'application/json'},
+                     json={'msg_type': 'text', 'content': {'text': at_str + str(msg)}},
+    )
+    print('Alert by Feishu', x)
+
+# print(sys.path)
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
+# sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
 print(sys.path)
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent.parent))
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
-print(sys.path)
-from algo_rec.utils.util import add_job_monitor, alert_feishu
+# from algo_rec.utils.util import add_job_monitor, alert_feishu
 
 # steup up
 s3_cli = boto3.client('s3')
@@ -57,7 +66,7 @@ def main(args):
         print('set site_code to:', args.site_code)
 
     sg_estimator = TensorFlow(
-        entry_point='prod_v3/run_rec_model.py',
+        entry_point='run_rec_model.py',
         dependencies=['aws_auth_init.py','build_feature_columns.py','feature_serv_describe.py'
             ,'din_mask_esmm.py','attention.py','din_base.py', 'din_mask_ctr.py', 'din_mask_esmm.py'],
         role=role,
