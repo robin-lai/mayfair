@@ -31,10 +31,11 @@ def recall_ana(d):
         s_len = len(d[i]['s'])
         n += s_len
         print(f"s_len:{s_len}")
-        if len(d[i]['s']) < 1:
-            not_recall_n += 1
 
         for ss, is_clk in zip(d[i]['s'], d[i]['is_clk']):
+            if len(ss) < 1:
+                not_recall_n += 1
+                continue
             for s in ss:
                 if int(is_clk) == 1:
                     clk_n += 1
