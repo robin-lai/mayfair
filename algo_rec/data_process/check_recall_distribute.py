@@ -68,7 +68,7 @@ if __name__ == '__main__':
         description='',
         epilog='')
     parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
-    parser.add_argument('--ds', default='20240114')
+    parser.add_argument('--ds', default='20250126')
     args = parser.parse_args()
     args.stat_file = args.stat_file % args.ds
     print(f"stat_file:{args.stat_file}")
