@@ -36,6 +36,7 @@ item_bhv_num_file = './%s_item_bhv_num.pkl'
 trig_item_list_file = './%s_trig_item_list_part_%s.pkl'
 item_info_file = './%s_item_info.pkl'
 pklfile = './swing_rec_%s_part_%s.pkl'
+pair_num_pklfile = './pair_num_%s_part_%s.pkl'
 round_num = 5
 
 
@@ -142,6 +143,7 @@ def swing(*args):
     ubeta = args[7]
     row_n = args[8]
     ltscore = args[9]
+    pair_pklfile = args[10]
     with open(item_bhv_user_list_file%(c), 'rb') as fin:
         item_bhv_user_list = pickle.load(fin)
     with open(user_bhv_item_list_file%(c), 'rb') as fin:
@@ -151,6 +153,7 @@ def swing(*args):
     with open(item_bhv_num_file%(c), 'rb') as fin:
         item_bhv_num = pickle.load(fin)
     ret = {}
+    pair_num_d = {}
     n = 0
     N = len(trig_itm_list)
     st0 = time.time()
@@ -175,6 +178,11 @@ def swing(*args):
                 for tgt_item in common_items:
                     if trig_itm == tgt_item:
                         continue
+                    pair_key = str(trig_itm) + '_' + str(tgt_item)
+                    if pair_key in pair_num_d:
+                        pair_num_d[pair_key] += pair_num_d[pair_key] + 1
+                    else:
+                        pair_num_d[pair_key] = 1
                     if user_debias and item_debias:
                         score = round((1 / math.pow(user_bhv_num[user_sample[i]], ubeta))
                                       * (1 / math.pow(user_bhv_num[user_sample[j]], ubeta))
@@ -203,6 +211,8 @@ def swing(*args):
     print('write swing result to file:', out_file)
     with open(pkl_file, 'wb') as fout:
         pickle.dump(ret, fout)
+    with open(pair_pklfile, 'wb') as fout:
+        pickle.dump(pair_num_d, fout)
     with open(out_file, 'w') as fout:
         lines = []
         for trig, tgt in ret.items():
@@ -309,6 +319,10 @@ def swing_result_ana(args, country, p):
     for i in range(p):
         with open(pklfile % (country, i), 'rb') as fin:
             d.update(pickle.load(fin))
+    pair_num_d = {}
+    for i in range(p):
+        with open(pair_num_pklfile % (country, i), 'rb') as fin:
+            pair_num_d.update(pickle.load(fin))
     print('swing result merge item num:', len(d.keys()))
     with open(item_info_file%country, 'rb') as fin:
         item_info = pickle.load(fin)
@@ -318,18 +332,22 @@ def swing_result_ana(args, country, p):
     dd = {}
     ll = []
     stat = {'is_cat2_rel_ratio': 0, 'is_cat3_rel_ratio': 0, 'is_leaf_rel_ratio': 0}
-    topn = 100
     n = len(d.keys())
     for itm, v in d.items():
         trig_t = item_info[itm]
         v = [e for e in v if float(e[1]) > 0]
         v.sort(key=lambda x: x[1], reverse=True)
         cat2_c, cat3_c, leaf_c = 0,0,0
-        vs = v if len(v) <= 100 else v[0:topn]
+        vs = v if len(v) <= args.row_n else v[0:args.row_n]
         tgt_list_tmp = []
         for ele in vs:
             tgt_t = item_info[ele[0]]
-            tmp_l = [str(ele[0]), str(item_num[ele[0]]), str(ele[1]) , str(tgt_t[0]), str(tgt_t[1]) ,str(tgt_t[2])]
+            pair_key = str(itm) + '_' + str(ele[0])
+            if pair_key in pair_num_d:
+                pair_n = pair_num_d[pair_key]
+            else:
+                pair_n = 0
+            tmp_l = [str(ele[0]), str(item_num[ele[0]]), str(ele[1]) , str(tgt_t[0]), str(tgt_t[1]) ,str(tgt_t[2]), str(pair_n)]
             tgt_list_tmp.append(','.join(tmp_l))
             if trig_t[0] == tgt_t[0]:
                 cat2_c += 1
@@ -374,7 +392,7 @@ def main(args, item_feature):
         st = time.time()
         outfile = './swing_rec_%s_part_%s'
         s3_file = args.s3_dir + 'swing_rec_%s_part_%s'
-        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta, args.row_n, args.ltscore]) for i in range(args.p)]
+        proc_list = [multiprocessing.Process(target=swing, args=[trig_item_list_file%(country, i), outfile%(country,i), country, s3_file%(country, i), pklfile%(country, i), args.beta, args.alph, args.ubeta, args.row_n, args.ltscore, pair_num_pklfile%(country, i)]) for i in range(args.p)]
         [p.start() for p in proc_list]
         [p.join() for p in proc_list]
         fail_cnt = sum([p.exitcode for p in proc_list])
