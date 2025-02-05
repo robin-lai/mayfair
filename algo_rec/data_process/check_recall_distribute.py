@@ -90,6 +90,8 @@ if __name__ == '__main__':
     if args.range != '':
         try:
             for ds in args.range.split(','):
+                args = parser.parse_args()
+                args.ds = ds
                 args.stat_file = args.stat_file % args.ds
                 print(f"stat_file:{args.stat_file}")
                 main(args)
