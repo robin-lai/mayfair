@@ -1,6 +1,7 @@
 import argparse
-import os
+import os,sys
 import pickle
+import traceback
 
 import boto3
 
@@ -87,10 +88,15 @@ if __name__ == '__main__':
     parser.add_argument('--range', default='20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109,20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119')
     args = parser.parse_args()
     if args.range != '':
-        for ds in args.range.split(','):
-            args.stat_file = args.stat_file % args.ds
-            print(f"stat_file:{args.stat_file}")
-            main(args)
+        try:
+            for ds in args.range.split(','):
+                args.stat_file = args.stat_file % args.ds
+                print(f"stat_file:{args.stat_file}")
+                main(args)
+        except Exception:
+            print("-" * 60)
+            traceback.print_exc(file=sys.stdout)
+            print("-" * 60)
     else:
         args.stat_file = args.stat_file % args.ds
         print(f"stat_file:{args.stat_file}")
