@@ -83,7 +83,9 @@ if __name__ == '__main__':
         epilog='')
     parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
     parser.add_argument('--ds', default='20250126')
+    parser.add_argument('--range', default='20250101,20250102')
     args = parser.parse_args()
-    args.stat_file = args.stat_file % args.ds
-    print(f"stat_file:{args.stat_file}")
-    main(args)
+    for ds in args.range.split(','):
+        args.stat_file = args.stat_file % ds
+        print(f"stat_file:{args.stat_file}")
+        main(args)
