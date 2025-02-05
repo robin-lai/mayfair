@@ -41,11 +41,11 @@ def recall_ana(d):
                     if s in clk_recall:
                         clk_recall[s] += 1
                     else:
-                        clk_recall[s] = 0
+                        clk_recall[s] = 1
                 if s in recall:
                     recall[s] += 1
                 else:
-                    recall[s] = 0
+                    recall[s] = 1
     print(f"not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
     for k, v in recall.items():
         print(f"曝光口径 s:{k}, v:{v} n:{n} ratio:{v / n}")
