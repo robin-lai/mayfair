@@ -1,5 +1,7 @@
 if [ $1 = "tfr_mt" ]; then
     python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250120
+elif [ $1 = "tfr_mt_d" ]; then
+    python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250120 --sample_num=1 --thread=1
 elif [ $1 = "mt_ana" ]; then
     python check_recall_distribute.py --range='' --ds=20250126
 elif [ $1 = "mt_ana_range" ]; then
