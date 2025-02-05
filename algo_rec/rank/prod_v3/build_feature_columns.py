@@ -20,10 +20,6 @@ def build_feature_columns():
                   m_cate_fc_emb,m_goods_id_fc_emb]
 
     # int col
-    is_rel_cate_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate", num_buckets=3, default_value=0)
-    is_rel_cate2_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate2", num_buckets=3, default_value=0)
-    is_rel_cate3_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate3", num_buckets=3, default_value=0)
-    is_rel_cate4_fc = tf.feature_column.categorical_column_with_identity("is_rel_cate4", num_buckets=3, default_value=0)
     sales_price_fc = tf.feature_column.categorical_column_with_identity("sales_price", num_buckets=20, default_value=0)
     mt_i2i_main_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_main", num_buckets=3, default_value=0), 8)
     mt_i2i_main_score = tf.feature_column.numeric_column(key="mt_i2i_main_score", default_value=-1, dtype=tf.float32)
@@ -35,13 +31,9 @@ def build_feature_columns():
     mt_hot_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_hot", num_buckets=3, default_value=0), 8)
 
 
-    is_rel_cate_emb = tf.feature_column.embedding_column(is_rel_cate_fc, 8)
-    is_rel_cate2_emb = tf.feature_column.embedding_column(is_rel_cate2_fc, 8)
-    is_rel_cate3_emb = tf.feature_column.embedding_column(is_rel_cate3_fc, 8)
-    is_rel_cate4_emb = tf.feature_column.embedding_column(is_rel_cate4_fc, 8)
     sales_price_emb = tf.feature_column.embedding_column(sales_price_fc, 8)
 
-    numric_cols_emb = [is_rel_cate_emb, is_rel_cate2_emb, is_rel_cate3_emb, is_rel_cate4_emb, sales_price_emb,
+    numric_cols_emb = [sales_price_emb,
                        mt_i2i_main_emb,mt_i2i_main_score,mt_i2i_long_emb,mt_i2i_long_score,mt_i2i_short_emb,
                        mt_i2i_short_score,mt_hot_i2leaf_emb,mt_hot_emb]
 
