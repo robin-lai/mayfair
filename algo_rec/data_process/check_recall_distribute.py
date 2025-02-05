@@ -28,6 +28,7 @@ def recall_ana(d, ds):
     recall_stat = []
     recall = {}
     clk_recall = {}
+    pos_idx_d = {"all_exp":[], "all_clk":[]}
     n = 0
     n_dup = 0
     clk_n = 0
@@ -39,8 +40,10 @@ def recall_ana(d, ds):
         n += s_len
         print(f"s_len:{s_len}")
 
-        for ss, is_clk in zip(d[i]['s'], d[i]['is_clk']):
+        for ss, is_clk, pos_idx in zip(d[i]['s'], d[i]['is_clk'], d[i]['pos_idx']):
+            pos_idx_d['all_exp'].append(pos_idx)
             if int(is_clk) == 1:
+                pos_idx_d['all_clk'].append(pos_idx)
                 clk_n += 1
 
             if len(ss) < 1:
@@ -50,7 +53,15 @@ def recall_ana(d, ds):
                 continue
             for s in ss:
                 n_dup += 1
+                if s in pos_idx_d:
+                    pos_idx_d[s + '_exp'].append(pos_idx)
+                else:
+                    pos_idx_d[s + '_exp'] = [pos_idx]
                 if int(is_clk) == 1:
+                    if s in pos_idx_d:
+                        pos_idx_d[s + '_clk'].append(pos_idx)
+                    else:
+                        pos_idx_d[s + '_clk'] = [pos_idx]
                     clk_n_dup += 1
                     if s in clk_recall:
                         clk_recall[s] += 1
@@ -60,16 +71,19 @@ def recall_ana(d, ds):
                     recall[s] += 1
                 else:
                     recall[s] = 1
-    recall_stat.append([ds, 'all', 'exp', not_recall_n, n, round(not_recall_n / n, 5)])
+    pp = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    import numpy as np
+
+    recall_stat.append([ds, 'all', 'exp', not_recall_n, n, round(not_recall_n / n, 5),  np.percentile(pos_idx_d['all_exp'], pp)])
     print(f"曝光口径 not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
     print(f"点击口径 not_recall_n:{not_recall_n_clk} ratio:{not_recall_n_clk / clk_n}")
-    recall_stat.append([ds, 'all', 'clk', not_recall_n_clk, clk_n, round(not_recall_n_clk / clk_n, 5)])
+    recall_stat.append([ds, 'all', 'clk', not_recall_n_clk, clk_n, round(not_recall_n_clk / clk_n, 5),  np.percentile(pos_idx_d['all_clk'], pp)])
     for k, v in recall.items():
         print(f"曝光口径 s:{k}, v:{v} n:{n_dup} ratio:{v / n_dup}")
-        recall_stat.append([ds, k, 'exp', v, n_dup, round(v / n_dup, 5)])
+        recall_stat.append([ds, k, 'exp', v, n_dup, round(v / n_dup, 5),  np.percentile(pos_idx_d[k + '_exp'], pp)])
     for k, v in clk_recall.items():
         print(f"点击口径 s:{k}, v:{v} n:{clk_n_dup} ratio:{v / clk_n_dup}")
-        recall_stat.append([ds, k, 'clk', v, clk_n_dup, round(v / clk_n_dup, 5)])
+        recall_stat.append([ds, k, 'clk', v, clk_n_dup, round(v / clk_n_dup, 5),  np.percentile(pos_idx_d[k + '_clk'], pp)])
     print(f"recall_stat {recall_stat}")
     return recall_stat
 
@@ -115,6 +129,6 @@ if __name__ == '__main__':
         args.stat_file = args.stat_file % args.ds
         print(f"stat_file:{args.stat_file}")
         recall_stat = main(args)
-    df = pd.DataFrame(recall_stat, columns=['ds','recall', 'koujing', 'fengzi', 'fengmu', 'ratio'])
+    df = pd.DataFrame(recall_stat, columns=['ds','recall', 'koujing', 'fengzi', 'fengmu', 'ratio', 'pos_idx_pp'])
     df.to_csv(args.local_file)
 

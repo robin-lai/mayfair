@@ -248,7 +248,7 @@ def gauc_fun(pred_d,label_idx, pre_idx, type):
     gpos = len(gauc_l)
     gneg = none_auc
     gauc = np.mean(gauc_l)
-    pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
+    pp = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     gaucpp = np.percentile(gauc_l, pp)
     print('none_auc num %s of all %s :%s'%(str(gneg),type, str(gnum)))
     print('%s num:%s have auc'%(type, str(gpos)))

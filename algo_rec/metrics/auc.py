@@ -64,7 +64,7 @@ def gauc(pred_d,label_idx, pre_idx, type):
     print('none_auc num %s of all %s :%s'%(str(none_auc),type, str(len(pred_d.keys()))))
     print('%s num:%s have auc'%(type, str(len(gauc_l))))
     print('type:%s'%type, np.mean(gauc_l))
-    pp = [10, 20, 30.40, 50, 60, 70, 80, 90, 100]
+    pp = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     print('type:%s percentle:'%type, np.percentile(gauc_l, pp))
 
 
