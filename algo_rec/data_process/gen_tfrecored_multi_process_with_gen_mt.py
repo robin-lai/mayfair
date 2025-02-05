@@ -281,7 +281,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         for name in user_seq_string.keys():
             feature.update({name: bytes_fea(t[name], n=20)})
 
-    stat_d = {"sample_id":[], "s":[], "is_clk":[], "is_cart":[], "is_wish":[], "is_pay":[]}
+    stat_d = {"sample_id":[], "s":[], "is_clk":[], "is_cart":[], "is_wish":[], "is_pay":[], "pos_idx":[]}
     for pt_file, tfr_local_file, tfr_s3_file in zip(path_pt_list, path_tfr_local_list, path_tfr_s3_list):
         st = time.time()
         pt = parquet.read_table(pt_file).to_pylist()
@@ -300,6 +300,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 stat_d['is_cart'].append(t['is_cart'])
                 stat_d['is_wish'].append(t['is_wish'])
                 stat_d['is_pay'].append(t['is_pay'])
+                stat_d['pos_idx'].append(t['pos_idx'])
             build_mt(t, feature, stat_d, stat_flag)
             build_feature(t, feature)
             build_seq_on(t['seq_on'], feature)

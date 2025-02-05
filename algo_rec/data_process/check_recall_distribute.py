@@ -23,7 +23,7 @@ def get_bucket_files(local_dir, buket):
     print(f"file list {ll}")
     return ll
 
-def recall_ana(d, ds, local_file):
+def recall_ana(d, ds):
     print(f"日期口径 {ds}")
     recall_stat = []
     recall = {}
@@ -85,7 +85,7 @@ def main(args):
             continue
         with open(file, 'rb') as fin:
             d[i] = pickle.load(fin)
-    return recall_ana(d, args.ds, args.local_file)
+    return recall_ana(d, args.ds)
 
 
 if __name__ == '__main__':
