@@ -66,7 +66,9 @@ def recall_ana(d):
 
 
 def main(args):
-    file_ll = get_bucket_files('./tmp/', args.stat_file)
+    local_tmp_dir = './tmp/'
+    os.system("rm -rf %s" % local_tmp_dir)
+    file_ll = get_bucket_files(local_tmp_dir, args.stat_file)
     d = {}
     for i, file in enumerate(file_ll): # first is base dir
         if not str.endswith(file, '.pkl'):
