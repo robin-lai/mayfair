@@ -544,11 +544,11 @@ if __name__ == '__main__':
     parser.add_argument('--thread', type=int, default=14)
     parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in/ds=%s')
-    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr/ds=%s')
+    parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr_row_n300/ds=%s')
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/cn_rec_detail_feature_item_base/ds=%s/')
     parser.add_argument('--item_stat', default='s3://warehouse-algo/rec/features/cn_rec_detail_feature_item_stat/ds=%s/')
     parser.add_argument('--i2i_s3',
-                        default='rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_%s_1.0_0.6_0.5/')
+                        default='rec/recall/cn_rec_detail_recall_i2i_for_redis_row_n300/item_user_debias_%s_1.0_0.6_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part', type=int, default=10)
     parser.add_argument('--u2cart_wish_file',
@@ -571,7 +571,7 @@ if __name__ == '__main__':
                 print('args.pre_ds:', args.pre_ds)
                 args.item_file = args.item_file % args.ds
                 args.item_stat = args.item_stat % pre_ds
-                args.i2i_s3 = args.i2i_s3 % '20250122'
+                args.i2i_s3 = args.i2i_s3 % pre_ds
                 args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
                 args.hot_i2leaf = args.hot_i2leaf % pre_ds
                 args.site_hot = args.site_hot % pre_ds
@@ -602,7 +602,7 @@ if __name__ == '__main__':
         print('args.pre_ds:', args.pre_ds)
         args.item_file = args.item_file % args.ds
         args.item_stat = args.item_stat % pre_ds
-        args.i2i_s3 = args.i2i_s3 % '20250122'
+        args.i2i_s3 = args.i2i_s3 % pre_ds
         args.u2cart_wish_file = args.u2cart_wish_file % pre_ds
         args.hot_i2leaf = args.hot_i2leaf % pre_ds
         args.site_hot = args.site_hot % pre_ds
@@ -621,8 +621,3 @@ if __name__ == '__main__':
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
     alert_feishu(f"gen tfr complete ds:{args.ds}")
-# python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250116  > run.log 2>&1 &  cpu:mem=9:7, 20250111
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119  > run.log 2>&1 & done
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109 > run.log 2>&1 & done
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20241217,20241218,20241219,20241220,20241221,20241222,20241223,20241224> run.log 2>&1 & done
-# python gen_tfrecored_multi_process_with_gen_mt.py --range=20241225,20241226,20241227,20241228,20241229,20241230,20241231,20250108,20250109 > run.log 2>&1 & done
