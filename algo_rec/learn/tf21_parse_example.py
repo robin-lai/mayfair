@@ -103,7 +103,7 @@ if __name__ == '__main__':
         prog='gentfr',
         description='gentfr',
         epilog='gentfr-help')
-    parser.add_argument('--file',type=str, default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=20250129/part-00005-e6afc2ce-f0f3-46bd-a574-d1b16ef7de74-c000')
+    parser.add_argument('--file',type=str, default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300/ds=20250120/part-00000-7c77b5e6-3306-42b4-a878-1a0712ce3ab4-c000')
     parser.add_argument('--n',type=int, default=10)
     parser.add_argument('--batch_size',type=int, default=10)
     args = parser.parse_args()
