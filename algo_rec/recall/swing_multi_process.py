@@ -180,7 +180,7 @@ def swing(*args):
                         continue
                     pair_key = str(trig_itm) + '_' + str(tgt_item)
                     if pair_key in pair_num_d:
-                        pair_num_d[pair_key] += pair_num_d[pair_key] + 1
+                        pair_num_d[pair_key] += 1
                     else:
                         pair_num_d[pair_key] = 1
                     if user_debias and item_debias:
