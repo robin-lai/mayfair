@@ -3,6 +3,9 @@ if [ $1 = "train" ]; then
 #    sleep 600
     python ./rank/prod_v2/run_rec_model_sg_di.py  --instance_count=3 --warm_start_from=NEWEST --pre_ds=20250101-20250119 --train_ds=20250120-20250126
 
+elif [ $1 = "train_d_v3" ]; then
+    python ./rank/prod_v3/run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v3 --instance_count=1 --warm_start_from=NEW --train_ds=20250119eval
+
 elif [ $1 = "train_d" ]; then
     python ./rank/prod_v2/run_rec_model_sg_di.py  --instance_count=1 --warm_start_from=NEW --train_ds=20250119eval
 
