@@ -21,6 +21,7 @@ def main(args):
             # , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
             #
             # , "is_rel_cate": v1.FixedLenFeature(1, tf.int64, 0)
+             "pos_idx": v1.FixedLenFeature(1, tf.int64, -1),
             # , "is_rel_cate2": v1.FixedLenFeature(1, tf.int64, 0)
             # , "is_rel_cate3": v1.FixedLenFeature(1, tf.int64, 0)
             # , "is_rel_cate4": v1.FixedLenFeature(1, tf.int64, 0)
