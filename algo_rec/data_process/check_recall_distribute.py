@@ -25,20 +25,29 @@ def recall_ana(d):
     recall = {}
     clk_recall = {}
     n = 0
+    n_dup = 0
     clk_n = 0
+    clk_n_dup = 0
     not_recall_n = 0
+    not_recall_n_clk = 0
     for i in d.keys():
         s_len = len(d[i]['s'])
         n += s_len
         print(f"s_len:{s_len}")
 
         for ss, is_clk in zip(d[i]['s'], d[i]['is_clk']):
+            if int(is_clk) == 1:
+                clk_n += 1
+
             if len(ss) < 1:
                 not_recall_n += 1
+                if int(is_clk) == 1:
+                    not_recall_n_clk += 1
                 continue
             for s in ss:
+                n_dup += 1
                 if int(is_clk) == 1:
-                    clk_n += 1
+                    clk_n_dup += 1
                     if s in clk_recall:
                         clk_recall[s] += 1
                     else:
@@ -47,11 +56,12 @@ def recall_ana(d):
                     recall[s] += 1
                 else:
                     recall[s] = 1
-    print(f"not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
+    print(f"曝光口径 not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
+    print(f"点击口径 not_recall_n:{not_recall_n_clk} ratio:{not_recall_n_clk / clk_n}")
     for k, v in recall.items():
-        print(f"曝光口径 s:{k}, v:{v} n:{n} ratio:{v / n}")
+        print(f"曝光口径 s:{k}, v:{v} n:{n_dup} ratio:{v / n_dup}")
     for k, v in clk_recall.items():
-        print(f"点击口径 s:{k}, v:{v} n:{clk_n} ratio:{v / clk_n}")
+        print(f"点击口径 s:{k}, v:{v} n:{clk_n_dup} ratio:{v / clk_n_dup}")
 
 
 def main(args):
