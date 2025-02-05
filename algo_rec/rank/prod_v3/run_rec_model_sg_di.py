@@ -57,7 +57,7 @@ def main(args):
         print('set site_code to:', args.site_code)
 
     sg_estimator = TensorFlow(
-        entry_point='run_rec_model.py',
+        entry_point='prod_v3/run_rec_model.py',
         dependencies=['aws_auth_init.py','build_feature_columns.py','feature_serv_describe.py'
             ,'din_mask_esmm.py','attention.py','din_base.py', 'din_mask_ctr.py', 'din_mask_esmm.py'],
         role=role,
