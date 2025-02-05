@@ -2,6 +2,7 @@ import argparse
 import os,sys
 import pickle
 import traceback
+import pandas as pd
 
 import boto3
 
@@ -22,7 +23,9 @@ def get_bucket_files(local_dir, buket):
     print(f"file list {ll}")
     return ll
 
-def recall_ana(d):
+def recall_ana(d, ds, local_file):
+    print(f"日期口径 {ds}")
+    recall_stat = []
     recall = {}
     clk_recall = {}
     n = 0
@@ -57,12 +60,18 @@ def recall_ana(d):
                     recall[s] += 1
                 else:
                     recall[s] = 1
+    recall_stat.append([ds, 'all', 'exp', not_recall_n, n, round(not_recall_n / n, 5)])
     print(f"曝光口径 not_recall_n:{not_recall_n} ratio:{not_recall_n / n}")
     print(f"点击口径 not_recall_n:{not_recall_n_clk} ratio:{not_recall_n_clk / clk_n}")
+    recall_stat.append([ds, 'all', 'clk', not_recall_n_clk, clk_n, round(not_recall_n_clk / clk_n, 5)])
     for k, v in recall.items():
         print(f"曝光口径 s:{k}, v:{v} n:{n_dup} ratio:{v / n_dup}")
+        recall_stat.append([ds, k, 'exp', v, n_dup, round(v / n_dup, 5)])
     for k, v in clk_recall.items():
         print(f"点击口径 s:{k}, v:{v} n:{clk_n_dup} ratio:{v / clk_n_dup}")
+        recall_stat.append([ds, k, 'clk', v, clk_n_dup, round(v / clk_n_dup, 5)])
+    print(f"recall_stat {recall_stat}")
+    return recall_stat
 
 
 def main(args):
@@ -76,8 +85,7 @@ def main(args):
             continue
         with open(file, 'rb') as fin:
             d[i] = pickle.load(fin)
-    print(f"日期口径 {args.ds}")
-    recall_ana(d)
+    return recall_ana(d, args.ds, args.local_file)
 
 
 if __name__ == '__main__':
@@ -86,9 +94,11 @@ if __name__ == '__main__':
         description='',
         epilog='')
     parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
+    parser.add_argument('--local_file', default='recall_distribute.csv')
     parser.add_argument('--ds', default='20250126')
     parser.add_argument('--range', default='20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109,20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119')
     args = parser.parse_args()
+    recall_stat = []
     if args.range != '':
         try:
             for ds in args.range.split(','):
@@ -96,7 +106,7 @@ if __name__ == '__main__':
                 args.ds = ds
                 args.stat_file = args.stat_file % args.ds
                 print(f"stat_file:{args.stat_file}")
-                main(args)
+                recall_stat.extend(main(args))
         except Exception:
             print("-" * 60)
             traceback.print_exc(file=sys.stdout)
@@ -104,5 +114,7 @@ if __name__ == '__main__':
     else:
         args.stat_file = args.stat_file % args.ds
         print(f"stat_file:{args.stat_file}")
-        main(args)
+        recall_stat = main(args)
+    df = pd.DataFrame(recall_stat, columns=['ds','recall', 'koujing', 'fengzi', 'fengmu', 'ratio'])
+    df.to_csv(args.local_file)
 
