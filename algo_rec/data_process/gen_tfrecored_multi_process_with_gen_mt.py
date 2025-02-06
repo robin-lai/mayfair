@@ -555,7 +555,7 @@ if __name__ == '__main__':
                         default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--hot_i2leaf', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_main_leaf2i_ds/ds=%s/')
     parser.add_argument('--site_hot', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_site_hot/ds=%s/')
-    parser.add_argument('--stat_file', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
+    parser.add_argument('--stat_file', default='s3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_stat_row_n300/ds=%s/')
     parser.add_argument('--stat_flag', type=bool, default=False)
     args = parser.parse_args()
     debug = args.debug
@@ -587,6 +587,7 @@ if __name__ == '__main__':
                 print('hot_i2leaf', args.hot_i2leaf)
                 print('site_hot', args.site_hot)
                 print('stat_file', args.stat_file)
+                print('stat_flag', args.stat_flag)
                 main(args)
                 print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
         except Exception:
@@ -618,6 +619,7 @@ if __name__ == '__main__':
         print('hot_i2leaf', args.hot_i2leaf)
         print('site_hot', args.site_hot)
         print('stat_file', args.stat_file)
+        print('stat_flag', args.stat_flag)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
     alert_feishu(f"gen tfr complete ds:{args.ds}")
