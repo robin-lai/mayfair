@@ -9,7 +9,7 @@ print(tf.__version__)
 def main(args):
     def gen_col(score, idx, key):
         id = idx[key].tolist()
-        id = [e[0] for e in id]
+        id = [round(e[0],5) for e in id]
         if key in score:
             score[key].extend(id)
         else:
