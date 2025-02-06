@@ -46,12 +46,13 @@ def recall_ana(d, ds):
                 pos_idx_d['all_clk'].append(pos_idx)
                 clk_n += 1
 
-            if len(ss) < 1:
+            if "".join(ss) == '':
                 not_recall_n += 1
                 if int(is_clk) == 1:
                     not_recall_n_clk += 1
                 continue
             for s in ss:
+                if s == '':continue
                 n_dup += 1
                 if s in pos_idx_d:
                     pos_idx_d[s + '_exp'].append(pos_idx)
