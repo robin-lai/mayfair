@@ -54,15 +54,17 @@ def recall_ana(d, ds):
             for s in ss:
                 if s == '':continue
                 n_dup += 1
-                if s in pos_idx_d:
-                    pos_idx_d[s + '_exp'].append(pos_idx)
+                skey = s + '_exp'
+                if skey in pos_idx_d:
+                    pos_idx_d[skey].append(pos_idx)
                 else:
-                    pos_idx_d[s + '_exp'] = [pos_idx]
+                    pos_idx_d[skey] = [pos_idx]
                 if int(is_clk) == 1:
-                    if s in pos_idx_d:
-                        pos_idx_d[s + '_clk'].append(pos_idx)
+                    sclk_key = s + '_clk'
+                    if sclk_key in pos_idx_d:
+                        pos_idx_d[sclk_key].append(pos_idx)
                     else:
-                        pos_idx_d[s + '_clk'] = [pos_idx]
+                        pos_idx_d[sclk_key] = [pos_idx]
                     clk_n_dup += 1
                     if s in clk_recall:
                         clk_recall[s] += 1
