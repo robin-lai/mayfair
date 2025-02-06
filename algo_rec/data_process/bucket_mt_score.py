@@ -63,6 +63,7 @@ def main(args):
     import numpy as np
     pp = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100]
     for k, v in score.items():
+        print(f"{k} len {len(v)}")
         bins = [round(e, 5) for e in np.percentile(v, pp)]
         print(f"{k}:{bins}")
 
