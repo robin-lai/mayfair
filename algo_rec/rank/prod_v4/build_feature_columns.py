@@ -21,6 +21,15 @@ def build_feature_columns():
     sales_price_fc = tf.feature_column.categorical_column_with_identity("sales_price", num_buckets=20, default_value=0)
     mt_i2i_main_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_main", num_buckets=3, default_value=0), 8)
     mt_i2i_main_score = tf.feature_column.numeric_column(key="mt_i2i_main_score", default_value=-1, dtype=tf.float32)
+    mt_i2i_main_score_emb = tf.feature_column.embedding_column(
+        tf.feature_column.bucketized_column(tf.feature_column.numeric_column(key="mt_i2i_main_score"),
+                                            boundaries=[-1.0, 0.0, 0.00066, 0.00103, 0.00155, 0.00228, 0.00328, 0.00465, 0.00649, 0.009, 0.01259, 0.01805, 0.02726, 0.04553, 0.09346, 5.24947,100]), 8)
+    mt_i2i_long_score_emb = tf.feature_column.embedding_column(
+        tf.feature_column.bucketized_column(tf.feature_column.numeric_column(key="mt_i2i_long_score"),
+                                            boundaries=[-1.0, 0.0, 0.0007, 0.00113, 0.00191, 0.00341, 0.00656, 0.01388, 0.03898, 3.94668,100]), 8)
+    mt_i2i_short_score_emb = tf.feature_column.embedding_column(
+        tf.feature_column.bucketized_column(tf.feature_column.numeric_column(key="mt_i2i_short_score"),
+                                            boundaries=[-1.0, 0.0, 0.00068, 0.0011, 0.00187, 0.00338, 0.00654, 0.01397, 0.03895, 2.73495,100]), 8)
     mt_i2i_long_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_long", num_buckets=3, default_value=0), 8)
     mt_i2i_long_score = tf.feature_column.numeric_column(key="mt_i2i_long_score", default_value=-1, dtype=tf.float32)
     mt_i2i_short_emb = tf.feature_column.embedding_column(tf.feature_column.categorical_column_with_identity("mt_i2i_short", num_buckets=3, default_value=0), 8)
@@ -86,7 +95,7 @@ def build_feature_columns():
     numric_cols_emb.extend(
         [pctr_14d_emb, pcart_14d_emb, pwish_14d_emb, pcvr_14d_emb,
          pctr_30d_emb, pcart_30d_emb, pwish_30d_emb,
-         pcvr_30d_emb])
+         pcvr_30d_emb, mt_i2i_main_score_emb, mt_i2i_long_score_emb, mt_i2i_short_score_emb])
 
     return {"numric_cols_emb": numric_cols_emb,
             "id_col_emb": id_col_emb
