@@ -93,10 +93,10 @@ if __name__ == '__main__':
         prog='',
         description='',
         epilog='')
-    parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
+    parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat_row_n300/ds=%s/')
     parser.add_argument('--local_file', default='./recall_distribute.csv')
     parser.add_argument('--ds', default='20250126')
-    parser.add_argument('--range', default='20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109,20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119')
+    parser.add_argument('--range', default='20250120,20250121,20250122,20250123,20250124,20250125,20250126,20250127,20250128,20250129,20250130,20250131,20250201,20250202,20250203,20250204,20250205')
     args = parser.parse_args()
     recall_stat = []
     if args.range != '':
