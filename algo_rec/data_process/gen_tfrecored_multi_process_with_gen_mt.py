@@ -590,6 +590,7 @@ if __name__ == '__main__':
                 print('stat_flag', args.stat_flag)
                 main(args)
                 print('%s process %s cost %s' % (str(args.thread), ds, str(time.time() - st)))
+                alert_feishu(f"gen tfr complete ds:{args.ds}")
         except Exception:
             print("-" * 60)
             traceback.print_exc(file=sys.stdout)
@@ -622,4 +623,4 @@ if __name__ == '__main__':
         print('stat_flag', args.stat_flag)
         main(args)
         print('%s process %s cost %s' % (str(args.thread), args.ds, str(time.time() - st)))
-    alert_feishu(f"gen tfr complete ds:{args.ds}")
+        alert_feishu(f"gen tfr complete ds:{args.ds}")
