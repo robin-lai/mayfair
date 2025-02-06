@@ -107,7 +107,7 @@ if __name__ == '__main__':
         prog='',
         description='',
         epilog='')
-    parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat/ds=%s/')
+    parser.add_argument('--stat_file', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_stat_row_n300/ds=%s/')
     parser.add_argument('--local_file', default='./recall_distribute.csv')
     parser.add_argument('--ds', default='20250126')
     parser.add_argument('--range', default='20250101,20250102,20250103,20250104,20250105,20250106,20250107,20250108,20250109,20250110,20250111,20250112,20250113,20250114,20250115,20250116,20250117,20250118,20250119')
