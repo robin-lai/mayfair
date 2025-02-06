@@ -28,12 +28,13 @@ def main(args):
     ds = tf.data.TFRecordDataset(local_file)
     ds = ds.map(parse).batch(args.batch_size)
     print(list(ds.as_numpy_iterator())[0:args.n])
-    mt_i2i_main_score_ll = []
+    score = {}
     for idx in ds.as_numpy_iterator():
-        gen_col(mt_i2i_main_score_ll, idx, "mt_i2i_main_score")
+        gen_col(score, idx, "mt_i2i_main_score")
     import numpy as np
     pp = [5, 10, 15, 20,25,  30, 35, 40, 45, 50,55, 60,65, 70,75, 80,85, 90,95, 100]
-    print(f"mt_i2i_main_score_ll:{np.percentile(mt_i2i_main_score_ll, pp)}")
+    for k, v in score.items():
+        print(f"{k}:{np.percentile(v, pp)}")
 
 
 if __name__ == '__main__':
