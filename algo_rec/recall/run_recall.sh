@@ -1,6 +1,8 @@
 if [ $1 = "recall" ]; then
-    python -u swing_multi_process.py --pre_ds=20250119
+    python -u swing_multi_process.py --pre_ds=20250120,20250121,20250122,20250123,20250124,20250125,20250126,20250127,20250128
 
+elif [ $1 = "recall2" ]; then
+    python -u swing_multi_process.py --pre_ds=20250129,20250130,20250131,20250201,20250202,20250203,20250204,20250205
 elif [ $1 = "recall_d" ]; then
     python -u swing_multi_process.py --pre_ds=20250119 --sample_num=10 --p=1
 fi
