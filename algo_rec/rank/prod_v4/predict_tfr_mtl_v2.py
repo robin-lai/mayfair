@@ -105,12 +105,14 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
                     continue
                 if name == 'mt_u2i_f':
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
-                if 'tf.string' in str(v):
+                elif 'tf.string' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
-                if 'tf.int64' in str(v):
+                elif 'tf.int64' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.int64)
-                if 'tf.float32' in str(v):
+                elif 'tf.float32' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
+                else:
+                    print(f"unkonwn name:{name}")
             # print(f"feed_dict fts num:{len(feed_dict)}")
             if debug:
                 print('feed_dict:', feed_dict)
