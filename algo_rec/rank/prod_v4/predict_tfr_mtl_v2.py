@@ -103,6 +103,8 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             for name, v in feature_describe_pred.items():
                 if name in ['is_clk', 'is_pay', 'sample_id']:
                     continue
+                if name == 'mt_u2i_f':
+                    feed_dict[name] = tf.constant(idx[name], dtype=tf.float32)
                 if 'tf.string' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
                 if 'tf.int64' in str(v):
