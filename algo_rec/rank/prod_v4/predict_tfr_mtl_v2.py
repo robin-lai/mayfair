@@ -100,7 +100,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             gen_col(score, idx, "cate_id")
 
             for name, v in feature_describe_pred.items():
-                if name in ['is_clk', 'is_pay', 'sample_id', 'mt']:
+                if name in ['is_clk', 'is_pay', 'sample_id']:
                     continue
                 if 'tf.string' in str(v):
                     feed_dict[name] = tf.constant(idx[name], dtype=tf.string)
