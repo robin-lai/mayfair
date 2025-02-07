@@ -21,7 +21,7 @@ import numpy as np
 import pickle
 from sklearn.metrics import roc_auc_score
 import tensorflow.compat.v1 as v1
-
+tf.compat.v1.enable_resource_variables()
 import math
 
 
