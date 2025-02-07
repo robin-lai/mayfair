@@ -3,7 +3,7 @@ import tensorflow as tf
 import tensorflow.compat.v1 as v1
 
 feature_describe_pred = {
-    "pctr_14d": v1.FixedLenFeature(1, tf.float32, -1.0),
+    # "pctr_14d": v1.FixedLenFeature(1, tf.float32, -1.0),
     "pcart_14d": v1.FixedLenFeature(1, tf.float32, -1.0),
     "pwish_14d": v1.FixedLenFeature(1, tf.float32, -1.0),
     "pcvr_14d": v1.FixedLenFeature(1, tf.float32, -1.0),
