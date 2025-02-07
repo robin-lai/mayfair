@@ -52,6 +52,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
         )
 
         features = tf.io.parse_single_example(data, features=feature_describe_pred)
+        features['mt_u2i_f'] = tf.cast(features['mt_u2i_f'], dtype=tf.float32)
         return features
 
     os.system('mkdir -p %s' % tmp_dir_data)
