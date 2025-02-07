@@ -451,7 +451,7 @@ if __name__ == '__main__':
                         default=(datetime.today() - timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='')
-    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr/ds=%s/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300/ds=%s/')
     parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.json')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
