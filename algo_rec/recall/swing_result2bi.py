@@ -27,7 +27,7 @@ def main(args):
     gc.collect()
     dd = {'trig_goods_id': [], 'trig_goods_name': [], 'num': [], 'cat2': [], 'cat3': [], 'leaf': [], 'leaf_cn':[], 'trig_pic_url': [],
           'tgt_goods_id': [], 'tgt_goods_name': [], 'tgt_score': [], 'tgt_pic_url': [], 'tgt_num': [], 'tgt_cat2': [],
-          'tgt_cat3': [], 'tgt_leaf': [], 'tgt_leaf_cn':[], 'version':[]}
+          'tgt_cat3': [], 'tgt_leaf': [],'pair_n': [], 'tgt_leaf_cn':[], 'version':[]}
     local_file = args.swing_result.split('/')[-1]
     remove_file(local_file)
     os.system("aws s3 cp %s %s" % (args.swing_result, local_file))
@@ -85,6 +85,7 @@ def main(args):
             dd['tgt_cat2'].append(str(tt[3]))
             dd['tgt_cat3'].append(str(tt[4]))
             dd['tgt_leaf'].append(str(tt[5]))
+            dd['pair_n'].append(str(tt[6]))
             dd['tgt_leaf_cn'].append(map_d.get(str(tt[5]), {}).get('cate_name_cn', ""))
             dd['version'].append(args.version)
 
@@ -115,9 +116,9 @@ if __name__ == '__main__':
     # file = './swing_result_20250106.csv'
     parser.add_argument('--item_file', default='s3://warehouse-algo/rec/dim_mf_goods_s3/ds=%s'%(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--save_file', default='s3://warehouse-algo/rec/recall/rec_detail_recall_swing_result_version/')
-    parser.add_argument('--swing_result', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis/item_user_debias_20250106/swing_result_20250106.csv')
+    parser.add_argument('--swing_result', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis_row_n300/item_user_debias_20250205_1.0_0.6_0.5/swing_result_20250205.csv')
     parser.add_argument('--leaf_info', default='s3://warehouse-algo/rec/leafname_map_cn.csv')
-    parser.add_argument('--version', default='swing_alph1_beta05')
+    parser.add_argument('--version', default='swing300_20250205_alph1_beta06_ubeta05')
     args = parser.parse_args()
     st = time.time()
     main(args)
