@@ -244,29 +244,55 @@ def output_handler(data, context):
 
 def main(args):
     d = {
+        "signature_name": "serving_default",
         "city": "Menbai",
         "country": "IN",
         "debug": "",
+        "parentGoodsId": "111307",
         "featureMap": {
             "userFeatures": {
                 "high_level_seq": [
                     "1327692",
-                    "1402902"
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
                 ],
                 "low_level_seq": [
                     "1327692",
-                    "1402902"
-                ]
+                    "1402902",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    ""
+                ],
+                "user_feature_context": {
+                    "register_brand": "other",
+                    "last_login_device": "huawei",
+                    "last_login_brand": "huawei"
+                }
             }
         },
         "goodsIdList": [
-            "1402902", "1327692"
+            "1327692",
+            "1402902",
+            "1459992",
+            "1477842"
         ],
         "itemContextMap": {
-            "1402902": {"s": "i2i_long,i2i_short,hot,hot_i2leaf,i2i_main","ss": "0.1,0.2,1,2,0.3"}, "1327692": {"s": "","ss":""}
+            "1327692": {"s": "u2i_long,u2i_short,hot,hot_i2leaf,i2i_main,u2i-f", "ss": "0.1,0.2,0.3,0.4,0.5,0.5"},
+            "1402902": {"s": "", "ss": ""},
+            "1459992": {"s": "u2i_long,u2i_short,hot,hot_i2leaf,i2i_main,u2i-f", "ss": "0.1,0.2,0.3,0.4,0.5,0.5"},
+            "1477842": {"s": "", "ss": ""}
         },
         "ip": "127.0.0.1",
-        "parentGoodsId": "1490152",
         "platform": "H5",
         "province": "Menbai",
         "scene": "detail_rec",
@@ -275,7 +301,7 @@ def main(args):
         "uuid": "fxleyu",
         "version": "8.2.2"
     }
-    # print(get_infer_json_from_request(d))
+    print(get_infer_json_from_request(d))
 
 
 if __name__ == '__main__':
