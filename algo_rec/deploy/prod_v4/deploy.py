@@ -1753,8 +1753,9 @@ def request_sagemaker(args):
 
 
 class CTX():
+    request_content_type = ""
     def __init__(self):
-        request_content_type = "application/json"
+        self.request_content_type = "application/json"
 
 
 def request_sagemaker_local(args):
