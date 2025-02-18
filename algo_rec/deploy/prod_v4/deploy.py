@@ -11,7 +11,7 @@ import sagemaker
 from sagemaker import image_uris, get_execution_role
 from sagemaker.session import production_variant
 import datetime
-from inference import input_handler
+# from inference import input_handler
 
 request = {
     "signature_name": "serving_default",
