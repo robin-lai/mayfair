@@ -114,12 +114,20 @@ if __name__ == '__main__':
         description='swing-args',
         epilog='swing-help')
     # file = './swing_result_20250106.csv'
-    parser.add_argument('--item_file', default='s3://warehouse-algo/rec/dim_mf_goods_s3/ds=%s'%(datetime.date.today() - datetime.timedelta(days=2)).strftime('%Y%m%d'))
+    parser.add_argument('--ds', type=str,
+                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    parser.add_argument('--item_file', default='s3://warehouse-algo/rec/dim_mf_goods_s3/ds=%s')
     parser.add_argument('--save_file', default='s3://warehouse-algo/rec/recall/rec_detail_recall_swing_result_version/')
-    parser.add_argument('--swing_result', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis_row_n300/item_user_debias_20250205_1.0_0.6_0.5/swing_result_20250205.csv')
+    parser.add_argument('--swing_result', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis_row_n300/item_user_debias_%s_1.0_0.6_0.5/swing_result_%s.csv')
     parser.add_argument('--leaf_info', default='s3://warehouse-algo/rec/leafname_map_cn.csv')
-    parser.add_argument('--version', default='swing300_20250205_alph1_beta06_ubeta05')
+    parser.add_argument('--version', default='swing300_%s_alph1_beta06_ubeta05')
     args = parser.parse_args()
+    args.item_file = args.item_file % args.ds
+    print(args.item_file)
+    args.swing_result = args.swing_result % (args.ds, args.ds)
+    print(args.swing_result)
+    args.version = args.version % args.ds
+    print(args.version)
     st = time.time()
     main(args)
     ed = time.time()
