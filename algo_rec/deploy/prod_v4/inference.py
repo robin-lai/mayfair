@@ -138,7 +138,7 @@ def get_infer_json_from_request(d):
 
         mt_context = {}
         mt_context.update({k: [v] for k, v in itemContextMap.items()})
-        # mt_context.update({k: [v] for k, v in itemContextMapAddAfter.items()})
+        mt_context.update({k: [v] for k, v in itemContextRecallScore.items()})
         for goods_id in d['goodsIdList']:
             example = {}
             example.update(example_base)
