@@ -135,7 +135,7 @@ def pkg(args):
 
     # item_stat
     os.system(
-        'aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.edp_version), fts_item_stat_local_text_dir))
+        'aws s3 cp --recursive %s %s' % (fts_item_stat_s3_text_dir % (args.ds), fts_item_stat_local_text_dir))
 
     def get_item_stat(file):
         print(f"item_stat_file:{file} goodid key type is string")
@@ -3242,6 +3242,8 @@ if __name__ == '__main__':
     parser.add_argument('--region', default='in')
     parser.add_argument('--debug_v', default='v1')
     parser.add_argument('--edp_version', type=str,
+                        default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
+    parser.add_argument('--ds', type=str,
                         default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
     parser.add_argument('--endpoint', default='edp%s-%s')
