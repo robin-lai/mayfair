@@ -5,5 +5,4 @@ elif [ $1 = "edp" ]; then
 elif [ $1 = "local" ]; then
     python inference.py
 elif [ $1 = "req_sg" ]; then
-    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250129-20250204  --region=sg --debug_v=3
-fi
+    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250129-20250204  --region=sg --debug_v=3 --debug=log
