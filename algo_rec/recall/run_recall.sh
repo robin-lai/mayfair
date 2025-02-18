@@ -5,6 +5,8 @@ elif [ $1 = "recall2" ]; then
     python -u swing_multi_process.py --pre_ds=20250206,20250207,20250208,20250209,20250210
 elif [ $1 = "recall_d" ]; then
     python -u swing_multi_process.py --pre_ds=20250119 --sample_num=10 --p=1
+elif [ $1 = "bi" ]; then
+    python -u swing_result2bi.py --ds=20250216
 fi
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
