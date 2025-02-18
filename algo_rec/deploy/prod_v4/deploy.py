@@ -1757,6 +1757,13 @@ class CTX():
     def __init__(self):
         self.request_content_type = "application/json"
 
+class DATA():
+    data = ""
+    def __init__(self, data):
+        self.data = data
+    def read(self):
+        return self.data
+
 
 def request_sagemaker_local(args):
     req_row = {
@@ -3155,8 +3162,9 @@ def request_sagemaker_local(args):
         request['debug'] = ""
 
     print('inp-json-dump', json.dumps(request))
-    data = json.dumps(request)
+    dump_js = json.dumps(request)
     context = CTX()
+    data = DATA(dump_js)
     input_handler(data, context)
 
 
