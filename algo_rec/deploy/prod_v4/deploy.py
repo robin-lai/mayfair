@@ -1819,10 +1819,11 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--model_name', default='mtl_seq_esmm_v4')
     parser.add_argument('--region', default='in')
+    parser.add_argument('--debug_v', default='v1')
     parser.add_argument('--edp_version', type=str,
                         default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_dir', default='prod_model/')
-    parser.add_argument('--endpoint', default='edp1-%s')
+    parser.add_argument('--endpoint', default='edp%s-%s')
     parser.add_argument('--model_version', default='/ds=%s/model/')
     parser.add_argument('--tar_name', default='%s_%s.tar.gz')
     parser.add_argument('--debug', default='')
@@ -1835,7 +1836,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     args.tar_name = args.tar_name % (args.model_name, args.edp_version)
     args.model_version = args.model_version % args.edp_version
-    args.endpoint = args.endpoint % args.model_name.replace('_', '-')
+    args.endpoint = args.endpoint % (args.debug_v, args.model_name.replace('_', '-'))
     # if args.pipeline == 'update_edp':
     #     args.endpoint = 'edp-' + args.model_name.replace('_', '-')
     # else:
