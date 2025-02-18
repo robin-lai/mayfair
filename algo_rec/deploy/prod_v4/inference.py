@@ -7,8 +7,8 @@ import os, sys, traceback
 import time
 import argparse
 
-# base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/prod_v1/pkg/'
-base_data_dir = '/opt/ml/model/'
+base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/mtl_seq_esmm_v4/pkg/'
+# base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
 item_stat_fts_file = base_data_dir + 'item_stat_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
