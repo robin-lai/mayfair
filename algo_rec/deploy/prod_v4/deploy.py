@@ -3165,7 +3165,7 @@ def request_sagemaker_local(args):
     dump_js = json.dumps(request)
     context = CTX()
     data = DATA(dump_js)
-    input_handler(data, context)
+    print('ipt:', input_handler(data, context))
 
 
 def request_sagemaker_time(args):
@@ -3212,7 +3212,7 @@ def main(args):
     #     print('start request edp')
     #     request_edp(args)
     #     print('end request edp')
-    if 'req_sg_local' in args.pipeline:
+    if 'local' in args.pipeline:
         print('start request sagemaker local')
         request_sagemaker_local(args)
         print('end request sagemaker local')
