@@ -5,6 +5,7 @@ import tensorflow as tf
 from multiprocessing import shared_memory
 import pickle
 import sys
+import gc
 import time
 import multiprocessing
 from pyarrow import parquet
@@ -315,6 +316,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
             if debug:
                 print('features', feature)
         ed = time.time()
+        del pt
+        gc.collect()
         fout_ctr.close()
         print('gen trf done, cost %s' % str(ed - st))
         # upload
