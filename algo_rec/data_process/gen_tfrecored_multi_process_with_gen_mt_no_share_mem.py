@@ -15,12 +15,12 @@ from random import shuffle
 import numpy as np
 import traceback
 from datetime import datetime,date, timedelta
-from pympler import asizeof
+# from pympler import asizeof
 
 import math
-import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
+# import pandas as pd
+# import pyarrow as pa
+# import pyarrow.parquet as pq
 from pathlib import Path
 print(sys.path)
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent))
