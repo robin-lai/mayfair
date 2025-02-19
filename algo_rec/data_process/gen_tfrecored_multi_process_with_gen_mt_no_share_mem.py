@@ -414,6 +414,7 @@ def get_hot_i2leaf(txt_dir):
     local_txt_dir = './tmp/hot_i2leaf/'
     print(f"hot_i2leaf local_txt_dir:{txt_dir}, {local_txt_dir}")
     os.system('rm -r %s' % local_txt_dir)
+    os.system('mkdir -p %s' % local_txt_dir)
     os.system('aws s3 cp --recursive %s %s' % (txt_dir, local_txt_dir))
 
     hot_i2leaf_d = {}
