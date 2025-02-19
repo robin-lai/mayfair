@@ -13,8 +13,8 @@ item_fts_file = base_data_dir + 'item_features.pkl'
 item_stat_fts_file = base_data_dir + 'item_stat_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
 
-itemContextMap = {"mt_i2i_main": 0, "mt_i2i_long": 0, "mt_i2i_short": 0, "mt_hot_i2leaf": 0, "mt_hot": 0, "mt_u2i_f": 0,
-                  "mt": ""}
+itemContextMap = {"mt_i2i_main": 0, "mt_i2i_long": 0, "mt_i2i_short": 0, "mt_hot_i2leaf": 0, "mt_hot": 0, "mt_u2i_f": 0}
+mtFeatures = {"mt":[""] * 6}
 recall_map = {"u2i_short": "mt_i2i_short", "u2i_long": "mt_i2i_long", "hot": "mt_hot", "hot_i2leaf": "mt_hot_i2leaf",
               "i2i_main": "mt_i2i_main", "u2i-f": "mt_u2i_f"}
 itemContextRecallScore = {"mt_i2i_main_score": -1.0, "mt_i2i_long_score": -1.0, "mt_i2i_short_score": -1.0}
@@ -138,6 +138,7 @@ def get_infer_json_from_request(d):
 
         mt_context = {}
         mt_context.update({k: [v] for k, v in itemContextMap.items()})
+        mt_context.update(mtFeatures)
         mt_context.update({k: [v] for k, v in itemContextRecallScore.items()})
         for goods_id in d['goodsIdList']:
             example = {}
@@ -176,6 +177,10 @@ def get_infer_json_from_request(d):
                     ss_str = s.get('ss')
                     if s_str != '' and ss_str != '':
                         s_ll = s_str.split(',')
+                        if len(s_ll) < 6:
+                            example['mt'] = list(s_ll).extend([""] * (6 - len(s_ll)))
+                        else:
+                            example['mt'] = list(s_ll)[0:5]
                         ss_ll = ss_str.split(',')
                         if len(s_ll) == len(ss_ll):
                             mt_d = {s_ll[i]: ss_ll[i] for i in range(len(s_ll))}
