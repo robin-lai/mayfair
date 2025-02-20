@@ -1,5 +1,5 @@
 if [ $1 = "recall" ]; then
-    python -u swing_multi_process.py --pre_ds=20250211,20250212,20250213,20250214,20250215
+    python -u swing_multi_process.py --pre_ds=20250219
 
 elif [ $1 = "recall2" ]; then
     python -u swing_multi_process.py --pre_ds=20250206,20250207,20250208,20250209,20250210
