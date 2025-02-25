@@ -2,9 +2,9 @@ if [ $1 = "tfr_mt" ]; then
     python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250218
 elif [ $1 = "tfr_mt_range" ]; then
 #  20250120,20250121,20250122,20250130,20250131
-    python gen_tfrecored_multi_process_with_gen_mt.py --range=20250206,20250207,20250208,20250209,20250210
+    python gen_tfrecored_multi_process_with_gen_mt.py --range=20250219,20250220
 elif [ $1 = "tfr_mt_range2" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt.py --range=20250211,20250212,20250213,20250214
+    python gen_tfrecored_multi_process_with_gen_mt.py --range=20250221,20250222,20250223
 elif [ $1 = "tfr_mt_range3" ]; then
     python gen_tfrecored_multi_process_with_gen_mt.py --range=20250216,20250217,20250218,20250215
 elif [ $1 = "tfr_mt_d" ]; then
