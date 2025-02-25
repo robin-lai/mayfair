@@ -7,8 +7,8 @@ import os, sys, traceback
 import time
 import argparse
 
-# base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/mtl_seq_esmm_v4/pkg/'
-base_data_dir = '/opt/ml/model/'
+base_data_dir = '/home/sagemaker-user/mayfair/algo_rec/deploy/mtl_seq_esmm_v4/pkg/'
+# base_data_dir = '/opt/ml/model/'
 item_fts_file = base_data_dir + 'item_features.pkl'
 item_stat_fts_file = base_data_dir + 'item_stat_features.pkl'
 # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
@@ -286,10 +286,12 @@ def main(args):
             }
         },
         "goodsIdList": [
+            "1540872"
             "1327692",
             "1402902",
             "1459992",
-            "1477842","1540872","1301942","1321412","1333632","1319462"
+            "1477842",
+            "1301942","1321412","1333632","1319462"
         ],
         "itemContextMap": {
             "1327692": {"s": "u2i_long,u2i_short,hot,hot_i2leaf,i2i_main,u2i-f", "ss": "0.1,0.2,0.3,0.4,0.5,0.5"},
