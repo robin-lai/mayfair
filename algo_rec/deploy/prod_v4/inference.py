@@ -180,7 +180,7 @@ def get_infer_json_from_request(d):
                         if len(s_ll) < 6:
                             example['mt'] = list(s_ll).extend([""] * (6 - len(s_ll)))
                         else:
-                            example['mt'] = list(s_ll)[0:5]
+                            example['mt'] = list(s_ll)[0:6]
                         ss_ll = ss_str.split(',')
                         if len(s_ll) == len(ss_ll):
                             mt_d = {s_ll[i]: ss_ll[i] for i in range(len(s_ll))}
