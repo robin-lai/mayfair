@@ -178,7 +178,9 @@ def get_infer_json_from_request(d):
                     if s_str != '' and ss_str != '':
                         s_ll = s_str.split(',')
                         if len(s_ll) < 6:
-                            example['mt'] = list(s_ll).extend([""] * (6 - len(s_ll)))
+                            tmp_ll = list(s_ll)
+                            tmp_ll.extend([""] * (6 - len(s_ll)))
+                            example['mt'] = tmp_ll
                         else:
                             example['mt'] = list(s_ll)[0:6]
                         ss_ll = ss_str.split(',')
