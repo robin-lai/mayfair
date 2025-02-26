@@ -18,6 +18,7 @@ from pyarrow import parquet
 def main(args):
     # u2i_d = {}
     i2i_d = {}
+    i2i_sort_d = {}
     u2i2i_d = {}
 
     i2i_file_ll = []
@@ -33,6 +34,11 @@ def main(args):
             for line in lines:
                 k, v = line.split(chr(1))
                 i2i_d[k] = v
+                tt_ll = []
+                for e in v.split(chr(2)):
+                    tt_ll.append(e.split(chr(4)))
+                tt_ll.sort(key=lambda x: x[1], reverse=True)
+                i2i_sort_d[k] = tt_ll
     print('read i2i end, num:', len(i2i_d.keys()))
 
     if args.debug:
@@ -49,29 +55,39 @@ def main(args):
         for id in d['goods_list']:
             i2i_k = 'Savana_IN' + chr(4) + str(id)
             if i2i_k in i2i_d:
-                tgt_pair = i2i_d[i2i_k]
+                tgt_pair = i2i_sort_d[i2i_k]
             else:
                 continue
-            for e in tgt_pair.split(chr(2)):
-                tt = e.split(chr(4))
-                if len(tt) < 2:
+            topn = len(tgt_pair) if len(tgt_pair) < args.topn else args.topn
+            for e in tgt_pair[0:topn]:
+                if float(e[1]) < 0.00001:
                     continue
-                if float(tt[1]) < 0.0000001:
-                    continue
-                tl.append((tt[0], float(tt[1])))
+                tl.append((e[0], float(e[1])))
+            # for e in tgt_pair.split(chr(2)):
+            #     tt = e.split(chr(4))
+            #     if len(tt) < 2:
+            #         continue
+            #     if float(tt[1]) < 0.0000001:
+            #         continue
+            #     tl.append((tt[0], float(tt[1])))
         if len(tl) < 1:
             continue
-        tl.sort(key=lambda x: x[1], reverse=True)
-        tl_set = set([str(e[0]) for e in tl])
-        tl = list(tl_set)
+        # tl.sort(key=lambda x: x[1], reverse=True)
+        tl_set = set()
+        tl_filter = []
+        for e in tl:
+            if str(e[0]) not in tl_set:
+                tl_set.add(str(e[0]))
+                tl_filter.append(e)
+
         if args.debug:
             if idx % 100 == 0:
-                print(tl)
+                print(tl_filter)
         kk = 'Savana_IN' + '|' + str(d['uuid'])
         if kk in u2i2i_d:
-            u2i2i_d[kk].extend(tl[0:100] if len(tl) > 100 else tl)
+            u2i2i_d[kk].extend(tl_filter[0:100] if len(tl_filter) > 100 else tl_filter)
         else:
-            u2i2i_d[kk] = tl[0:100] if len(tl) > 100 else tl
+            u2i2i_d[kk] = tl_filter[0:100] if len(tl_filter) > 100 else tl_filter
     # line0, line1, line2 , line3 = [], [], [], []
     gc.collect()
     lines, fins = [[] for _ in range(args.part)], []
@@ -84,7 +100,7 @@ def main(args):
     # fin2 = open(args.u2i2i_file % 2, 'w')
     # fin3 = open(args.u2i2i_file % 3, 'w')
     for idx,k in enumerate(u2i2i_d.keys()):
-        v = chr(2).join([str(e) + chr(4) + "1" for e in u2i2i_d[k]])
+        v = chr(2).join([str(e[0]) + chr(4) + str(e[1]) for e in u2i2i_d[k]])
         line = (k + chr(1) + v + '\n')
         lines[idx%args.part].append(line)
         # if i%4 == 0: line0.append(line)
@@ -120,7 +136,8 @@ if __name__ == '__main__':
     parser.add_argument('--v',default='')
     parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis%s/item_user_debias_%s/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
-    parser.add_argument('--i2i_part',type=int, default=7)
+    parser.add_argument('--i2i_part',type=int, default=10)
+    parser.add_argument('--topn',type=int, default=10)
     parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
     parser.add_argument('--u2i2i_s3', default='s3://warehouse-algo/rec/recall/recall_u2i2i/item_user_debias%s_%s/')
