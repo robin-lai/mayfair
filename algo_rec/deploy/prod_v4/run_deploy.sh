@@ -1,11 +1,11 @@
 if [ $1 = "pkg" ]; then
-    python deploy.py --pipeline=pkg  --model_name=mtl_seq_esmm_v4  --edp_version=20250205-20250217  --region=in --debug_v=3 --ds=20250223
+    python deploy.py --pipeline=pkg  --model_name=mtl_seq_esmm_v4  --edp_version=20250218-20250223  --region=in --debug_v='' --ds=20250223
 elif [ $1 = "edp" ]; then
-    python deploy.py --pipeline=edp  --model_name=mtl_seq_esmm_v4  --edp_version=20250205-20250217 --region=in --debug_v=3 --ds=20250223
+    python deploy.py --pipeline=edp  --model_name=mtl_seq_esmm_v4  --edp_version=20250218-20250223 --region=in --debug_v='' --ds=20250223
 elif [ $1 = "local" ]; then # change base_data_dir on inference.py
     python inference.py
 elif [ $1 = "req_sg" ]; then
-    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250205-20250217  --region=in --debug_v=3 --debug=log --ds=20250223
+    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250218-20250223  --region=in --debug_v='' --debug=log --ds=20250223
 elif [ $1 = "req_sg1" ]; then
-    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250205-20250217  --region=in --debug_v=3 --debug=1 --ds=20250223
+    python deploy.py --pipeline=req_sg  --model_name=mtl_seq_esmm_v4  --edp_version=20250218-20250223  --region=in --debug_v='' --debug=1 --ds=20250223
 fi

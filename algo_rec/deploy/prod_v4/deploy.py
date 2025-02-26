@@ -1833,7 +1833,7 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', default='pkg,edp,req_sg,update,time')
     parser.add_argument('--model_name', default='mtl_seq_esmm_v4')
     parser.add_argument('--region', default='in')
-    parser.add_argument('--debug_v', default='v1')
+    parser.add_argument('--debug_v', default='')
     parser.add_argument('--edp_version', type=str,
                         default=(datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--ds', type=str,
