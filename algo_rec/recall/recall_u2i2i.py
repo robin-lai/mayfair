@@ -37,7 +37,8 @@ def main(args):
                 tt_ll = []
                 for e in v.split(chr(2)):
                     e_tt = e.strip('\n').split(chr(4))
-                    tt_ll.append((e_tt[0], float(e_tt[1])))
+                    if len(e_tt) == 2:
+                        tt_ll.append((e_tt[0], float(e_tt[1])))
                 tt_ll.sort(key=lambda x: x[1], reverse=True)
                 i2i_sort_d[k] = tt_ll
     print('read i2i end, num:', len(i2i_d.keys()))
