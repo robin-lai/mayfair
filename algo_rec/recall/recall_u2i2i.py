@@ -34,7 +34,7 @@ def main(args):
             for line in lines:
                 k, v = line.split(chr(1))
                 i2i_d[k] = v
-                tt_ll = [(str(k), 1.0)] # 重定向
+                tt_ll = [(str(k.split(chr(4)[1])), 1.0)] # 重定向
                 for e in v.split(chr(2)):
                     e_tt = e.strip('\n').split(chr(4))
                     if len(e_tt) == 2:
