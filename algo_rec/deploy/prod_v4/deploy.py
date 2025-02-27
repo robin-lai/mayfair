@@ -1815,7 +1815,10 @@ def main(args):
         print('end request sagemaker')
     if 'update' in args.pipeline:
         print('start update edp')
-        args.s3_tar_file = in8_rec_buk + args.tar_name
+        if args.region == 'in':
+            args.s3_tar_file = in8_rec_buk + args.tar_name
+        if args.region == 'sg':
+            args.s3_tar_file = sg_rec_buk + args.tar_name
         update_edp(args)
         print('end update edp')
 
