@@ -141,6 +141,7 @@ if __name__ == '__main__':
             st = time.time()
             main(args)
             print('end train ds:%s cost:%s' % (args.train_ds, str(time.time() - st)))
+            alert_feishu(f"train ds:{args.train_ds} complete, cost:{str(time.time() - st)}, please check model")
     else:
         print('eval ds:', args.eval_ds)
         st = time.time()
@@ -149,4 +150,4 @@ if __name__ == '__main__':
         # job_d = {"start_time": str(st), "end_time": str(ed), "cost": str(ed - st)}
         # add_job_monitor('train', job_d)
         print('end train ds:%s cost:%s' % (args.eval_ds, str(time.time() - st)))
-    alert_feishu(f"train ds:{args.train_ds} complete, please check model")
+        alert_feishu(f"train ds:{args.train_ds} complete, cost:{str(time.time() - st)}, please check model")
