@@ -8,11 +8,11 @@ if [ $1 = "train" ]; then
 #    sleep 600
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250226 --pre_ds=20250225 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250227 --pre_ds=20250226 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250228 --pre_ds=20250227 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
-    sleep 600
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250301 --pre_ds=20250228 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
-    sleep 600
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250302 --pre_ds=20250301 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250228 --pre_ds=20250227 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
+#    sleep 600
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250301 --pre_ds=20250228 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
+#    sleep 600
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=4 --warm_start_from=NEWEST --train_ds=20250302 --pre_ds=20250227 --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
 
 elif [ $1 = "train_d" ]; then
     python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v4 --instance_count=1 --warm_start_from=NEW --train_ds=20250120eval --eval_ds=20250120eval --sample=cn_rec_detail_sample_v30_savana_in_tfr_row_n300
