@@ -2268,7 +2268,10 @@ def main(args):
         print('end request sagemaker')
     if 'update' in args.pipeline:
         print('start update edp')
-        args.s3_tar_file = in8_rec_buk + args.tar_name
+        if args.region == 'in':
+            args.s3_tar_file = in8_rec_buk + args.tar_name
+        if args.region == 'sg':
+            args.s3_tar_file = sg_rec_buk + args.tar_name
         update_edp(args)
         print('end update edp')
 
@@ -2297,7 +2300,7 @@ if __name__ == '__main__':
     parser.add_argument('--col_num', type=int, default=1)
     parser.add_argument('--instance_type', default='ml.r5.xlarge')
     parser.add_argument('--req_num', type=int, default=10000)
-    parser.add_argument('--instance_count', type=int, default=2)
+    parser.add_argument('--instance_count', type=int, default=3)
     parser.add_argument('--goods_num', type=int, default=100)
     args = parser.parse_args()
     args.tar_name = args.tar_name % (args.model_name, args.edp_version)

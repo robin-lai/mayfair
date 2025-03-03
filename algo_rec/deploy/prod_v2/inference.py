@@ -228,7 +228,7 @@ def input_handler(data, context):
         try:
             print('edp-version:0126')
             d = json.loads(data.read())
-            print('request', d)
+            # print('request', d)
             if "debug" not in d:
                 d["debug"] = ""
             if d["debug"] == '1':
@@ -254,7 +254,8 @@ def output_handler(data, context):
     response_content_type = context.accept_header
     prediction = data.content
     try:
-        print('response', json.loads(prediction))
+        # print('response', json.loads(prediction))
+        ret = json.loads(prediction)
     except Exception:
         print("-" * 60)
         logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
