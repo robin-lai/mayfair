@@ -209,9 +209,9 @@ def input_handler(data, context):
     if context.request_content_type == "application/json":
         # logging.info('[DEBUG] current dir: %s %s', os.getcwd(), os.listdir("/opt/ml/model/"))
         try:
-            print('edp-version:0126')
+            print('edp-version:0302')
             d = json.loads(data.read())
-            print('request', d)
+            # print('request', d)
             if "debug" not in d:
                 d["debug"] = ""
             if d["debug"] == '1':
@@ -221,7 +221,7 @@ def input_handler(data, context):
             st = time.time()
             ipt = get_infer_json_from_request(d)
             ed = time.time()
-            print('feature_process cost:', ed - st)
+            # print('feature_process cost:', ed - st)
             if d["debug"] == 'log':
                 print('req_input', ipt)
 
@@ -238,7 +238,8 @@ def output_handler(data, context):
     response_content_type = context.accept_header
     prediction = data.content
     try:
-        print('response', json.loads(prediction))
+        # print('response', json.loads(prediction))
+        ret = json.loads(prediction)
     except Exception:
         print("-" * 60)
         logging.info('[DEBUG] output_data: %s %s  %s', type(data), data, context)
