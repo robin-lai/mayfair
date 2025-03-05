@@ -207,7 +207,6 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
             , "cate_level2_id": "", "cate_level2_name": "",
                                 "cate_level3_id": "", "cate_level3_name": "",
                                 "cate_level4_id": "", "cate_level4_name": "",
-                                "country": "",
 
                                 "goods_name": "", "main_color": "",
                                 "prop_seaon": "", "prop_length": "",
