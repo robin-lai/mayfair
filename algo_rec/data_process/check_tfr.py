@@ -8,21 +8,7 @@ import tensorflow.compat.v1 as v1
 def main(args):
     def parse(data):
         feature_describe = {
-            "ctr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
-            , "cvr_7d": v1.FixedLenFeature(1, tf.float32, 0.0)
-            , "show_7d": v1.FixedLenFeature(1, tf.int64, 0)
-            , "click_7d": v1.FixedLenFeature(1, tf.int64, 0)
-            , "cart_7d": v1.FixedLenFeature(1, tf.int64, 0)
-            , "ord_total": v1.FixedLenFeature(1, tf.int64, 0)
-            , "pay_total": v1.FixedLenFeature(1, tf.int64, 0)
-            , "ord_7d": v1.FixedLenFeature(1, tf.int64, 0)
-            , "pay_7d": v1.FixedLenFeature(1, tf.int64, 0)
-
-            , "is_rel_cate": v1.FixedLenFeature(1, tf.int64, 0)
-            , "is_rel_cate2": v1.FixedLenFeature(1, tf.int64, 0)
-            , "is_rel_cate3": v1.FixedLenFeature(1, tf.int64, 0)
-            , "is_rel_cate4": v1.FixedLenFeature(1, tf.int64, 0)
-            , "sales_price": v1.FixedLenFeature(1, tf.int64, 0)
+            "sales_price": v1.FixedLenFeature(1, tf.int64, 0)
 
             , "main_goods_id": v1.FixedLenFeature(1, tf.string, "-1")
             , "main_cate_id": v1.FixedLenFeature(1, tf.string, "-1")
@@ -48,7 +34,6 @@ def main(args):
             , "cate_level2_id": v1.FixedLenFeature(1, tf.string, "-1")
             , "cate_level3_id": v1.FixedLenFeature(1, tf.string, "-1")
             , "cate_level4_id": v1.FixedLenFeature(1, tf.string, "-1")
-            , "country": v1.FixedLenFeature(1, tf.string, '-1')
 
             # , "seq_cate_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
             # , "seq_goods_id": v1.FixedLenSequenceFeature(20, tf.string, default_value="-1", allow_missing=True)
@@ -65,7 +50,7 @@ def main(args):
            }
         features = tf.io.parse_single_example(data, features=feature_describe)
         return features
-    s3_file = 's3://warehouse-algo/rec/cn_rec_detail_sample_v10_tfr/ds=%s/%s' % (args.ds, args.file)
+    s3_file = 's3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300_sample_select/ds=%s/%s' % (args.ds, args.file)
     local_file = './' + args.file
     os.system('aws s3 cp %s %s' % (s3_file, local_file))
     ds = tf.data.TFRecordDataset(local_file)
@@ -96,11 +81,11 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict')
-    parser.add_argument('--file', default='part-00000-17ebac5c-0e1d-4b33-98db-ebd48025b24b-c000')
-    parser.add_argument('--ds', default='20241209')
+    parser.add_argument('--file', default='part-00000-5d8949ad-f96a-4927-9883-57e2e4023168-c000')
+    parser.add_argument('--ds', default='20250304')
     parser.add_argument('--batch_size',type=int, default=64)
     parser.add_argument('--head',type=int, default=10)
-    parser.add_argument('--names', default='sample_id,highLevelSeqListGoods,lowerLevelSeqListGoods,lowerLevelSeqListCateId,is_rel_cate3,main_cate_level2_id,prop_style,last_login_device,main_goods_id')
+    parser.add_argument('--names', default='sample_id,highLevelSeqListGoods,lowerLevelSeqListGoods,lowerLevelSeqListCateId,main_cate_level2_id,prop_style,last_login_device,main_goods_id')
     args = parser.parse_args()
     main(args)
 
