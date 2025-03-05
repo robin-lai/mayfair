@@ -189,7 +189,7 @@ def get_file_batch(args):
         file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list][0:args.sample_num]
     else:
         file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list]
-    print('file list num in dir', len(file_list))
+    print('file list num in dir', len(file_list), file_list)
     shuffle(file_list)
     file_batch = list(chunks(file_list, args.proc))
     return file_batch
