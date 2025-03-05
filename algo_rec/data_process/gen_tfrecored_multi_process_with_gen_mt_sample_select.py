@@ -246,7 +246,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         itm_id_int = int(t['goods_id'])
         for name in item_features_string.keys():
             if itm_id_int in itm_d:
-                raw_v = itm_d[itm_id_int][name]
+                raw_v = str(itm_d[itm_id_int][name])
                 if raw_v is not None:
                     feature.update({name: bytes_fea(raw_v)})
                 else:
@@ -256,7 +256,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
 
         for name in item_features_int.keys():
             if itm_id_int in itm_d:
-                raw_v = itm_d[itm_id_int][name]
+                raw_v = int(itm_d[itm_id_int][name])
                 if raw_v is not None:
                     feature.update({name: ints_fea(raw_v)})
                 else:
@@ -266,7 +266,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
 
         for name in item_features_double.keys():
             if itm_id_int in itm_d:
-                raw_v = itm_d[itm_id_int][name]
+                raw_v = float(itm_d[itm_id_int][name])
                 if raw_v is not None:
                     feature.update({name: floats_fea(raw_v)})
                 else:
@@ -278,7 +278,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         for name in main_item_features_string.keys():
             name_suffix = name.lstrip('main_')
             if main_itm_id_int in itm_d:
-                raw_v = itm_d[main_itm_id_int][name_suffix]
+                raw_v = str(itm_d[main_itm_id_int][name_suffix])
                 if raw_v is not None:
                     feature.update({name: bytes_fea(raw_v)})
                 else:
@@ -289,7 +289,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         for name in main_item_features_int.keys():
             name_suffix = name.lstrip('main_')
             if main_itm_id_int in itm_d:
-                raw_v = itm_d[main_itm_id_int][name_suffix]
+                raw_v = int(itm_d[main_itm_id_int][name_suffix])
                 if raw_v is not None:
                     feature.update({name: ints_fea(raw_v)})
                 else:
@@ -300,7 +300,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         for name in main_item_features_double.keys():
             name_suffix = name.lstrip('main_')
             if main_itm_id_int in itm_d:
-                raw_v = itm_d[main_itm_id_int][name_suffix]
+                raw_v = float(itm_d[main_itm_id_int][name_suffix])
                 if raw_v is not None:
                     feature.update({name: floats_fea(raw_v)})
                 else:
@@ -309,8 +309,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 feature.update({name: floats_fea(main_item_features_double[name])})
 
         for name in item_stat_double.keys():
-            if int(t['goods_id']) in itm_stat_d:
-                raw_v = itm_stat_d[int(t['goods_id'])][name]
+            if itm_id_int in itm_stat_d:
+                raw_v = float(itm_stat_d[itm_id_int][name])
                 if raw_v is not None:
                     feature.update({name: floats_fea(raw_v)})
                 else:
@@ -319,8 +319,8 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 feature.update({name: floats_fea(item_stat_double[name])})
 
         for name in item_stat_int.keys():
-            if int(t['goods_id']) in itm_stat_d:
-                raw_v = itm_stat_d[int(t['goods_id'])][name]
+            if itm_id_int in itm_stat_d:
+                raw_v = int(itm_stat_d[itm_id_int][name])
                 if raw_v is not None:
                     feature.update({name: ints_fea(raw_v)})
                 else:
