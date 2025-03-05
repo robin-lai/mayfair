@@ -186,7 +186,7 @@ def get_file_batch(args):
     file_list = [[v['Key'] for v in page.get('Contents', [])] for page in page_iter][0]
     if args.sample_num is not None:
         print('sample file num:', args.sample_num)
-        file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list][0:args.sample_num]
+        file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list][1:args.sample_num+1]
     else:
         file_list = ['s3://%s/%s' % (BUCKET, v) for v in file_list]
     print('file list num in dir', len(file_list), file_list)
