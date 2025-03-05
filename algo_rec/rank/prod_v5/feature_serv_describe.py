@@ -22,7 +22,7 @@ feature_spec_serve = {
     "mt_i2i_long_score": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_i2i_long_score"),
     "mt_i2i_short_score": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_i2i_short_score"),
     "mt": tf.placeholder(dtype=tf.string, shape=[None, 6], name="mt"),
-    "mt_u2i_f": tf.placeholder(dtype=tf.float32, shape=[None, 1], name="mt_u2i_f"),
+    "mt_u2i_f": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="mt_u2i_f"),
 
     "sales_price": tf.placeholder(dtype=tf.int64, shape=[None, 1], name="sales_price"),
 
