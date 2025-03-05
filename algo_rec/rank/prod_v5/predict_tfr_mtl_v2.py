@@ -80,7 +80,7 @@ def process_tfr(proc, tfr_list, batch_size, dir, pkl_file, site_code):
             score[key] = prob
         
     for file_n, file in enumerate(tfr_list):
-        # print('download file into tmp:',file)
+        print('download file into tmp:',file)
         os.system('aws s3 cp %s %s' % (file, tmp_dir_data))
         file_suffix = tmp_dir_data + file.split('/')[-1]
         ds = tf.data.TFRecordDataset(file_suffix)
