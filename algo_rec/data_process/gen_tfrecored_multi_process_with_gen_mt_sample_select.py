@@ -281,9 +281,9 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 if raw_v is not None:
                     feature.update({name: bytes_fea(raw_v)})
                 else:
-                    feature.update({name: bytes_fea(item_features_string[name])})
+                    feature.update({name: bytes_fea(main_item_features_string[name])})
             else:
-                feature.update({name: bytes_fea(item_features_string[name])})
+                feature.update({name: bytes_fea(main_item_features_string[name])})
 
         for name in main_item_features_int.keys():
             name_suffix = name.lstrip('main_')
