@@ -4,11 +4,11 @@ import tensorflow as tf
 import argparse
 print(tf.__version__)
 import tensorflow.compat.v1 as v1
-from feature_serv_describe import feature_describe, feature_spec_serve
+from feature_serv_describe_tfv2 import feature_describe_pred
 
 def main(args):
     def parse(data):
-        features = tf.io.parse_single_example(data, features=feature_describe)
+        features = tf.io.parse_single_example(data, features=feature_describe_pred)
         return features
     s3_file = 's3://warehouse-algo/rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300_sample_select/ds=%s/%s' % (args.ds, args.file)
     local_file = './' + args.file
