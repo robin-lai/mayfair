@@ -237,7 +237,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
         main_item_features_int ={ "main_sales_price": 0}
         main_item_features_double ={ "main_gmv_price": 0.0}
 
-        user_int = {"age": -1, "seq_len": 0, "pos_idx": -1}
+        user_int = {"age": -1, "pos_idx": -1}
         user_string = {"last_login_device": "", "last_login_brand": "", "register_brand": "", "client_type": ""}
         other_string = {"sample_id": "", "uuid": ""}
         other_int = {"is_clk": 0, "is_pay": 0, "is_cart": 0, "is_wish": 0}
