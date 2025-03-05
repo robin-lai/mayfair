@@ -132,7 +132,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
                 mt.append('i2i_main')
                 mt_w.append(i2i_d[main_goods][tgt_id])
         seq_on = tt['seq_on']
-        if seq_on != '':
+        if seq_on != '' and seq_on is not None:
             js = dict(json.loads(seq_on))
             if 'highLevelSeqList' in js:
                 ret = is_tgt_in_recall(js['highLevelSeqList'], i2i_d, tgt_id)
@@ -178,7 +178,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
     def build_seq_on(seq_on, feature):
         if debug:
             print('seq_on', seq_on)
-        if seq_on == "":
+        if seq_on == "" and seq_on is None:
             js = dict()
         else:
             js = dict(json.loads(seq_on))
