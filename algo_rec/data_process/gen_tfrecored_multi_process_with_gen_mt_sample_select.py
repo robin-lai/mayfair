@@ -600,7 +600,7 @@ if __name__ == '__main__':
                         default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--range', type=str, default='')
-    parser.add_argument('--thread', type=int, default=14)
+    parser.add_argument('--thread', type=int, default=17)
     parser.add_argument('--sample_num', type=int, default=None)
     parser.add_argument('--dir_pt', default='cn_rec_detail_sample_v20_savana_in_ssv0/ds=%s')
     parser.add_argument('--dir_tfr', default='cn_rec_detail_sample_v30_savana_in_tfr_row_n300_sample_select/ds=%s')
