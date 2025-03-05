@@ -178,7 +178,7 @@ def build_tfrecord(path_pt_list, path_tfr_local_list, path_tfr_s3_list,proc_id,s
     def build_seq_on(seq_on, feature):
         if debug:
             print('seq_on', seq_on)
-        if seq_on == "" and seq_on is None:
+        if seq_on is None:
             js = dict()
         else:
             js = dict(json.loads(seq_on))
