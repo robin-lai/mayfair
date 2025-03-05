@@ -449,14 +449,14 @@ if __name__ == '__main__':
         prog='predict',
         description='predict',
         epilog='predict-use tf2.0')
-    parser.add_argument('--model_name', default='mtl_seq_esmm')
+    parser.add_argument('--model_name', default='mtl_seq_esmm_v5')
     parser.add_argument('--ds', type=str,
                         default=(datetime.today() - timedelta(days=2)).strftime('%Y%m%d'))
     parser.add_argument('--pred_ds', type=str,
                         default=(datetime.today() - timedelta(days=1)).strftime('%Y%m%d'))
     parser.add_argument('--model_version', default='/ds=%s/model/%s/')
     parser.add_argument('--tfr', default='')
-    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300/ds=%s/')
+    parser.add_argument('--tfr_s3', default='rec/cn_rec_detail_sample_v30_savana_in_tfr_row_n300_sample_select/ds=%s/')
     parser.add_argument('--auc_file', default='s3://warehouse-algo/rec/model_pred/auc.json')
     parser.add_argument('--batch_size', type=int, default=1024)
     parser.add_argument('--proc', type=int, default=10)
