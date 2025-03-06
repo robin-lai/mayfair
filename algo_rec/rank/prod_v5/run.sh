@@ -8,6 +8,8 @@ elif [ $1 = "train_d" ]; then
 
 elif [ $1 = "pred_d" ]; then
     python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v5 --ds=20250304eval --pred_ds=20250304eval  --proc=1 --sample_num=1
-elif [ $1 = "pred" ]; then
+elif [ $1 = "pred1" ]; then
     python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v5 --ds=20250215-20250224  --pred_ds=20250225
+elif [ $1 = "pred2" ]; then
+    python predict_tfr_mtl_v2.py --model_name=mtl_seq_esmm_v5 --ds=20250225-20250304  --pred_ds=20250304
 fi
