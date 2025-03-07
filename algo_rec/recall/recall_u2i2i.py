@@ -140,7 +140,7 @@ if __name__ == '__main__':
     parser.add_argument('--i2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_i2i_for_redis_row_n300/item_user_debias_%s_1.0_0.6_0.5/')
     parser.add_argument('--i2i_file', default='swing_rec_Savana_IN_part_%s')
     parser.add_argument('--i2i_part',type=int, default=10)
-    parser.add_argument('--topn',type=int, default=10)
+    parser.add_argument('--topn',type=int, default=5)
     parser.add_argument('--u2i_s3', default='s3://warehouse-algo/rec/recall/cn_rec_detail_recall_wish_cart2i/ds=%s/')
     parser.add_argument('--u2i2i_file', default='u2i2i_part_%s')
     parser.add_argument('--u2i2i_s3', default='s3://warehouse-algo/rec/recall/recall_u2i2i/item_user_debias_%s/')
