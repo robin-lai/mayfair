@@ -7,7 +7,7 @@ elif [ $1 = "recall_d" ]; then
 elif [ $1 = "bi" ]; then
     python -u swing_result2bi.py --ds=20250216
 elif [ $1 = "u2i2i" ]; then
-    python -u recall_u2i2i.py --pre_ds=20250224
+    python -u recall_u2i2i.py --pre_ds=20250305
 elif [ $1 = "u2i2i_d" ]; then
     python -m pdb recall_u2i2i.py --pre_ds=20250224
 fi
