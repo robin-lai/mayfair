@@ -1,5 +1,5 @@
 if [ $1 = "recall" ]; then
-    python -u swing_multi_process.py --pre_ds=20250219
+    python -u swing_multi_process.py --pre_ds=20250308
 elif [ $1 = "recall2" ]; then
     python -u swing_multi_process.py --pre_ds=20250206,20250207,20250208,20250209,20250210
 elif [ $1 = "recall_d" ]; then
@@ -7,7 +7,7 @@ elif [ $1 = "recall_d" ]; then
 elif [ $1 = "bi" ]; then
     python -u swing_result2bi.py --ds=20250216
 elif [ $1 = "u2i2i" ]; then
-    python -u recall_u2i2i.py --pre_ds=20250305
+    python -u recall_u2i2i.py --pre_ds=20250309
 elif [ $1 = "u2i2i_d" ]; then
     python -m pdb recall_u2i2i.py --pre_ds=20250224
 fi
