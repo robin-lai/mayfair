@@ -1,7 +1,7 @@
 if [ $1 = "tfr_mt" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250309
+    python gen_tfrecored_multi_process_with_gen_mt.py --ds=20250310,20250311,20250312
 elif [ $1 = "tfr_mt_ss" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --ds=20250309
+    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --ds=20250310,20250311,20250312
 elif [ $1 = "tfr_mt_range" ]; then
     python gen_tfrecored_multi_process_with_gen_mt.py --range=20250228,20250301,20250302
 elif [ $1 = "tfr_mt_range_ss" ]; then
