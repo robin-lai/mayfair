@@ -8,7 +8,7 @@ def process(from_dir, to_dir):
 
 
 def main(args):
-    main(args.from_dir, args.to_dir)
+    process(args.from_dir, args.to_dir)
 
 
 if __name__ == '__main__':
