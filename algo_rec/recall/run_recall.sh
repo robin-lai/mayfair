@@ -10,6 +10,8 @@ elif [ $1 = "u2i2i" ]; then
     python -u recall_u2i2i.py --pre_ds=20250309
 elif [ $1 = "u2i2i_d" ]; then
     python -m pdb recall_u2i2i.py --pre_ds=20250224
+elif [ $1 = "copy_online" ]; then
+    python recall_copy_file_online.py --ds=20250316 --to_dir='s3://algo-sg/rec_test/test/'
 fi
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
