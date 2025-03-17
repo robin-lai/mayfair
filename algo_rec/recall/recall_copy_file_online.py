@@ -4,7 +4,7 @@ from datetime import datetime,date, timedelta
 import multiprocessing
 
 def process(from_dir, to_dir):
-    os.system("aws s3 cp *part_* --recursive %s  %s" % (from_dir, to_dir))
+    os.system("aws s3 cp %s/*part_*  %s" % (from_dir, to_dir))
 
 
 def main(args):
