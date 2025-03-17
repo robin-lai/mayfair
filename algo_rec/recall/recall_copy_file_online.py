@@ -8,10 +8,7 @@ def process(from_dir, to_dir):
 
 
 def main(args):
-    ll = [[args.from_dir % ds, args.to_dir] for ds in args.range.split(',')]
-    proc_list = [multiprocessing.Process(target=process, args=t) for t in ll]
-    [p.start() for p in proc_list]
-    [p.join() for p in proc_list]
+    main(args.from_dir, args.to_dir)
 
 
 if __name__ == '__main__':
