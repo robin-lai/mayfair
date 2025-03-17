@@ -1,10 +1,9 @@
 import os
 import argparse
 from datetime import datetime,date, timedelta
-import multiprocessing
 
 def process(from_dir, to_dir):
-    os.system("aws s3 cp %s/*part_*  %s" % (from_dir, to_dir))
+    os.system("aws s3 cp %s/swing_rec_Savana_IN_part_*  %s  --recursive" % (from_dir, to_dir))
 
 
 def main(args):
