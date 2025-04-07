@@ -5,11 +5,11 @@ elif [ $1 = "tfr_mt_ss" ]; then
 elif [ $1 = "tfr_mt_range" ]; then
     python gen_tfrecored_multi_process_with_gen_mt.py --range=20250324,20250325,20250326
 elif [ $1 = "tfr_mt_range_ss" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250324,20250325,20250326
+    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250404,20250330,20250405,20250406
 elif [ $1 = "tfr_mt_range2_ss" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250224,20250225,20250226,20250227,20250228
+    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250331,20250401,20250402,20250403
 elif [ $1 = "tfr_mt_range3_ss" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250220,20250221,20250222,20250223
+    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --range=20250326,20250327,20250328,20250329
 elif [ $1 = "tfr_mt_d" ]; then
     python -m pdb gen_tfrecored_multi_process_with_gen_mt_sample_select.py --ds=20250215 --sample_num=1 --thread=1
 elif [ $1 = "tfr_mt_d_ss" ]; then
