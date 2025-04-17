@@ -13,7 +13,7 @@ elif [ $1 = "u2i2i_d" ]; then
 elif [ $1 = "copy_online_test" ]; then
     python recall_copy_file_online.py --ds=20250316 --to_dir='s3://algo-sg/rec_test/test/'
 elif [ $1 = "copy_online" ]; then
-    python recall_copy_file_online.py --ds=20250405
+    python recall_copy_file_online.py --ds=20250416
 fi
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.6 done
 # nohup python -u swing_multi_process.py --pre_ds=20250106 --beta=0.7 done
