@@ -10,9 +10,12 @@ if [ $1 = "train" ]; then
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250325 --pre_ds=20250324  --eval_ds=20250304eval
 #    sleep 600
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250326 --pre_ds=20250325  --eval_ds=20250304eval
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250327 --pre_ds=20250326  --eval_ds=20250304eval
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250327 --pre_ds=20250326  --eval_ds=20250304eval
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250328 --pre_ds=20250327  --eval_ds=20250304eval
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250329 --pre_ds=20250328  --eval_ds=20250330
     sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250328 --pre_ds=20250327  --eval_ds=20250304eval
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250330 --pre_ds=20250329  --eval_ds=20250331
 
 elif [ $1 = "train_d" ]; then
     python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=1 --warm_start_from=NEW --train_ds=20250304eval --eval_ds=20250304eval 

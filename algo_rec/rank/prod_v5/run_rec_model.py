@@ -30,6 +30,8 @@ def input_fn(task='ctr', batch_size=256, channel='train',
     dataset = PipeModeDataset(channel=channel, record_format="TFRecord")
     # https://sagemaker.readthedocs.io/en/stable/frameworks/tensorflow/using_tf.html#training-with-pipe-mode-using-pipemodedataset
     dataset = dataset.shard(host_num, host_rank)
+    if channel=='eval':
+        dataset = dataset.take(1000)
     dataset = dataset.map(_parse_fea, num_parallel_calls=num_parallel_calls)
     if site_code is not None:
         print('only site_code:%s data use' % (str(site_code)))
