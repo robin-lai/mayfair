@@ -43,7 +43,7 @@ if __name__ == '__main__':
         prog='cooc',
         description='cooc',
         epilog='cooc')
-    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation%s/ds=20250421')
+    parser.add_argument('--in_file', type=str, default='s3://warehouse-algo/rec/cn_rec_detail_recall_ui_relation/ds=20250421')
     parser.add_argument('--out_pkl', type=str, default='swing_cooccurrence_num.pkl')
     args = parser.parse_args()
     main(args)
