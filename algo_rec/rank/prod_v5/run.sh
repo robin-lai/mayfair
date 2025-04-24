@@ -17,49 +17,53 @@ if [ $1 = "train" ]; then
 #    sleep 300
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250330 --pre_ds=20250329  --eval_ds=20250331
 #    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250331 --pre_ds=20250330  --eval_ds=20250401
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250331 --pre_ds=20250330  --eval_ds=20250401
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250401 --pre_ds=20250331  --eval_ds=20250402
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250402 --pre_ds=20250401  --eval_ds=20250403
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250403 --pre_ds=20250402  --eval_ds=20250404
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250404 --pre_ds=20250403  --eval_ds=20250405
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250405 --pre_ds=20250404  --eval_ds=20250406
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250406 --pre_ds=20250405  --eval_ds=20250407
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250407 --pre_ds=20250406  --eval_ds=20250408
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250408 --pre_ds=20250407  --eval_ds=20250409
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250409 --pre_ds=20250408  --eval_ds=20250410
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250410 --pre_ds=20250409  --eval_ds=20250411
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250411 --pre_ds=20250410  --eval_ds=20250412
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250412 --pre_ds=20250411  --eval_ds=20250413
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250413 --pre_ds=20250412  --eval_ds=20250414
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250414 --pre_ds=20250413  --eval_ds=20250415
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250415 --pre_ds=20250414  --eval_ds=20250416
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250416 --pre_ds=20250415  --eval_ds=20250417
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250417 --pre_ds=20250416  --eval_ds=20250418
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250418 --pre_ds=20250417  --eval_ds=20250419
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250419 --pre_ds=20250418  --eval_ds=20250420
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250420 --pre_ds=20250419  --eval_ds=20250421
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250421 --pre_ds=20250420  --eval_ds=20250421
+#    sleep 300
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250422 --pre_ds=20250421  --eval_ds=20250423
     sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250401 --pre_ds=20250331  --eval_ds=20250402
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250402 --pre_ds=20250401  --eval_ds=20250403
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250403 --pre_ds=20250402  --eval_ds=20250404
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250404 --pre_ds=20250403  --eval_ds=20250405
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250405 --pre_ds=20250404  --eval_ds=20250406
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250406 --pre_ds=20250405  --eval_ds=20250407
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250407 --pre_ds=20250406  --eval_ds=20250408
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250408 --pre_ds=20250407  --eval_ds=20250409
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250409 --pre_ds=20250408  --eval_ds=20250410
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250410 --pre_ds=20250409  --eval_ds=20250411
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250411 --pre_ds=20250410  --eval_ds=20250412
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250412 --pre_ds=20250411  --eval_ds=20250413
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250413 --pre_ds=20250412  --eval_ds=20250414
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250414 --pre_ds=20250413  --eval_ds=20250415
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250415 --pre_ds=20250414  --eval_ds=20250416
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250416 --pre_ds=20250415  --eval_ds=20250417
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250417 --pre_ds=20250416  --eval_ds=20250418
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250418 --pre_ds=20250417  --eval_ds=20250419
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250419 --pre_ds=20250418  --eval_ds=20250420
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250420 --pre_ds=20250419  --eval_ds=20250421
-    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250421 --pre_ds=20250420  --eval_ds=20250421
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250423 --pre_ds=20250422  --eval_ds=20250423
     sleep 300
 
 elif [ $1 = "train_d" ]; then
