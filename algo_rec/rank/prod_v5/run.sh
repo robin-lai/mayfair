@@ -61,9 +61,15 @@ if [ $1 = "train" ]; then
 #    sleep 300
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250421 --pre_ds=20250420  --eval_ds=20250421
 #    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250422 --pre_ds=20250421  --eval_ds=20250423
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250422 --pre_ds=20250421  --eval_ds=20250423
+#    sleep 300
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250423 --pre_ds=20250422  --eval_ds=20250423
+#    sleep 300
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250424 --pre_ds=20250423  --eval_ds=20250424
     sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250423 --pre_ds=20250422  --eval_ds=20250423
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250425 --pre_ds=20250424  --eval_ds=20250425
+    sleep 300
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250426 --pre_ds=20250425  --eval_ds=20250426
     sleep 300
 
 elif [ $1 = "train_d" ]; then
