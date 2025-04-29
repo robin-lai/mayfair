@@ -71,7 +71,9 @@ if [ $1 = "train" ]; then
 #    sleep 300
 #    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250426 --pre_ds=20250425  --eval_ds=20250426
 #    sleep 300
-    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250427 --pre_ds=20250426  --eval_ds=20250427
+#    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250427 --pre_ds=20250426  --eval_ds=20250427
+#    sleep 300
+    python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=2 --warm_start_from=NEWEST --train_ds=20250428 --pre_ds=20250427  --eval_ds=20250428
     sleep 300
 elif [ $1 = "train_d" ]; then
     python run_rec_model_sg_di.py  --model_name=mtl_seq_esmm_v5 --instance_count=1 --warm_start_from=NEW --train_ds=20250304eval --eval_ds=20250304eval 
