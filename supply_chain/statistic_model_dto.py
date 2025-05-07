@@ -30,6 +30,10 @@ def main(args):
         pt = parquet.read_table(args.dir_pt_sku).to_pylist()
         for t in pt:
             # t['sign_date_format'] = date(t['sign_date'])
+            if t['sign_date'] is None:
+                print('sign_date is None')
+                print(t)
+                continue
             tt = [t['sale_sku_id']]
             for col in cols:
                 tt.append(t[col])
