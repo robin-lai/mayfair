@@ -57,7 +57,7 @@ def main(args):
     if args.flag == 'sku':
         process_data(args.debug, args.dir_pt_sku, 434453, dd_sku_file, 'sku')
     elif args.flag == 'skc':
-        process_data(args.debug, args.dir_pt_skc, 124510, dd_skc_file, 'skc')
+        process_data(args.debug, args.dir_pt_skc, 85192, dd_skc_file, 'skc')
 
 
 
