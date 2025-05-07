@@ -1,17 +1,27 @@
 from pyarrow import parquet
 import argparse
-from datetime import datetime,date, timedelta
+from datetime import datetime, date, timedelta
 import pickle
 
 dd_sku_file = 'dd_sku.pkl'
 dd_skc_file = 'dd_skc.pkl'
+cols = ['goods_id',
+        'skc_id',
+        'brand',
+        'site_code',
+        'sign_date',
+        'sign_sku_qty',
+        'dto_sku_qty',
+        'quality_dto_sku_qty',
+        'size_dto_sku_qty',
+        'layer_tag']
+
+
 def model1(dd):
     for k, v in dd.items():
         print(v)
-        v.sort(key=lambda x: x['sign_date'], reverse=True)
+        v.sort(key=lambda x: x[5], reverse=True)
         print(v)
-
-
 
 
 def main(args):
@@ -20,10 +30,14 @@ def main(args):
         pt = parquet.read_table(args.dir_pt_sku).to_pylist()
         for t in pt:
             # t['sign_date_format'] = date(t['sign_date'])
-            if t['sale_sku_id'] not in dd_sku:
-                dd_sku[t['sale_sku_id']] = [t]
+            tt = [t['sale_sku_id']]
+            for col in cols:
+                tt.append(t[col])
+
+            if tt[0] not in dd_sku:
+                dd_sku[tt[0]] = [tt]
             else:
-                dd_sku[t['sale_sku_id']].append(t)
+                dd_sku[tt[0]].append(tt)
         print(f"sku_num:{len(dd_sku)}")
         with open(dd_sku_file, 'wb') as fout:
             pickle.dump(dd_sku, fout)
@@ -31,9 +45,6 @@ def main(args):
         with open(dd_sku_file, 'rb') as fin:
             dd_sku = pickle.load(fin)
     model1({434453: dd_sku[434453]})
-
-
-
 
 
 if __name__ == '__main__':
