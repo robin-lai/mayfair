@@ -51,14 +51,17 @@ def process_data(debug, in_file, case_id,out_file, flag):
 def model1(dd):
     for k, v in dd.items():
         v.sort(key=lambda x: x[5], reverse=True)
-        print([(t[0], t[5], t[6], t[7]) for t in v])
+        for t in v:
+            print(f"{t[0]}, {t[5]}, {t[6]}, {t[7]} \n")
 
 
 def main(args):
     for case_id in args.case.split(','):
         if args.flag == 'sku':
+            print('caseid', case_id)
             process_data(args.debug, args.dir_pt_sku, int(case_id), dd_sku_file, 'sku')
         elif args.flag == 'skc':
+            print('caseid', case_id)
             process_data(args.debug, args.dir_pt_skc, int(case_id) , dd_skc_file, 'skc')
 
 
