@@ -31,7 +31,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
             if flag == 'sku':
                 tt = [t['sale_sku_id']]
             else:
-                tt = [-1]
+                tt = [t['skc_id']]
             for col in cols:
                 tt.append(t[col])
 
