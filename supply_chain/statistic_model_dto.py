@@ -19,7 +19,7 @@ def main(args):
         pt = parquet.read_table(args.dir_pt_sku).to_pylist()
         for t in pt:
             # t['sign_date_format'] = date(t['sign_date'])
-            if t['sale_sku_id'] in dd_sku:
+            if t['sale_sku_id'] not in dd_sku:
                 dd_sku[t['sale_sku_id']] = [t]
             else:
                 dd_sku[t['sale_sku_id']].append(t)
