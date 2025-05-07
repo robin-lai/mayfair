@@ -29,9 +29,9 @@ def process_data(debug, in_file, case_id,out_file, flag):
             if t['layer_tag'] == 'C':
                 continue
             if flag == 'sku':
-                tt = [t['sale_sku_id']]
+                tt = [int(t['sale_sku_id'])]
             else:
-                tt = [t['skc_id']]
+                tt = [int(t['skc_id'])]
             for col in cols:
                 tt.append(t[col])
 
@@ -40,6 +40,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
             else:
                 dd[tt[0]].append(tt)
         print(f"dd_num:{len(dd)}")
+        print(f"dd_keys:{dd.items()[0:10]}")
         with open(out_file, 'wb') as fout:
             pickle.dump(dd, fout)
     else:
