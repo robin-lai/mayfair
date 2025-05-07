@@ -29,7 +29,7 @@ def main(args):
     else:
         with open(dd_sku_file, 'rb') as fin:
             dd_sku = pickle.load(fin)
-    model1({124510: dd_sku['124510']})
+    model1({434453: dd_sku[434453]})
 
 
 
