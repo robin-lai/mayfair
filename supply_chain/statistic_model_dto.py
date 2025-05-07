@@ -40,7 +40,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
             else:
                 dd[tt[0]].append(tt)
         print(f"dd_num:{len(dd)}")
-        print(f"dd_keys:{dd.items()[0:10]}")
+        print(f"dd_keys:{list(dd.items())[0:10]}")
         with open(out_file, 'wb') as fout:
             pickle.dump(dd, fout)
     else:
