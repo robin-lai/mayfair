@@ -46,5 +46,6 @@ if __name__ == '__main__':
     parser.add_argument('--dir_pt_skc', default='s3://warehouse-algo/supply_chain/sc_dto_num_skc_estimation/ds=%s')
     parser.add_argument('--debug', type=bool, default=False)
     args = parser.parse_args()
-    args.dir_pt = args.dir_pt % args.ds
+    args.dir_pt_sku = args.dir_pt_sku % args.ds
+    args.dir_pt_skc = args.dir_pt_skc % args.ds
     main(args)
