@@ -7,7 +7,7 @@ dd_sku_file = 'dd_sku.pkl'
 dd_skc_file = 'dd_skc.pkl'
 def model1(dd):
     for k, v in dd.items():
-        sort_v = v.sort(lambda x: x['sign_date_format'], reverse=True)
+        sort_v = v.sort(lambda x: x['sign_date'], reverse=True)
         print(sort_v)
 
 
@@ -18,7 +18,7 @@ def main(args):
     if not args.debug:
         pt = parquet.read_table(args.dir_pt_sku).to_pylist()
         for t in pt:
-            t['sign_date_format'] = date.fromisoformat(t['sign_date'])
+            # t['sign_date_format'] = date(t['sign_date'])
             if t['sale_sku_id'] in dd_sku:
                 dd_sku[t['sale_sku_id']] = [t]
             else:
