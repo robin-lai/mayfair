@@ -26,6 +26,8 @@ def process_data(debug, in_file, case_id,out_file, flag):
                 print('sign_date is None')
                 print(t)
                 continue
+            if t['layer_tag'] == 'C':
+                continue
             if flag == 'sku':
                 tt = [t['sale_sku_id']]
             else:
@@ -37,7 +39,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
                 dd[tt[0]] = [tt]
             else:
                 dd[tt[0]].append(tt)
-        print(f"sku_num:{len(dd)}")
+        print(f"dd_num:{len(dd)}")
         with open(out_file, 'wb') as fout:
             pickle.dump(dd, fout)
     else:
