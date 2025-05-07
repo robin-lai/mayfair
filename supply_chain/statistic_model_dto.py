@@ -7,6 +7,7 @@ dd_sku_file = 'dd_sku.pkl'
 dd_skc_file = 'dd_skc.pkl'
 def model1(dd):
     for k, v in dd.items():
+        print(v)
         v.sort(key=lambda x: x['sign_date'], reverse=True)
         print(v)
 
