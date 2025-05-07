@@ -16,6 +16,34 @@ cols = ['goods_id',
         'size_dto_sku_qty',
         'layer_tag']
 
+def process_data(debug, in_file, case_id,out_file, flag):
+    dd = {}
+    if not debug:
+        pt = parquet.read_table(in_file).to_pylist()
+        for t in pt:
+            # t['sign_date_format'] = date(t['sign_date'])
+            if t['sign_date'] is None:
+                print('sign_date is None')
+                print(t)
+                continue
+            if flag == 'sku':
+                tt = [t['sale_sku_id']]
+            else:
+                tt = [-1]
+            for col in cols:
+                tt.append(t[col])
+
+            if tt[0] not in dd:
+                dd[tt[0]] = [tt]
+            else:
+                dd[tt[0]].append(tt)
+        print(f"sku_num:{len(dd)}")
+        with open(out_file, 'wb') as fout:
+            pickle.dump(dd, fout)
+    else:
+        with open(out_file, 'rb') as fin:
+            dd = pickle.load(fin)
+    model1({case_id: dd[case_id]})
 
 def model1(dd):
     for k, v in dd.items():
@@ -25,30 +53,12 @@ def model1(dd):
 
 
 def main(args):
-    dd_sku = {}
-    if not args.debug:
-        pt = parquet.read_table(args.dir_pt_sku).to_pylist()
-        for t in pt:
-            # t['sign_date_format'] = date(t['sign_date'])
-            if t['sign_date'] is None:
-                print('sign_date is None')
-                print(t)
-                continue
-            tt = [t['sale_sku_id']]
-            for col in cols:
-                tt.append(t[col])
+    if args.flag == 'sku':
+        process_data(args.debug, args.dir_pt_sku, 434453, dd_sku_file, 'sku')
+    elif args.flag == 'skc':
+        process_data(args.debug, args.dir_pt_skc, 124510, dd_skc_file, 'skc')
 
-            if tt[0] not in dd_sku:
-                dd_sku[tt[0]] = [tt]
-            else:
-                dd_sku[tt[0]].append(tt)
-        print(f"sku_num:{len(dd_sku)}")
-        with open(dd_sku_file, 'wb') as fout:
-            pickle.dump(dd_sku, fout)
-    else:
-        with open(dd_sku_file, 'rb') as fin:
-            dd_sku = pickle.load(fin)
-    model1({434453: dd_sku[434453]})
+
 
 
 if __name__ == '__main__':
@@ -61,6 +71,7 @@ if __name__ == '__main__':
     parser.add_argument('--dir_pt_sku', default='s3://warehouse-algo/supply_chain/sc_dto_num_sku_estimation/ds=%s')
     parser.add_argument('--dir_pt_skc', default='s3://warehouse-algo/supply_chain/sc_dto_num_skc_estimation/ds=%s')
     parser.add_argument('--debug', type=bool, default=False)
+    parser.add_argument('--flag', default='sku')
     args = parser.parse_args()
     args.dir_pt_sku = args.dir_pt_sku % args.ds
     args.dir_pt_skc = args.dir_pt_skc % args.ds
