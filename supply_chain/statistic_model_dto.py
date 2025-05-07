@@ -47,9 +47,8 @@ def process_data(debug, in_file, case_id,out_file, flag):
 
 def model1(dd):
     for k, v in dd.items():
-        print(v)
         v.sort(key=lambda x: x[5], reverse=True)
-        print(v)
+        print([(t[0], t[5], t[6], t[7]) for t in v])
 
 
 def main(args):
