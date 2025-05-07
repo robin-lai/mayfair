@@ -52,7 +52,7 @@ def model1(dd):
     for k, v in dd.items():
         v.sort(key=lambda x: x[5], reverse=True)
         for t in v:
-            print(f"{t[0]}, {t[5]}, {t[6]}, {t[7]} \n")
+            print(f"{t[0]}, {t[5]}, {t[6]}, {t[7]}")
 
 
 def main(args):
