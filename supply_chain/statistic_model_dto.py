@@ -24,7 +24,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
             # t['sign_date_format'] = date(t['sign_date'])
             if t['sign_date'] is None:
                 print('sign_date is None')
-                print(t)
+                # print(t)
                 continue
             if t['layer_tag'] == 'C':
                 continue
@@ -40,7 +40,7 @@ def process_data(debug, in_file, case_id,out_file, flag):
             else:
                 dd[tt[0]].append(tt)
         print(f"dd_num:{len(dd)}")
-        print(f"dd_keys:{list(dd.items())[0:10]}")
+        print(f"dd_keys:{list(dd.keys())[0:10]}")
         with open(out_file, 'wb') as fout:
             pickle.dump(dd, fout)
     else:
