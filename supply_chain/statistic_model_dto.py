@@ -55,10 +55,11 @@ def model1(dd):
 
 
 def main(args):
-    if args.flag == 'sku':
-        process_data(args.debug, args.dir_pt_sku, 434453, dd_sku_file, 'sku')
-    elif args.flag == 'skc':
-        process_data(args.debug, args.dir_pt_skc, 85192, dd_skc_file, 'skc')
+    for case_id in args.case.split(','):
+        if args.flag == 'sku':
+            process_data(args.debug, args.dir_pt_sku, int(case_id), dd_sku_file, 'sku')
+        elif args.flag == 'skc':
+            process_data(args.debug, args.dir_pt_skc, int(case_id) , dd_skc_file, 'skc')
 
 
 
@@ -74,6 +75,7 @@ if __name__ == '__main__':
     parser.add_argument('--dir_pt_skc', default='s3://warehouse-algo/supply_chain/sc_dto_num_skc_estimation/ds=%s')
     parser.add_argument('--debug', type=bool, default=False)
     parser.add_argument('--flag', default='sku')
+    parser.add_argument('--case', default='66332,125086')
     args = parser.parse_args()
     args.dir_pt_sku = args.dir_pt_sku % args.ds
     args.dir_pt_skc = args.dir_pt_skc % args.ds
