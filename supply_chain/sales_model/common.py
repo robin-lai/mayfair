@@ -19,6 +19,7 @@ sample_thresh = 0.8
 model_num = 1
 BUCKET = "warehouse-algo"
 
+
 def parquet_iter(parquet_file):
     """
     读取parquet文件
@@ -49,7 +50,7 @@ def load_record(tmp_file, fmt):
                 yield {k: items[v] for k, v in header.items()}
 
 
-def load_s3_dir(bucket, prefix, days_range,save_path,fmt='parquet'):
+def load_s3_dir(bucket, prefix, days_range, save_path, fmt='parquet'):
     """
     从s3下载某个目录下的所有文件，并读取这些文件，逐行返回
     """
@@ -106,7 +107,7 @@ def wait_for_ready(tfr_sample_dir, target_date, wait_window=3600 * 24, wait_inte
         print('done_file', done_file)
         done_file_exist = len(get_s3_file_list_by_prefix(BUCKET, done_file))
         if (not done_file_exist) or done_file_exist < 1:
-            print('done_file_exist',done_file_exist)
+            print('done_file_exist', done_file_exist)
             print('Done file %s not exists, continue wait after %.2f hours' % (
                 done_file, (now - begin) / 3600))
             time.sleep(wait_interval)
@@ -114,6 +115,7 @@ def wait_for_ready(tfr_sample_dir, target_date, wait_window=3600 * 24, wait_inte
 
         print('Done file %s updated, start processing.' % done_file, done_file_exist)
         return target_date
+
 
 class MultiLSTM(nn.Module):
     def __init__(self, num_id_features, id_embedding_dims, numeric_sequence_features,
@@ -185,6 +187,7 @@ class MultiLSTM(nn.Module):
         output = output.flatten()
         return output
 
+
 def smooth_flash(df):
     if df["is_flashsale"].sum() < 1:
         return df
@@ -194,7 +197,7 @@ def smooth_flash(df):
     # 遍历处理每一行
     for i in range(len(df)):
         if df.iloc[i]['is_flashsale'] == 1:
-            window_data = df.iloc[i-3:i]
+            window_data = df.iloc[i - 3:i]
             window_data = window_data['adjusted_sales']
             # 计算平均值（忽略窗口不足情况）
             if not window_data.empty:
@@ -203,6 +206,7 @@ def smooth_flash(df):
     df['sales_1d'] = df['adjusted_sales']
     df.drop('adjusted_sales', axis=1, inplace=True)
     return df
+
 
 def max_digit_place_double(n: int) -> int:
     """
@@ -216,7 +220,7 @@ def max_digit_place_double(n: int) -> int:
         return 0  # 特殊情况处理
     num_str = str(abs(n))  # 转换为正数并转为字符串
     highest_digit = int(num_str[0])  # 提取最高位数字
-    place_value = 10**(len(num_str) - 1)  # 计算最高位对应的位权值
+    place_value = 10 ** (len(num_str) - 1)  # 计算最高位对应的位权值
     return highest_digit * place_value * 2  # 返回位权值的两倍
 
 
@@ -257,9 +261,10 @@ class DataConfig:
         for na_feature, default in self.na_features.items():
             self.df[na_feature] = self.df[na_feature].fillna(default)
         self.codes = set(self.df[self.code].values.tolist())
-        self.id_feature_num = {id_feature: max_digit_place_double(self.df[id_feature].max()) for id_feature in self.id_features}
+        self.id_feature_num = {id_feature: max_digit_place_double(self.df[id_feature].max()) for id_feature in
+                               self.id_features}
 
-    def process_code(self, split, train_and_predict_data_path_smooth,mode="train"):
+    def process_code(self, split, train_and_predict_data_path_smooth, mode="train"):
         sequence_features = []
         to_predict_week_features = []
         real_sell_num = []
@@ -322,8 +327,8 @@ class DataConfig:
                     real_sell_num.append(to_predict[self.target].sum())
                     train_period_mean.append(0)
                     labels.append(mean_target_rate)
-            df_smooth = pd.concat(df_list)
-            df_smooth.to_csv(train_and_predict_data_path_smooth)
+        df_smooth = pd.concat(df_list)
+        df_smooth.to_csv(train_and_predict_data_path_smooth)
         return sequence_features, to_predict_week_features, real_sell_num, train_period_mean, labels
 
     def process_to_predict_code(self):
@@ -373,9 +378,10 @@ class DataConfig:
         return sequence_features, to_predict_week_features, to_predict_codes
 
 
-def prepare_train_valid_data(dc, split):
+def prepare_train_valid_data(dc, split, train_and_predict_data_path_smooth):
     sequence_features_, to_predict_week_features_, real_sell_num_, train_period_mean_, labels_ = dc.process_code(split,
-                                                                                                                 "train")
+                                                                                                                 train_and_predict_data_path_smooth,
+                                                                                                                 mode="train")
     labels_ = np.asarray(labels_)
     # labels_ = (np.log(labels_ + 1) - 1).tolist()
     zip_temp = list(zip(sequence_features_, to_predict_week_features_, labels_))
@@ -412,6 +418,7 @@ def prepare_train_valid_data(dc, split):
     test_loader = DataLoader(dataset=test_dataset, batch_size=128, shuffle=True)
     return train_loader, test_loader
 
+
 def evaluate_train_loss(test_model, test_loader, dc):
     test_model.eval()  # 设置为评估模式
     test_losses = []
@@ -434,11 +441,12 @@ def evaluate_train_loss(test_model, test_loader, dc):
     print("abs diffs:", np.mean(abs_diffs), np.std(abs_diffs))
     return test_loss
 
+
 def save_model(to_save_model, path):
     torch.save(to_save_model.state_dict(), path)
 
 
-def train(dc, train_loader, test_loader,saved_model_path):
+def train(dc, train_loader, test_loader, saved_model_path):
     id2num = dc.id_feature_num
     num_id_features = [id2num[item] + 2 for item in dc.id_features]
     id_embedding_dims = [4 for _ in num_id_features]
@@ -493,7 +501,7 @@ def train(dc, train_loader, test_loader,saved_model_path):
             train_batch_count += 1
 
 
-def get_saved_model(dc,local_predict_dir):
+def get_saved_model(dc, local_predict_dir):
     models = []
     saved_model_pths = os.listdir(local_predict_dir)
     id2num = dc.id_feature_num
@@ -507,7 +515,7 @@ def get_saved_model(dc,local_predict_dir):
         if "best_model" not in filename:
             continue
         filename = local_predict_dir + filename
-        print("load model state from: %s"%filename )
+        print("load model state from: %s" % filename)
         model = MultiLSTM(
             num_id_features=num_id_features,
             id_embedding_dims=id_embedding_dims,
@@ -522,12 +530,12 @@ def get_saved_model(dc,local_predict_dir):
     return models
 
 
-def daily_predict(dc,local_predict_dir):
+def daily_predict(dc, local_predict_dir):
     def reverse_predict(val):
         val = math.exp(val) - 1
         return val
 
-    saved_models = get_saved_model(dc,local_predict_dir)
+    saved_models = get_saved_model(dc, local_predict_dir)
     sequence_features, to_predict_week_features, to_predict_codes = dc.process_to_predict_code()
     code_predict_results = []
     debug_model = set()
@@ -538,7 +546,7 @@ def daily_predict(dc,local_predict_dir):
         sequence_feature = torch.from_numpy(np.asarray([sequence_feature], dtype=np.float32))
         to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
 
-        for i,saved_model in enumerate(saved_models):
+        for i, saved_model in enumerate(saved_models):
             model_pred = saved_model(sequence_feature, to_predict_week_feature)
             model_pred = model_pred.detach().numpy().tolist()[0]
             try:
@@ -551,7 +559,7 @@ def daily_predict(dc,local_predict_dir):
                 debug_model.add(i)
                 if debug_n > 0:
                     debug_n -= 1
-                    print(sequence_feature,to_predict_week_feature)
+                    print(sequence_feature, to_predict_week_feature)
                 pass
 
             code_predict_results.append([code, week_num, real_predict_num])
@@ -560,12 +568,12 @@ def daily_predict(dc,local_predict_dir):
     return code_predict_results
 
 
-def evaluate_model(dc,local_evaluated_result_path,saved_model_path):
+def evaluate_model(dc, local_evaluated_result_path, saved_model_path):
     def reverse_predict(val):
         val = math.exp(val) - 1
         return val
 
-    saved_model = get_saved_model(dc,saved_model_path)
+    saved_model = get_saved_model(dc, saved_model_path)
     abs_diffs = []
     real_abs_diffs = []
     fast_ratio = []
@@ -616,6 +624,7 @@ def evaluate_model(dc,local_evaluated_result_path,saved_model_path):
                                 columns=["goods_id", "skc_id", "week_num", "date", "real_sell_num", "real_predict_num"])
     hive_parquet.to_parquet(local_evaluated_result_path)
     print("hive_parquet:", hive_parquet.shape)
+
 
 def download_file(key, fname):
     try:
