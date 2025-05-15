@@ -472,7 +472,7 @@ def train(dc, train_loader, test_loader, saved_model_path):
     model.train()
     for epoch in range(num_epochs):
         for i, (train_sequence_batch, train_to_predict_features_batch, train_labels_batch) in enumerate(train_loader):
-            if train_batch_count % 100 == 0:
+            if train_batch_count % 800 == 0:
                 self_defined_score = evaluate_train_loss(model, test_loader, dc)
                 model.train()
                 if self_defined_score < max_self_defined_score:
