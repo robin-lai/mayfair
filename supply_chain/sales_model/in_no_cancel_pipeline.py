@@ -63,7 +63,7 @@ if __name__ == '__main__':
     ed = time.time()
 
     print('evalute')
-    evaluate_model(dc,local_evaluated_result_path,saved_model_path)
+    evaluate_model(dc,local_evaluated_result_path,local_predict_dir)
     os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%yesterday_str))
     print('evalute cost:', time.time() - ed)
 
