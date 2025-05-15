@@ -20,12 +20,13 @@ local_evaluated_result_path = base_dir +  "evaluated_result.parquet"
 local_predicted_result_path = base_dir +  'output.parquet'
 local_predict_dir = base_dir + 'pred/'
 os.system('mkdir %s'%local_predict_dir)
-model_num = 1
+model_num = 10
 
 
 
 
 if __name__ == '__main__':
+    st1 = time.time()
     st = time.time()
     print('process data')
     dc = DataConfig("sales_1d", time_delta )
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%yesterday_str))
     print('pred cost:', time.time() - ed)
     ed = time.time()
+    print('all cost:', time.time() - st1)
 
     # print('evalute')
     # evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
