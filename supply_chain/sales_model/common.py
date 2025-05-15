@@ -280,7 +280,7 @@ class DataConfig:
 
         count = 0
         for code in iter_codes:
-            if count % 2000 == 0:
+            if count % 500 == 0:
                 print("step: %d / %d" % (count, len(iter_codes)))
             count += 1
             sub_df = self.df[self.df[self.code] == code].copy(deep=True)
@@ -335,7 +335,7 @@ class DataConfig:
             self.df["target_date"] >= (self.today - timedelta(days=self.ideal_predict_length)).strftime("%Y-%m-%d")]
         count = 0
         for code in iter_codes:
-            if count % 2000 == 0:
+            if count % 500 == 0:
                 print("step: %d / %d" % (count, len(iter_codes)))
             count += 1
             sub_df = self.df[self.df[self.code] == code].copy(deep=True)
