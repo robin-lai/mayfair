@@ -294,7 +294,7 @@ class DataConfig:
 
         count = 0
         for code in iter_codes:
-            if count % 100 == 0:
+            if count % 2000 == 0:
                 print("step: %d / %d" % (count, len(iter_codes)))
             count += 1
             sub_df = self.df[self.df[self.code] == code].copy(deep=True)
@@ -346,7 +346,7 @@ class DataConfig:
             self.df["target_date"] >= (self.today - timedelta(days=self.ideal_predict_length)).strftime("%Y-%m-%d")]
         count = 0
         for code in iter_codes:
-            if count % 100 == 0:
+            if count % 2000 == 0:
                 print("step: %d / %d" % (count, len(iter_codes)))
             count += 1
             sub_df = self.df[self.df[self.code] == code].copy(deep=True)
@@ -495,7 +495,7 @@ def train(dc, train_loader, test_loader):
             loss.backward()
             optimizer.step()
 
-            if train_batch_count % 100 == 0:
+            if train_batch_count % 800 == 0:
                 mean_loss = np.mean(train_losses)
                 print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{len(train_loader)}], Loss: {mean_loss:.4f}')
                 train_losses = []
