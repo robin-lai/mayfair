@@ -573,7 +573,7 @@ def evaluate_model(dc, local_evaluated_result_path, saved_model_path,train_and_p
         val = math.exp(val) - 1
         return val
 
-    saved_model = get_saved_model(dc, saved_model_path)
+    saved_model = get_saved_model(dc, saved_model_path)[0]
     abs_diffs = []
     real_abs_diffs = []
     fast_ratio = []
