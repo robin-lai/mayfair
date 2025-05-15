@@ -5,15 +5,16 @@ time_delta = 0
 train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 base_dir = "./data_cancel_iq/"
 suffix = 'iq'
+model_num = 1
 
 train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth.csv"%suffix
+saved_model_path = base_dir + "best_model.pth"
 s3_saved_model_path = 'sequence_model_predict_best_model_%s/ds=%s/'
 s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result_%s/ds=%s/'
 s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_result_%s/ds=%s/evaluated_result.parquet'
 os.system('rm -rf %s'%base_dir)
 os.system('mkdir %s'%base_dir)
 
-saved_model_path = base_dir + "best_model.pth"
 local_train_data_path = base_dir +  "sequence_data.csv"
 tmp_path = base_dir + 'tmp.txt'
 local_future_dau_plan_path = base_dir +  "savana_future_daus.csv"
@@ -49,8 +50,13 @@ if __name__ == '__main__':
 
     print('pred')
     ed = time.time()
-    remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
-    download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
+    # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
+    # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
+    for i in range(0, model_num):
+        download_date = dc.yesterday - timedelta(days=i)
+        download_date = download_date.strftime("%Y%m%d")
+        remote_path = s3_saved_model_path % (suffix, download_date) + "best_model.pth"
+        download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
 
     predicted_result = daily_predict(dc, saved_model_path)
     predicted_result.to_parquet(local_predicted_result_path)

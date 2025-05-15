@@ -5,6 +5,7 @@ import math
 import torch
 from torch import nn
 import boto3
+import os
 import json
 import random
 import time
@@ -101,9 +102,13 @@ def wait_for_ready(tfr_sample_dir, target_date, wait_window=3600 * 24, wait_inte
         now = time.time()
         if now - begin > wait_window:
             raise
-        done_file = tfr_sample_dir + 'ds=' + target_date
+        # done_file = tfr_sample_dir + 'ds=' + target_date
+        done_file = tfr_sample_dir % target_date
+        print('done_file', done_file)
+        print(get_s3_file_list_by_prefix(BUCKET, done_file))
         done_file_exist = len(get_s3_file_list_by_prefix(BUCKET, done_file))
-        if (not done_file_exist) or done_file_exist <= 3:
+        if (not done_file_exist) or done_file_exist < 1:
+            print('done_file_exist',done_file_exist)
             print('Done file %s not exists, continue wait after %.2f hours' % (
                 done_file, (now - begin) / 3600))
             time.sleep(wait_interval)
@@ -490,7 +495,9 @@ def train(dc, train_loader, test_loader,saved_model_path):
             train_batch_count += 1
 
 
-def get_saved_model(dc,saved_model_path):
+def get_saved_model(dc,local_predict_dir):
+    models = []
+    saved_model_pths = os.listdir(local_predict_dir)
     id2num = dc.id_feature_num
     num_id_features = [id2num[item] + 2 for item in dc.id_features]
     id_embedding_dims = [4 for _ in num_id_features]
@@ -498,49 +505,59 @@ def get_saved_model(dc,saved_model_path):
     numeric_extra_features = 1
     hidden_size = 16
     num_layers = 1
-    model = MultiLSTM(
-        num_id_features=num_id_features,
-        id_embedding_dims=id_embedding_dims,
-        numeric_sequence_features=numeric_sequence_features,
-        numeric_extra_features=numeric_extra_features,
-        hidden_size=hidden_size,
-        num_layers=num_layers
-    )
-    model.load_state_dict(torch.load(saved_model_path))
-    model.eval()
-    return model
+    for filename in saved_model_pths:
+        if "best_model" not in filename:
+            continue
+        filename = local_predict_dir + filename
+        print("load model state from: %s"%filename )
+        model = MultiLSTM(
+            num_id_features=num_id_features,
+            id_embedding_dims=id_embedding_dims,
+            numeric_sequence_features=numeric_sequence_features,
+            numeric_extra_features=numeric_extra_features,
+            hidden_size=hidden_size,
+            num_layers=num_layers
+        )
+        model.load_state_dict(torch.load(filename))
+        model.eval()
+        models.append(model)
+    return models
 
 
-def daily_predict(dc,saved_model_path):
+def daily_predict(dc,local_predict_dir):
     def reverse_predict(val):
         val = math.exp(val) - 1
         return val
 
-    saved_model = get_saved_model(dc,saved_model_path)
+    saved_models = get_saved_model(dc,local_predict_dir)
     sequence_features, to_predict_week_features, to_predict_codes = dc.process_to_predict_code()
     code_predict_results = []
+    debug_model = set()
     debug_n = 2
     for code, to_predict_week_feature, sequence_feature in zip(to_predict_codes, to_predict_week_features,
                                                                sequence_features):
         week_num = to_predict_week_feature[1] + 1
         sequence_feature = torch.from_numpy(np.asarray([sequence_feature], dtype=np.float32))
         to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
-        model_pred = saved_model(sequence_feature, to_predict_week_feature)
-        model_pred = model_pred.detach().numpy().tolist()[0]
-        real_predict_num = 0.0
-        try:
-            if model_pred is not None:
-                pred_new = reverse_predict(model_pred)
-                real_predict_num = int(pred_new * 7)
-            else:
-                real_predict_num = int(0.001 * 7)
-        except Exception as e:
-            if debug_n > 0:
-                debug_n -= 1
-                print(sequence_feature, to_predict_week_feature)
-            pass
-        # real_predict_num = int(reverse_predict(model_pred) * 7)
-        code_predict_results.append([code, week_num, real_predict_num])
+
+        for i,saved_model in enumerate(saved_models):
+            model_pred = saved_model(sequence_feature, to_predict_week_feature)
+            model_pred = model_pred.detach().numpy().tolist()[0]
+            try:
+                if model_pred is not None:
+                    pred_new = reverse_predict(model_pred)
+                    real_predict_num = int(pred_new * 7)
+                else:
+                    real_predict_num = int(0.001 * 7)
+            except Exception as e:
+                debug_model.add(i)
+                if debug_n > 0:
+                    debug_n -= 1
+                    print(sequence_feature,to_predict_week_feature)
+                pass
+
+            code_predict_results.append([code, week_num, real_predict_num])
+    print('debug_model', debug_model)
     code_predict_results = pd.DataFrame(code_predict_results, columns=["skc_id", "week_num", "predict"])
     return code_predict_results
 

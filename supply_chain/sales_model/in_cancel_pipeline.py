@@ -47,10 +47,15 @@ if __name__ == '__main__':
 
     print('pred')
     ed = time.time()
-    remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
-    download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
+    # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
+    # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
+    for i in range(0, 10):
+        download_date = dc.yesterday - timedelta(days=i)
+        download_date = download_date.strftime("%Y%m%d")
+        remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % download_date
+        download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
 
-    predicted_result = daily_predict(dc, saved_model_path)
+    predicted_result = daily_predict(dc, local_predict_dir)
     predicted_result.to_parquet(local_predicted_result_path)
     os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%yesterday_str))
     print('pred cost:', time.time() - ed)
