@@ -20,7 +20,7 @@ local_evaluated_result_path = base_dir +  "evaluated_result.parquet"
 local_predicted_result_path = base_dir +  'output.parquet'
 local_predict_dir = base_dir + 'pred/'
 os.system('mkdir %s'%local_predict_dir)
-model_num = 10
+model_num = 2
 
 
 
