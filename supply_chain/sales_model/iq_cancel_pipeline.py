@@ -58,7 +58,7 @@ if __name__ == '__main__':
         remote_path = s3_saved_model_path % (suffix, download_date) + "best_model.pth"
         download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
 
-    predicted_result = daily_predict(dc, saved_model_path)
+    predicted_result = daily_predict(dc, local_predict_dir)
     predicted_result.to_parquet(local_predicted_result_path)
     os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%(suffix, yesterday_str)))
     print('pred cost:', time.time() - ed)
