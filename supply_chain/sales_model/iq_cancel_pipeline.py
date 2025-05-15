@@ -22,6 +22,7 @@ base_dir = "./data_cancel_iq/"
 os.system('rm -rf %s'%base_dir)
 os.system('mkdir %s'%base_dir)
 saved_model_path = base_dir + "best_model.pth"
+train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_iq_smooth.csv"
 local_train_data_path = base_dir +  "sequence_data.csv"
 local_future_dau_plan_path = base_dir +  "savana_future_daus.csv"
 local_evaluated_result_path = base_dir +  "evaluated_result.parquet"
@@ -280,6 +281,7 @@ class DataConfig:
         real_sell_num = []
         train_period_mean = []
         labels = []
+        df_list = []
         iter_codes = self.codes
         if mode == "train":
             self.df = self.df[self.df[self.time_idx] < split]
@@ -304,6 +306,7 @@ class DataConfig:
                 continue
             sub_df = sub_df.sort_values(by=self.time_idx)
             sub_df = smooth_flash(sub_df)
+            df_list.append(sub_df.copy())
             if len(sub_df) < self.ideal_predict_length + self.future_days:
                 tile_df = sub_df.iloc[0]
                 repeated_arr = np.repeat(tile_df.values.reshape(1, -1),
@@ -335,6 +338,8 @@ class DataConfig:
                     real_sell_num.append(to_predict[self.target].sum())
                     train_period_mean.append(0)
                     labels.append(mean_target_rate)
+        df_smooth = pd.concat(df_list)
+        df_smooth.to_csv(train_and_predict_data_path_smooth)
         return sequence_features, to_predict_week_features, real_sell_num, train_period_mean, labels
 
     def process_to_predict_code(self):
@@ -533,6 +538,7 @@ def daily_predict(dc):
     saved_model = get_saved_model(dc)
     sequence_features, to_predict_week_features, to_predict_codes = dc.process_to_predict_code()
     code_predict_results = []
+    debug_n = 2
     for code, to_predict_week_feature, sequence_feature in zip(to_predict_codes, to_predict_week_features,
                                                                sequence_features):
         week_num = to_predict_week_feature[1] + 1
@@ -540,7 +546,19 @@ def daily_predict(dc):
         to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
         model_pred = saved_model(sequence_feature, to_predict_week_feature)
         model_pred = model_pred.detach().numpy().tolist()[0]
-        real_predict_num = int(reverse_predict(model_pred) * 7)
+        real_predict_num = 0.0
+        try:
+            if model_pred is not None:
+                pred_new = reverse_predict(model_pred)
+                real_predict_num = int(pred_new * 7)
+            else:
+                real_predict_num = int(0.001 * 7)
+        except Exception as e:
+            if debug_n > 0:
+                debug_n -= 1
+                print(sequence_feature, to_predict_week_feature)
+            pass
+        # real_predict_num = int(reverse_predict(model_pred) * 7)
         code_predict_results.append([code, week_num, real_predict_num])
     code_predict_results = pd.DataFrame(code_predict_results, columns=["skc_id", "week_num", "predict"])
     return code_predict_results
