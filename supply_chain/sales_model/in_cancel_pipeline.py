@@ -19,6 +19,7 @@ local_evaluated_result_path = base_dir +  "evaluated_result.parquet"
 local_predicted_result_path = base_dir +  'output.parquet'
 local_predict_dir = base_dir + 'pred/'
 os.system('mkdir %s'%local_predict_dir)
+model_num = 1
 
 
 
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     ed = time.time()
     # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
     # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
-    for i in range(0, 10):
+    for i in range(0, model_num):
         download_date = dc.yesterday - timedelta(days=i)
         download_date = download_date.strftime("%Y%m%d")
         remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % download_date
