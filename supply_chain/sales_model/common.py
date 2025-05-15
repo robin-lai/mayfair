@@ -104,7 +104,6 @@ def wait_for_ready(tfr_sample_dir, target_date, wait_window=3600 * 24, wait_inte
             raise
         done_file = tfr_sample_dir + 'ds=' + target_date
         print('done_file', done_file)
-        print(get_s3_file_list_by_prefix(BUCKET, done_file))
         done_file_exist = len(get_s3_file_list_by_prefix(BUCKET, done_file))
         if (not done_file_exist) or done_file_exist < 1:
             print('done_file_exist',done_file_exist)
