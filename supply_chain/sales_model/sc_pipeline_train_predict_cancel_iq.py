@@ -612,6 +612,7 @@ def download_file(key, fname):
     # raise ValueError('Failed to download file: %s to %s' % (key, fname))
 
 if __name__ == '__main__':
+    st = time.time()
     print('process data')
     dc = DataConfig(time_delta)
     wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
@@ -621,17 +622,23 @@ if __name__ == '__main__':
     print(ret["target_date"].max(), ret["target_date"].min())
     ret.to_csv(local_train_data_path)
     del ret
+    ed = time.time()
+    print('process data cost:', ed - st)
+
     print('train')
     dc.init_df(local_train_data_path)
     train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
     train(dc, train_loader, test_loader)
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
     os.system('aws s3 cp %s %s' % (saved_model_path, s3_saved_model_path%yesterday_str))
+    print('train cost:', time.time() - ed)
 
+    print('pred')
+    ed = time.time()
     remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
     download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
 
-    print('pred')
     predicted_result = daily_predict(dc)
     predicted_result.to_parquet(local_predicted_result_path)
     os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%yesterday_str))
+    print('pred cost:', time.time() - ed)
