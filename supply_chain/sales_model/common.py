@@ -221,12 +221,12 @@ def max_digit_place_double(n: int) -> int:
 
 
 class DataConfig:
-    def __init__(self, time_delta=0):
+    def __init__(self, target_field, time_delta=0):
         self.code = "skc_id"
         self.static_id_features = ["skc_id", "cid1", "cid2", "cid3", "cid4", "goods_id"]
         self.dynamic_id_features = ["is_flashsale"]
         self.id_features = self.static_id_features + self.dynamic_id_features
-        self.target = "sales_1d"
+        self.target = target_field
         self.time_idx = "target_date"
         self.normalized_features = ["full_size", "discount_rate"]
         self.to_normalized_features = {"temperature": 30, "dau": 500000, "show_times": 10000, "click_times": 2000}

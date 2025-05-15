@@ -3,13 +3,13 @@ from common import *
 
 time_delta = 0
 train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
-base_dir = "./data_cancel/"
+base_dir = "./data_no_cancel/"
 os.system('rm -rf %s'%base_dir)
 os.system('mkdir %s'%base_dir)
 train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth.csv"
-s3_saved_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
-s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result/ds=%s/'
-s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_result/ds=%s/evaluated_result.parquet'
+s3_saved_model_path = 's3://warehouse-algo/sequence_model_no_cancel_predict_best_model/ds=%s/'
+s3_pred_result = 's3://warehouse-algo/sequence_model_predict_no_cancel_result/ds=%s/'
+s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_no_cancel_result/ds=%s/evaluated_result.parquet'
 
 saved_model_path = base_dir + "best_model.pth"
 local_train_data_path = base_dir +  "sequence_data.csv"
@@ -27,7 +27,7 @@ model_num = 1
 if __name__ == '__main__':
     st = time.time()
     print('process data')
-    dc = DataConfig("sales_1d" )
+    dc = DataConfig("no_cancel_sales_1d", time_delta)
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
     wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
     ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")],tmp_path))
