@@ -19,12 +19,15 @@ time_delta = 0
 BUCKET = "warehouse-algo"
 train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 base_dir = "./data_cancel_iq/"
+os.system('rm -rf %s'%base_dir)
+os.system('mkdir %s'%base_dir)
 saved_model_path = base_dir + "best_model.pth"
 local_train_data_path = base_dir +  "sequence_data.csv"
 local_future_dau_plan_path = base_dir +  "savana_future_daus.csv"
 local_evaluated_result_path = base_dir +  "evaluated_result.parquet"
 local_predicted_result_path = base_dir +  'output.parquet'
 local_predict_dir = base_dir + 'pred/'
+os.system('mkdir %s'%local_predict_dir)
 s3_saved_model_path = 'sequence_model_predict_best_model_iq/ds=%s/'
 s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result_iq/ds=%s/'
 EPOCH = 2
