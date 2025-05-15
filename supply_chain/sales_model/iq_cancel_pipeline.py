@@ -8,6 +8,7 @@ suffix = 'iq'
 model_num = 1
 
 train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth.csv"%suffix
+train_and_predict_data_path_smooth_eval = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth_eval.csv"%suffix
 saved_model_path = base_dir + "best_model.pth"
 s3_saved_model_path = 'sequence_model_predict_best_model_%s/ds=%s/'
 s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result_%s/ds=%s/'
@@ -65,7 +66,7 @@ if __name__ == '__main__':
     ed = time.time()
 
     print('evalute')
-    evaluate_model(dc,local_evaluated_result_path,local_predict_dir)
+    evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
     os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%(suffix, yesterday_str)))
     print('evalute cost:', time.time() - ed)
 

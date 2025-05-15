@@ -568,7 +568,7 @@ def daily_predict(dc, local_predict_dir):
     return code_predict_results
 
 
-def evaluate_model(dc, local_evaluated_result_path, saved_model_path):
+def evaluate_model(dc, local_evaluated_result_path, saved_model_path,train_and_predict_data_path_smooth_eval):
     def reverse_predict(val):
         val = math.exp(val) - 1
         return val
@@ -580,6 +580,7 @@ def evaluate_model(dc, local_evaluated_result_path, saved_model_path):
     hive_parquet = []
     sequence_features_, to_predict_week_features_, real_sell_nums_, train_period_means_, labels_ = dc.process_code(
         split=(dc.today - timedelta(days=28)).strftime('%Y-%m-%d'),
+        train_and_predict_data_path_smooth = train_and_predict_data_path_smooth_eval,
         mode="eval"
     )
     labels_ = np.asarray(labels_)

@@ -7,6 +7,7 @@ base_dir = "./data_cancel/"
 os.system('rm -rf %s'%base_dir)
 os.system('mkdir %s'%base_dir)
 train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth.csv"
+train_and_predict_data_path_smooth_eval = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_eval.csv"
 s3_saved_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
 s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result/ds=%s/'
 s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_result/ds=%s/evaluated_result.parquet'
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     ed = time.time()
 
     print('evalute')
-    evaluate_model(dc,local_evaluated_result_path,local_predict_dir)
+    evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
     os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%yesterday_str))
     print('evalute cost:', time.time() - ed)
 
