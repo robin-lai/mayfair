@@ -63,8 +63,8 @@ if __name__ == '__main__':
     print('pred cost:', time.time() - ed)
     ed = time.time()
 
-    print('evalute')
-    evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
-    os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%yesterday_str))
-    print('evalute cost:', time.time() - ed)
+    # print('evalute')
+    # evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
+    # os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%yesterday_str))
+    # print('evalute cost:', time.time() - ed)
 
