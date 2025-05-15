@@ -27,32 +27,32 @@ if __name__ == '__main__':
     print('process data')
     dc = DataConfig(time_delta)
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
-    # wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
-    # ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")],tmp_path))
-    # ret = pd.DataFrame(ret)
-    # ret = ret[ret["target_date"] >= (dc.today - timedelta(days=250)).strftime("%Y-%m-%d")]
-    # print(ret["target_date"].max(), ret["target_date"].min())
-    # ret.to_csv(local_train_data_path)
-    # del ret
-    # ed = time.time()
-    # print('process data cost:', ed - st)
-    #
-    # print('train')
+    wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
+    ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")],tmp_path))
+    ret = pd.DataFrame(ret)
+    ret = ret[ret["target_date"] >= (dc.today - timedelta(days=250)).strftime("%Y-%m-%d")]
+    print(ret["target_date"].max(), ret["target_date"].min())
+    ret.to_csv(local_train_data_path)
+    del ret
+    ed = time.time()
+    print('process data cost:', ed - st)
+
+    print('train')
     dc.init_df(local_train_data_path)
-    # train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
-    # train(dc, train_loader, test_loader, saved_model_path)
-    # os.system('aws s3 cp %s %s' % (saved_model_path, s3_saved_model_path%yesterday_str))
-    # print('train cost:', time.time() - ed)
-    #
-    # print('pred')
-    # ed = time.time()
-    # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
-    # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
-    #
-    # predicted_result = daily_predict(dc, saved_model_path)
-    # predicted_result.to_parquet(local_predicted_result_path)
-    # os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%yesterday_str))
-    # print('pred cost:', time.time() - ed)
+    train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
+    train(dc, train_loader, test_loader, saved_model_path)
+    os.system('aws s3 cp %s %s' % (saved_model_path, s3_saved_model_path%yesterday_str))
+    print('train cost:', time.time() - ed)
+
+    print('pred')
+    ed = time.time()
+    remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
+    download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
+
+    predicted_result = daily_predict(dc, saved_model_path)
+    predicted_result.to_parquet(local_predicted_result_path)
+    os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result%yesterday_str))
+    print('pred cost:', time.time() - ed)
     ed = time.time()
 
     print('evalute')
