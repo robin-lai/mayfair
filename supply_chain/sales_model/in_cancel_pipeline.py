@@ -27,7 +27,7 @@ model_num = 1
 if __name__ == '__main__':
     st = time.time()
     print('process data')
-    dc = DataConfig("sales_1d" )
+    dc = DataConfig("sales_1d", time_delta )
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
     wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
     ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")],tmp_path))

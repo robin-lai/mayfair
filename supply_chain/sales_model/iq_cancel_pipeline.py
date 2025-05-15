@@ -29,7 +29,7 @@ os.system('mkdir %s'%local_predict_dir)
 if __name__ == '__main__':
     st = time.time()
     print('process data')
-    dc = DataConfig(time_delta)
+    dc = DataConfig("sales_1d", time_delta)
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
     wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
     ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")],tmp_path))
