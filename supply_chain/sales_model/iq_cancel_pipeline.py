@@ -53,11 +53,11 @@ if __name__ == '__main__':
     # ed = time.time()
     # # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
     # # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
-    # for i in range(0, model_num):
-    #     download_date = dc.yesterday - timedelta(days=i)
-    #     download_date = download_date.strftime("%Y%m%d")
-    #     remote_path = s3_saved_model_path % (suffix, download_date) + "best_model.pth"
-    #     download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
+    for i in range(0, model_num):
+        download_date = dc.yesterday - timedelta(days=i)
+        download_date = download_date.strftime("%Y%m%d")
+        remote_path = s3_saved_model_path % (suffix, download_date) + "best_model.pth"
+        download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
     #
     # predicted_result = daily_predict(dc, local_predict_dir)
     # predicted_result.to_parquet(local_predicted_result_path)
