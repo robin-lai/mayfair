@@ -17,7 +17,7 @@ model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_iq/ds=%s/'
 s3_pred_path = 's3://warehouse-algo/sequence_model_predict_result_iq/ds=%s/'
 s3_eval_path = 's3://warehouse-algo/sequence_model_evaluated_result_iq/ds=%s/evaluated_result.parquet'
-os.system('rm -rf %s' % base_dir)
+# os.system('rm -rf %s' % base_dir)
 os.system('mkdir %s' % base_dir)
 
 local_data_path = base_dir + "sequence_data.csv"
@@ -41,7 +41,7 @@ def main(args):
         init(dc, data_path, local_data_path, tmp_path)
 
     if 'train' in args.pipeline:
-        train_pipeline(dc, local_data_path, model_path, s3_model_path)
+        train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
         pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)

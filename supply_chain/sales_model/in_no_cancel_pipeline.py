@@ -40,7 +40,7 @@ def main(args):
         init(dc, data_path, local_data_path, tmp_path)
 
     if 'train' in args.pipeline:
-        train_pipeline(dc, local_data_path, model_path, s3_model_path)
+        train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
         pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
