@@ -13,8 +13,8 @@ saved_model_path = base_dir + "best_model.pth"
 s3_saved_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_%s/ds=%s/'
 s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result_%s/ds=%s/'
 s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_result_%s/ds=%s/evaluated_result.parquet'
-os.system('rm -rf %s'%base_dir)
-os.system('mkdir %s'%base_dir)
+os.system('rm -rf %s' % base_dir)
+os.system('mkdir %s' % base_dir)
 
 local_train_data_path = base_dir + "sequence_data.csv"
 tmp_path = base_dir + 'tmp.txt'
