@@ -93,7 +93,7 @@ if __name__ == '__main__':
         description='sc_iq',
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,train,pred,eval,metric')
+                        default='init,train,pred,eval,metrics')
     args = parser.parse_args()
     main(args)
 
