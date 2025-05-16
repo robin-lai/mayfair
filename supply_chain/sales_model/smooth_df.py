@@ -9,7 +9,7 @@ def smooth_df(in_file, s3_file):
     codes = set(df['skc_id'].values.tolist())
     count = 0
     df_list = []
-    for code in list(codes)[0:100]:
+    for code in list(codes):
         if count % 500 == 0:
             print("step: %d / %d" % (count, len(codes)))
         count += 1
