@@ -10,6 +10,7 @@ def init(dc, data_path, local_data_path, tmp_path):
     wait_for_ready(data_path, dc.yesterday.strftime("%Y%m%d"))
     ret = list(load_s3_dir(BUCKET, data_path, [dc.yesterday.strftime("%Y%m%d")], tmp_path))
     ret = pd.DataFrame(ret)
+    print(ret.head())
     ret = ret[ret["target_date"] >= (dc.today - timedelta(days=250)).strftime("%Y-%m-%d")]
     print(ret["target_date"].max(), ret["target_date"].min())
     ret.to_csv(local_data_path)
