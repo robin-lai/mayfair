@@ -23,7 +23,7 @@ def smooth_df(in_file, s3_file):
     local_file_pt = './tmp/' + '_'.join(s3_file.split('/')) + '.parquet'
     df2.to_csv(local_file_csv)
     df2.to_parquet(local_file_pt, engine="pyarrow")
-    os.system('aws cp %s %s' % (local_file_pt, s3_file))
+    os.system('aws s3 cp %s %s' % (local_file_pt, s3_file))
     print(df2.head(10))
 
 
