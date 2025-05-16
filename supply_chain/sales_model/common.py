@@ -270,7 +270,6 @@ class DataConfig:
         real_sell_num = []
         train_period_mean = []
         labels = []
-        df_list = []
         iter_codes = self.codes
         if mode == "train":
             self.df = self.df[self.df[self.time_idx] < split]
@@ -295,7 +294,6 @@ class DataConfig:
                 continue
             sub_df = sub_df.sort_values(by=self.time_idx)
             sub_df = smooth_flash(sub_df)
-            df_list.append(sub_df.copy())
             if len(sub_df) < self.ideal_predict_length + self.future_days:
                 tile_df = sub_df.iloc[0]
                 repeated_arr = np.repeat(tile_df.values.reshape(1, -1),
@@ -327,8 +325,6 @@ class DataConfig:
                     real_sell_num.append(to_predict[self.target].sum())
                     train_period_mean.append(0)
                     labels.append(mean_target_rate)
-        df_smooth = pd.concat(df_list)
-        df_smooth.to_csv(train_and_predict_data_path_smooth)
         return sequence_features, to_predict_week_features, real_sell_num, train_period_mean, labels
 
     def process_to_predict_code(self):
@@ -371,7 +367,6 @@ class DataConfig:
             for i in range(len(sub_df) - self.ideal_predict_length + 1):
                 train_df = sub_df.iloc[i:i + self.ideal_predict_length].copy()
                 train_df[self.target] = np.log(train_df[self.target] + 1)
-                train_df.fillna()
                 for j in range(4):
                     # mean_dau_rate = np.mean(self.future_28_day_daus[i * 7:(i + 1) * 7])
                     mean_dau_rate = train_df["dau"].mean()
