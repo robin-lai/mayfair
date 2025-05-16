@@ -1,10 +1,12 @@
 from pyarrow import parquet
 import os
 import pandas as pd
+import time
 from common import smooth_flash
 
 
 def smooth_df(in_file, s3_file):
+    st = time.time()
     df = parquet.read_table(in_file).to_pandas()
     codes = set(df['skc_id'].values.tolist())
     count = 0
@@ -25,6 +27,7 @@ def smooth_df(in_file, s3_file):
     df2.to_parquet(local_file_pt, engine="pyarrow")
     os.system('aws s3 cp %s %s' % (local_file_pt, s3_file))
     print(df2.head(10))
+    print('cost:', time.time() - st)
 
 
 if __name__ == '__main__':
