@@ -340,6 +340,8 @@ class DataConfig:
             self.df["target_date"] >= (self.today - timedelta(days=self.ideal_predict_length)).strftime("%Y-%m-%d")]
         count = 0
         for code in iter_codes:
+            if code is None:
+                continue
             if count % 500 == 0:
                 print("step: %d / %d" % (count, len(iter_codes)))
             count += 1
@@ -369,11 +371,12 @@ class DataConfig:
             for i in range(len(sub_df) - self.ideal_predict_length + 1):
                 train_df = sub_df.iloc[i:i + self.ideal_predict_length].copy()
                 train_df[self.target] = np.log(train_df[self.target] + 1)
+                train_df.fillna()
                 for j in range(4):
                     # mean_dau_rate = np.mean(self.future_28_day_daus[i * 7:(i + 1) * 7])
                     mean_dau_rate = train_df["dau"].mean()
                     sequence_features.append(train_df)
-                    to_predict_week_features.append([mean_dau_rate, j])
+                    to_predict_week_features.append([0 if mean_dau_rate is not None else mean_dau_rate, j])
                     to_predict_codes.append(code)
         return sequence_features, to_predict_week_features, to_predict_codes
 
@@ -550,15 +553,15 @@ def daily_predict(dc, local_predict_dir):
         for i, saved_model in enumerate(saved_models):
             model_pred = saved_model(sequence_feature, to_predict_week_feature)
             model_pred = model_pred.detach().numpy().tolist()[0]
+            real_predict_num = int(0.001 * 7)
             try:
                 if model_pred is not None:
                     pred_new = reverse_predict(model_pred)
                     real_predict_num = int(pred_new * 7)
-                else:
-                    real_predict_num = int(0.001 * 7)
             except Exception as e:
                 debug_model.add(i)
                 if debug_n > 0:
+                    print('exception', e)
                     debug_n -= 1
                     print(sequence_feature, to_predict_week_feature)
                 pass
