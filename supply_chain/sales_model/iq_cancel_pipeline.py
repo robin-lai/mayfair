@@ -1,3 +1,4 @@
+import datetime
 import os
 from common import *
 import argparse
@@ -78,13 +79,42 @@ def main(args):
 
     if 'metrics' in args.pipeline:
         print('step5: 评测')
-        pred_df = parquet.read_table(s3_pred_result % (suffix, '20250511')).to_pandas()
+        pred_date_str = '20250511'
+        pred_date = datetime.strptime(pred_date_str, "%Y%m%d").date()
+        pred_df = parquet.read_table(s3_pred_result % (suffix, pred_date_str)).to_pandas().drop_duplicates()
         print(pred_df.describe())
         real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=20250514/'
-        real_df =  parquet.read_table(real_df_file).to_pandas()
+        real_df =  parquet.read_table(real_df_file).to_pandas()[['target_date', 'skc_id', 'sales_1d', 'no_cancel_sales_1d']].astype({"target_date":str, "skc_id": int, "sales_1d": int, "no_cancel_sales_1d":int})
+        real_df['target_date'] = pd.to_datetime(real_df['target_date'])
         print(real_df.describe())
         print(pred_df.head())
         print(real_df.head())
+        pred_ids = set(pred_df['skc_id'].values)
+        real_ids = set(real_df['skc_id'].values)
+        ids = pred_ids.intersection(real_ids)
+        for id in ids:
+            print('id', id)
+            id_df = pred_df[pred_df['skc_id'] == id]
+            w1_p = id_df[id_df['week_num'] == 1]['predict'].values[0]
+            w2_p = id_df[id_df['week_num'] == 2]['predict'].values[0]
+            w3_p = id_df[id_df['week_num'] == 3]['predict'].values[0]
+            w4_p = id_df[id_df['week_num'] == 4]['predict'].values[0]
+            r_df = real_df[real_df['skc_id'] == id]
+            end_w1 = pred_date + pd.Timedelta(days=7)
+            end_w2 = pred_date + pd.Timedelta(days=14)
+            end_w3 = pred_date + pd.Timedelta(days=21)
+            end_w4 = pred_date + pd.Timedelta(days=28)
+            w1_r = r_df[r_df['target_date']].between(pred_date, end_w1)
+            print(w1_r)
+            w2_r = r_df[r_df['target_date']].between(pred_date, end_w2)
+            print(w2_r)
+            w3_r = r_df[r_df['target_date']].between(pred_date, end_w3)
+            print(w3_r)
+            w4_r = r_df[r_df['target_date']].between(pred_date, end_w4)
+            print(w4_r)
+
+
+
 
 
     print('all cost[hour]:', (time.time() - st1) / 3600)
