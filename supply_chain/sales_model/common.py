@@ -263,7 +263,7 @@ class DataConfig:
         self.id_feature_num = {id_feature: max_digit_place_double(self.df[id_feature].max()) for id_feature in
                                self.id_features}
 
-    def process_code(self, split, train_and_predict_data_path_smooth, mode="train"):
+    def process_code(self, split, mode="train"):
         sequence_features = []
         to_predict_week_features = []
         real_sell_num = []
@@ -375,9 +375,8 @@ class DataConfig:
         return sequence_features, to_predict_week_features, to_predict_codes
 
 
-def prepare_train_valid_data(dc, split, train_and_predict_data_path_smooth):
+def prepare_train_valid_data(dc, split):
     sequence_features_, to_predict_week_features_, real_sell_num_, train_period_mean_, labels_ = dc.process_code(split,
-                                                                                                                 train_and_predict_data_path_smooth,
                                                                                                                  mode="train")
     labels_ = np.asarray(labels_)
     # labels_ = (np.log(labels_ + 1) - 1).tolist()
@@ -443,7 +442,7 @@ def save_model(to_save_model, path):
     torch.save(to_save_model.state_dict(), path)
 
 
-def train(dc, train_loader, test_loader, saved_model_path):
+def train(dc, train_loader, test_loader, model_path):
     id2num = dc.id_feature_num
     num_id_features = [id2num[item] + 2 for item in dc.id_features]
     id_embedding_dims = [4 for _ in num_id_features]
@@ -474,9 +473,9 @@ def train(dc, train_loader, test_loader, saved_model_path):
                 model.train()
                 if self_defined_score < max_self_defined_score:
                     max_self_defined_score = self_defined_score
-                    save_model(model, saved_model_path)
+                    save_model(model, model_path)
                     print("the max self defined score is %f, saved model to %s" % (
-                        self_defined_score, saved_model_path))
+                        self_defined_score, model_path))
                 model.train()
                 pass
             outputs = model(train_sequence_batch, train_to_predict_features_batch)

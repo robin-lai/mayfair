@@ -5,61 +5,60 @@ import pandas as pd
 
 from common import *
 import argparse
-def init(dc,train_and_predict_data_path,local_train_data_path, tmp_path):
+def init(dc, data_path, local_data_path, tmp_path):
     st = time.time()
-    wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
-    ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")], tmp_path))
+    wait_for_ready(data_path, dc.yesterday.strftime("%Y%m%d"))
+    ret = list(load_s3_dir(BUCKET, data_path, [dc.yesterday.strftime("%Y%m%d")], tmp_path))
     ret = pd.DataFrame(ret)
     ret = ret[ret["target_date"] >= (dc.today - timedelta(days=250)).strftime("%Y-%m-%d")]
     print(ret["target_date"].max(), ret["target_date"].min())
-    ret.to_csv(local_train_data_path)
+    ret.to_csv(local_data_path)
     del ret
     ed = time.time()
     print('process data cost:', ed - st)
 
 
-def train(dc,local_train_data_path,train_and_predict_data_path_smooth,saved_model_path,s3_saved_model_path,suffix=''):
+def train_pipeline(dc, local_data_path, model_path, s3_model_path):
     ed = time.time()
     print('step2: train')
-    dc.init_df(local_train_data_path)
-    train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'),
-                                                         train_and_predict_data_path_smooth)
-    train(dc, train_loader, test_loader, saved_model_path)
-    os.system('aws s3 cp %s %s' % (saved_model_path, s3_saved_model_path % (suffix, dc.yesterday.strftime("%Y%m%d"))))
+    dc.init_df(local_data_path)
+    train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
+    train(dc, train_loader, test_loader, model_path)
+    os.system('aws s3 cp %s %s' % (model_path, s3_model_path % (dc.yesterday.strftime("%Y%m%d"))))
     print('train cost:', time.time() - ed)
 
 
-def pred(dc,model_num,s3_saved_model_path,local_predict_dir,local_predicted_result_path,s3_pred_result,suffix=''):
+def pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path):
     print('step3: pred')
     ed = time.time()
     for i in range(0, model_num):
         download_date = dc.yesterday - timedelta(days=i)
         download_date = download_date.strftime("%Y%m%d")
-        remote_path = s3_saved_model_path % (suffix, download_date) + "best_model_iq.pth"
+        remote_path = s3_model_path % download_date + "best_model_iq.pth"
         print('remote_path', remote_path)
-        download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
+        download_file(remote_path, local_pred_dir + "best_model_%s.pth" % download_date)
     #
-    predicted_result = daily_predict(dc, local_predict_dir)
-    predicted_result.to_parquet(local_predicted_result_path)
+    predicted_result = daily_predict(dc, local_pred_dir)
+    predicted_result.to_parquet(local_pred_path)
     os.system(
-        'aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result % (suffix, dc.yesterday.strftime("%Y%m%d"))))
+        'aws s3 cp %s %s' % (local_pred_path, s3_pred_path % (dc.yesterday.strftime("%Y%m%d"))))
     print('pred cost:', time.time() - ed)
 
 
-def eval(dc,local_evaluated_result_path, local_predict_dir,train_and_predict_data_path_smooth_eval,s3_evaluated_result_path,suffix):
+def eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path):
     ed = time.time()
     print('step4: evalute')
-    evaluate_model(dc, local_evaluated_result_path, local_predict_dir, train_and_predict_data_path_smooth_eval)
+    evaluate_model(dc, local_eval_path, local_pred_dir, data_smooth_eval_path)
     os.system('aws s3 cp %s %s' % (
-    local_evaluated_result_path, s3_evaluated_result_path % (suffix, dc.yesterday.strftime("%Y%m%d"))))
+        local_eval_path, s3_eval_path % dc.yesterday.strftime("%Y%m%d")))
     print('evalute cost:', time.time() - ed)
 
 
-def metrics(s3_pred_result, local_metrics_path,suffix=''):
+def metrics(s3_pred_path, local_metrics_path):
     print('step5: 评测')
     pred_date_str = '2025-05-11'
     pred_date = datetime.strptime(pred_date_str, "%Y-%m-%d")
-    pred_df = parquet.read_table(s3_pred_result % (suffix, pred_date_str)).to_pandas().drop_duplicates()
+    pred_df = parquet.read_table(s3_pred_path % pred_date_str).to_pandas().drop_duplicates()
     print(pred_df.describe())
     real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/' % pred_date_str.replace(
         '-', '')

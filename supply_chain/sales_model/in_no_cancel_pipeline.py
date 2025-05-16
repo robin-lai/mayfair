@@ -42,8 +42,7 @@ if __name__ == '__main__':
 
     print('train')
     dc.init_df(local_train_data_path)
-    train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'),
-                                                         train_and_predict_data_path_smooth)
+    train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
     train(dc, train_loader, test_loader, saved_model_path)
     os.system('aws s3 cp %s %s' % (saved_model_path, s3_saved_model_path % yesterday_str))
     print('train cost:', time.time() - ed)

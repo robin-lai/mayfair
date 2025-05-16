@@ -8,28 +8,26 @@ import argparse
 from pipeline import *
 
 time_delta = 0
-train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 base_dir = "./data_cancel_iq/"
-suffix = 'iq'
+data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
+data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_iq_smooth_eval.csv"
 model_num = 1
 
-train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth.csv" % suffix
-train_and_predict_data_path_smooth_eval = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth_eval.csv" % suffix
-saved_model_path = base_dir + "best_model.pth"
-s3_saved_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_%s/ds=%s/'
-s3_pred_result = 's3://warehouse-algo/sequence_model_predict_result_%s/ds=%s/'
-s3_evaluated_result_path = 's3://warehouse-algo/sequence_model_evaluated_result_%s/ds=%s/evaluated_result.parquet'
+model_path = base_dir + "best_model.pth"
+s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_iq/ds=%s/'
+s3_pred_path = 's3://warehouse-algo/sequence_model_predict_result_iq/ds=%s/'
+s3_eval_path = 's3://warehouse-algo/sequence_model_evaluated_result_iq/ds=%s/evaluated_result.parquet'
 os.system('rm -rf %s' % base_dir)
 os.system('mkdir %s' % base_dir)
 
-local_train_data_path = base_dir + "sequence_data.csv"
+local_data_path = base_dir + "sequence_data.csv"
 local_metrics_path = base_dir + "metrics_skc_diff.csv"
 tmp_path = base_dir + 'tmp.txt'
 local_future_dau_plan_path = base_dir + "savana_future_daus.csv"
-local_evaluated_result_path = base_dir + "evaluated_result.parquet"
-local_predicted_result_path = base_dir + 'output.parquet'
-local_predict_dir = base_dir + 'pred/'
-os.system('mkdir %s' % local_predict_dir)
+local_eval_path = base_dir + "evaluated_result.parquet"
+local_pred_path = base_dir + 'output.parquet'
+local_pred_dir = base_dir + 'pred/'
+os.system('mkdir %s' % local_pred_dir)
 
 
 
@@ -42,16 +40,16 @@ def main(args):
 
     # step 1: process data
     if 'init' in args.pipeline:
-        init(dc,train_and_predict_data_path,local_train_data_path, tmp_path)
+        init(dc, data_path, local_data_path, tmp_path)
 
     if 'train' in args.pipeline:
-        train(dc)
+        train_pipeline(dc, local_data_path, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
-        pred(dc)
+        pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
 
     if 'eval' in args.pipeline:
-        eval(dc)
+        eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
 
     if 'metrics' in args.pipeline:
         metrics()
