@@ -565,19 +565,19 @@ def daily_predict(dc, local_predict_dir):
     return code_predict_results
 
 
-def evaluate_model(dc, local_evaluated_result_path, saved_model_path,train_and_predict_data_path_smooth_eval):
+def evaluate_model(dc, local_eval_path, model_path, data_smooth_eval_path):
     def reverse_predict(val):
         val = math.exp(val) - 1
         return val
 
-    saved_model = get_saved_model(dc, saved_model_path)[0]
+    saved_model = get_saved_model(dc, model_path)[0]
     abs_diffs = []
     real_abs_diffs = []
     fast_ratio = []
     hive_parquet = []
     sequence_features_, to_predict_week_features_, real_sell_nums_, train_period_means_, labels_ = dc.process_code(
         split=(dc.today - timedelta(days=28)).strftime('%Y-%m-%d'),
-        train_and_predict_data_path_smooth = train_and_predict_data_path_smooth_eval,
+        train_and_predict_data_path_smooth = data_smooth_eval_path,
         mode="eval"
     )
     labels_ = np.asarray(labels_)
@@ -604,23 +604,23 @@ def evaluate_model(dc, local_evaluated_result_path, saved_model_path,train_and_p
         hive_parquet.append(
             [goods_id, skc_id, week_num, dc.yesterday.strftime("%Y%m%d"), real_sell_num, real_predict_num])
 
-    print(np.mean(abs_diffs), np.std(abs_diffs))
-
-    # 卖的比备货多的
-    real_pos_diff_sum = sum([item[0] if item[0] > 0 else 0 for item in real_abs_diffs])
-    # 备货比卖的多的占比
-    real_neg_diff_sum = sum([-item[0] if item[0] < 0 else 0 for item in real_abs_diffs])
-    predict_sell_sum = sum([item[1] for item in real_abs_diffs])
-    print(real_pos_diff_sum, predict_sell_sum, real_pos_diff_sum / predict_sell_sum)
-    print(real_neg_diff_sum, predict_sell_sum, real_neg_diff_sum / predict_sell_sum)
-
-    total_sell_num = sum([item[1] for item in fast_ratio])
-    fast_num = sum([item[0] for item in fast_ratio])
-    print(fast_num, total_sell_num, fast_num / total_sell_num)
+    # print(np.mean(abs_diffs), np.std(abs_diffs))
+    #
+    # # 卖的比备货多的
+    # real_pos_diff_sum = sum([item[0] if item[0] > 0 else 0 for item in real_abs_diffs])
+    # # 备货比卖的多的占比
+    # real_neg_diff_sum = sum([-item[0] if item[0] < 0 else 0 for item in real_abs_diffs])
+    # predict_sell_sum = sum([item[1] for item in real_abs_diffs])
+    # print(real_pos_diff_sum, predict_sell_sum, real_pos_diff_sum / predict_sell_sum)
+    # print(real_neg_diff_sum, predict_sell_sum, real_neg_diff_sum / predict_sell_sum)
+    #
+    # total_sell_num = sum([item[1] for item in fast_ratio])
+    # fast_num = sum([item[0] for item in fast_ratio])
+    # print(fast_num, total_sell_num, fast_num / total_sell_num)
 
     hive_parquet = pd.DataFrame(hive_parquet,
                                 columns=["goods_id", "skc_id", "week_num", "date", "real_sell_num", "real_predict_num"])
-    hive_parquet.to_parquet(local_evaluated_result_path)
+    hive_parquet.to_parquet(local_eval_path)
     print("hive_parquet:", hive_parquet.shape)
 
 
