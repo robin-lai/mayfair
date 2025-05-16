@@ -25,8 +25,10 @@ model_num = 2
 if __name__ == '__main__':
     st1 = time.time()
     st = time.time()
-    print('process data')
+    print('step1:process data')
     dc = DataConfig("no_cancel_sales_1d", time_delta)
+
+    # step 1: process data
     yesterday_str = dc.yesterday.strftime("%Y%m%d")
     wait_for_ready(train_and_predict_data_path, dc.yesterday.strftime("%Y%m%d"))
     ret = list(load_s3_dir(BUCKET, train_and_predict_data_path, [dc.yesterday.strftime("%Y%m%d")], tmp_path))
@@ -48,12 +50,10 @@ if __name__ == '__main__':
 
     print('pred')
     ed = time.time()
-    # remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % dc.yesterday
-    # download_file(remote_path, local_predict_dir + "best_model_%s.pth" % dc.yesterday)
     for i in range(0, model_num):
         download_date = dc.yesterday - timedelta(days=i)
         download_date = download_date.strftime("%Y%m%d")
-        remote_path = "sequence_model_predict_best_model/ds=%s/best_model.pth" % download_date
+        remote_path = s3_saved_model_path % download_date + "best_model.pth"
         download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
 
     predicted_result = daily_predict(dc, local_predict_dir)
@@ -61,9 +61,9 @@ if __name__ == '__main__':
     os.system('aws s3 cp %s %s' % (local_predicted_result_path, s3_pred_result % yesterday_str))
     print('pred cost:', time.time() - ed)
     ed = time.time()
-    print('all cost:', time.time() - st1)
 
-    # print('evalute')
-    # evaluate_model(dc,local_evaluated_result_path,local_predict_dir,train_and_predict_data_path_smooth_eval)
-    # os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path%yesterday_str))
-    # print('evalute cost:', time.time() - ed)
+    print('step4: evalute')
+    evaluate_model(dc, local_evaluated_result_path, local_predict_dir, train_and_predict_data_path_smooth_eval)
+    os.system('aws s3 cp %s %s' % (local_evaluated_result_path, s3_evaluated_result_path % yesterday_str))
+    print('evalute cost:', time.time() - ed)
+    print('all cost[hour]:', (time.time() - st1) / 3600)
