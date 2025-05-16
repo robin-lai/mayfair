@@ -1,7 +1,7 @@
 import os
 from common import *
 
-time_delta = 0
+time_delta = 1
 train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
 base_dir = "./data_cancel/"
 os.system('rm -rf %s' % base_dir)
