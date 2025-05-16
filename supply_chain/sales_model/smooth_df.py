@@ -9,7 +9,7 @@ def smooth_df(in_file, s3_file):
     codes = set(df['skc_id'].values.tolist())
     count = 0
     df_list = []
-    for code in codes:
+    for code in codes[0:100]:
         if count % 500 == 0:
             print("step: %d / %d" % (count, len(codes)))
         count += 1
@@ -20,7 +20,7 @@ def smooth_df(in_file, s3_file):
 
     df2 = pd.concat(df_list)
     local_file_csv = './tmp/' + '_'.join(s3_file.split('/'))
-    local_file_pt = './tmp/' + '_'.join(s3_file.split('/') + '.parquet')
+    local_file_pt = './tmp/' + '_'.join(s3_file.split('/')) + '.parquet'
     df2.to_csv(local_file_csv)
     df2.to_parquet(local_file_pt, engine="pyarrow")
     os.system('aws cp %s %s' % (local_file_pt, s3_file))
