@@ -635,4 +635,4 @@ def download_file(from_file, to_file):
     except Exception as e:
         # traceback.print_exc()
         print(Exception, e)
-    raise ValueError('Failed to download file: %s to %s' % (from_file, to_file))
+        raise ValueError('Failed to download file: %s to %s' % (from_file, to_file))
