@@ -19,10 +19,9 @@ def init(dc, data_path, local_data_path, tmp_path):
     print('process data cost:', ed - st)
 
 
-def train_pipeline(dc, local_data_path, model_path, s3_model_path):
+def train_pipeline(dc, model_path, s3_model_path):
     ed = time.time()
     print('step2: train')
-    dc.init_df(local_data_path)
     train_loader, test_loader = prepare_train_valid_data(dc, (dc.today - timedelta(days=0)).strftime('%Y-%m-%d'))
     train(dc, train_loader, test_loader, model_path)
     os.system('aws s3 cp %s %s' % (model_path, s3_model_path % (dc.yesterday.strftime("%Y%m%d"))))

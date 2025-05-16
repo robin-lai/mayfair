@@ -34,6 +34,7 @@ def main(args):
     st1 = time.time()
     print('step1:process data')
     dc = DataConfig("sales_1d", time_delta)
+    dc.init_df(local_data_path)
 
     # step 1: process data
     if 'init' in args.pipeline:
