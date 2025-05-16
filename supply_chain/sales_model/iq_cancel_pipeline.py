@@ -7,7 +7,7 @@ from common import *
 import argparse
 from pipeline import *
 
-time_delta = 0
+time_delta = 1
 base_dir = "./data_cancel_iq/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_iq_smooth_eval.csv"
