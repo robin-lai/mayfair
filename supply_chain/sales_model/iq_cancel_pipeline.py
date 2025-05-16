@@ -79,8 +79,10 @@ def main(args):
     if 'metrics' in args.pipeline:
         print('step5: 评测')
         pred_df = parquet.read_table(s3_pred_result % (suffix, '20250511')).to_pandas()
+        print(pred_df.describe())
         real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=20250514/'
         real_df =  parquet.read_table(real_df_file).to_pandas()
+        print(real_df.describe())
         print(pred_df.head())
         print(real_df.head())
 
