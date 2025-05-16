@@ -504,6 +504,7 @@ def train(dc, train_loader, test_loader, saved_model_path):
 def get_saved_model(dc, local_predict_dir):
     models = []
     saved_model_pths = os.listdir(local_predict_dir)
+    print('local_predict_dir', saved_model_pths)
     id2num = dc.id_feature_num
     num_id_features = [id2num[item] + 2 for item in dc.id_features]
     id_embedding_dims = [4 for _ in num_id_features]
