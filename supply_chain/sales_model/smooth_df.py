@@ -34,6 +34,6 @@ if __name__ == '__main__':
     # smooth_df(in_file=site_in_file, s3_file=site_s3_file)
 
     # iq
-    site_in_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_iq/ds=20250515/'
-    site_s3_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=20250515/'
+    site_in_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_iq/ds=20250514/'
+    site_s3_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=20250514/'
     smooth_df(in_file=site_in_file, s3_file=site_s3_file)
