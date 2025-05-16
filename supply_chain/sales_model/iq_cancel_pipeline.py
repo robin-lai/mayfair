@@ -57,6 +57,7 @@ if __name__ == '__main__':
         download_date = dc.yesterday - timedelta(days=i)
         download_date = download_date.strftime("%Y%m%d")
         remote_path = s3_saved_model_path % (suffix, download_date) + "best_model.pth"
+        print('remote_path', remote_path)
         download_file(remote_path, local_predict_dir + "best_model_%s.pth" % download_date)
     #
     # predicted_result = daily_predict(dc, local_predict_dir)
