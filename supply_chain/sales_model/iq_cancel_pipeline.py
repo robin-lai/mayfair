@@ -5,7 +5,7 @@ time_delta = 0
 train_and_predict_data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 base_dir = "./data_cancel_iq/"
 suffix = 'iq'
-model_num = 2
+model_num = 1
 
 train_and_predict_data_path_smooth = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth.csv"%suffix
 train_and_predict_data_path_smooth_eval = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_%s_smooth_eval.csv"%suffix

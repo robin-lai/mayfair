@@ -631,8 +631,7 @@ def evaluate_model(dc, local_evaluated_result_path, saved_model_path,train_and_p
 def download_file(key, fname):
     try:
         s3_cli.download_file(Bucket="warehouse-algo", Key=key, Filename=fname)
-        return
     except Exception as e:
         # traceback.print_exc()
         print(Exception, e)
-    # raise ValueError('Failed to download file: %s to %s' % (key, fname))
+    raise ValueError('Failed to download file: %s to %s' % (key, fname))
