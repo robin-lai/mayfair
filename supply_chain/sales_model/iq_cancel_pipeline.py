@@ -1,5 +1,8 @@
 import datetime
 import os
+
+import pandas as pd
+
 from common import *
 import argparse
 
@@ -19,12 +22,14 @@ os.system('rm -rf %s' % base_dir)
 os.system('mkdir %s' % base_dir)
 
 local_train_data_path = base_dir + "sequence_data.csv"
+local_metrics_path = base_dir + "metrics_skc_diff.csv"
 tmp_path = base_dir + 'tmp.txt'
 local_future_dau_plan_path = base_dir + "savana_future_daus.csv"
 local_evaluated_result_path = base_dir + "evaluated_result.parquet"
 local_predicted_result_path = base_dir + 'output.parquet'
 local_predict_dir = base_dir + 'pred/'
 os.system('mkdir %s' % local_predict_dir)
+
 
 def main(args):
     st1 = time.time()
@@ -79,12 +84,15 @@ def main(args):
 
     if 'metrics' in args.pipeline:
         print('step5: 评测')
-        pred_date_str = '20250511'
-        pred_date = datetime.strptime(pred_date_str, "%Y%m%d").date()
+        pred_date_str = '2025-05-11'
+        pred_date = datetime.strptime(pred_date_str, "%Y-%m-%d")
         pred_df = parquet.read_table(s3_pred_result % (suffix, pred_date_str)).to_pandas().drop_duplicates()
         print(pred_df.describe())
-        real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=20250514/'
-        real_df =  parquet.read_table(real_df_file).to_pandas()[['target_date', 'skc_id', 'sales_1d', 'no_cancel_sales_1d']].astype({"target_date":str, "skc_id": int, "sales_1d": int, "no_cancel_sales_1d":int})
+        real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/' % pred_date_str.replace(
+            '-', '')
+        real_df = parquet.read_table(real_df_file).to_pandas()[
+            ['target_date', 'skc_id', 'sales_1d', 'no_cancel_sales_1d']].astype(
+            {"target_date": str, "skc_id": int, "sales_1d": int, "no_cancel_sales_1d": int})
         real_df['target_date'] = pd.to_datetime(real_df['target_date'])
         print(real_df.describe())
         print(pred_df.head())
@@ -92,6 +100,7 @@ def main(args):
         pred_ids = set(pred_df['skc_id'].values)
         real_ids = set(real_df['skc_id'].values)
         ids = pred_ids.intersection(real_ids)
+        ret_list = []
         for id in ids:
             print('id', id)
             id_df = pred_df[pred_df['skc_id'] == id]
@@ -99,25 +108,42 @@ def main(args):
             w2_p = id_df[id_df['week_num'] == 2]['predict'].values[0]
             w3_p = id_df[id_df['week_num'] == 3]['predict'].values[0]
             w4_p = id_df[id_df['week_num'] == 4]['predict'].values[0]
-            r_df = real_df[real_df['skc_id'] == id]
+            r_df = real_df[real_df['skc_id'] == id].dropna()
             end_w1 = pred_date + pd.Timedelta(days=7)
             end_w2 = pred_date + pd.Timedelta(days=14)
             end_w3 = pred_date + pd.Timedelta(days=21)
             end_w4 = pred_date + pd.Timedelta(days=28)
-            w1_r = r_df[r_df['target_date']].between(pred_date, end_w1)
-            print(w1_r)
-            w2_r = r_df[r_df['target_date']].between(pred_date, end_w2)
-            print(w2_r)
-            w3_r = r_df[r_df['target_date']].between(pred_date, end_w3)
-            print(w3_r)
-            w4_r = r_df[r_df['target_date']].between(pred_date, end_w4)
-            print(w4_r)
-
-
-
-
+            w1_r = r_df[r_df['target_date'].between(pred_date, end_w1)]['sales_1d'].values
+            w2_r = r_df[r_df['target_date'].between(pred_date, end_w2)]['sales_1d'].values
+            w3_r = r_df[r_df['target_date'].between(pred_date, end_w3)]['sales_1d'].values
+            w4_r = r_df[r_df['target_date'].between(pred_date, end_w4)]['sales_1d'].values
+            w1_diff, w2_diff, w3_diff, w4_diff = -1, -1, -1, -1
+            w1_r2, w2_r2, w3_r2, r4_r2 = -1, -1, -1, -1
+            w1_l, w2_l, w3_l, w4_l = len(w1_r), len(w2_r), len(w3_r), len(w4_r)
+            if len(w1_r) > 0 and sum(w1_r) > 0:
+                w1_r2 = np.mean(w1_r) * 7
+                w1_diff = np.abs(w1_p - w1_r2) / w1_r2
+            if len(w2_r) > 0 and sum(w2_r) > 0:
+                w2_r2 = np.mean(w2_r) * 7
+                w2_diff = np.abs(w2_p - w2_r2) / w2_r2
+            if len(w3_r) > 0 and sum(w3_r) > 0:
+                w3_r2 = np.mean(w3_r) * 7
+                w3_diff = np.abs(w3_p - w3_r2) / w3_r2
+            if len(w4_r) > 0 and sum(w4_r) > 0:
+                w4_r2 = np.mean(w4_r) * 7
+                w4_diff = np.abs(w4_p - w4_r2) / w4_r2
+            ret_list.append(
+                [id, w1_p, w2_p, w3_p, w4_p, w1_r2, w2_r2, w3_r2, r4_r2, w1_diff, w2_diff, w3_diff, w4_diff, w1_l, w2_l, w3_l, w4_l])
+            print(
+                f"id:{id}, w1_p:{w1_p}, w2_p:{w2_p}, w3_p:{w3_p}, w4_p:{w4_p},  w1_r2:{w1_r2}, w2_r2:{w2_r2}, w3_r2:{w3_r2}, r4_r2:{r4_r2}, "
+                f" w1_diff:{w1_diff}, w2_diff:{w2_diff}, w3_diff:{w3_diff}, w4_diff:{w4_diff},  w1_l:{w1_l}, w2_l:{w2_l}, w3_l:{w3_l}, w4_l:{w4_l} ")
+        ret_df = pd.DataFrame(ret_list,
+                              columns=['id', 'w1_p', 'w2_p', 'w3_p', 'w4_p', 'w1_r2', 'w2_r2', 'w3_r2', 'r4_r2',
+                                       'w1_diff', 'w2_diff', 'w3_diff', 'w4_diff', 'w1_l', 'w2_l', 'w3_l', 'w4_l'])
+        ret_df.to_csv(local_metrics_path)
 
     print('all cost[hour]:', (time.time() - st1) / 3600)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -128,5 +154,3 @@ if __name__ == '__main__':
                         default='init,train,pred,eval,metrics')
     args = parser.parse_args()
     main(args)
-
-
