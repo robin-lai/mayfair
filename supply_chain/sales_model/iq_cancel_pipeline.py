@@ -30,9 +30,6 @@ local_pred_dir = base_dir + 'pred/'
 os.system('mkdir %s' % local_pred_dir)
 
 
-
-
-
 def main(args):
     st1 = time.time()
     print('step1:process data')
@@ -52,7 +49,7 @@ def main(args):
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
 
     if 'metrics' in args.pipeline:
-        metrics()
+        metrics(s3_pred_path, local_metrics_path)
 
     print('all cost[hour]:', (time.time() - st1) / 3600)
 
