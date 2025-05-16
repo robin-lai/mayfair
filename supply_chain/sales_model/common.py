@@ -16,7 +16,6 @@ from torch.utils.data import DataLoader, TensorDataset
 s3_cli = boto3.client('s3')
 EPOCH = 2
 sample_thresh = 0.8
-model_num = 1
 BUCKET = "warehouse-algo"
 
 
