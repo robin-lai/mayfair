@@ -576,9 +576,7 @@ def evaluate_model(dc, local_eval_path, model_path, data_smooth_eval_path):
     fast_ratio = []
     hive_parquet = []
     sequence_features_, to_predict_week_features_, real_sell_nums_, train_period_means_, labels_ = dc.process_code(
-        split=(dc.today - timedelta(days=28)).strftime('%Y-%m-%d'),
-        train_and_predict_data_path_smooth = data_smooth_eval_path,
-        mode="eval"
+        split=(dc.today - timedelta(days=28)).strftime('%Y-%m-%d'),mode="eval"
     )
     labels_ = np.asarray(labels_)
     for sequence_feature, to_predict_week_feature, real_sell_num, train_period_mean, label in zip(sequence_features_,
