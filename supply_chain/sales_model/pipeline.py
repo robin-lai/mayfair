@@ -35,7 +35,7 @@ def pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_
     for i in range(0, model_num):
         download_date = dc.yesterday - timedelta(days=i)
         download_date = download_date.strftime("%Y%m%d")
-        remote_path = s3_model_path % download_date + "best_model_iq.pth"
+        remote_path = s3_model_path % download_date + "best_model.pth"
         print('remote_path', remote_path)
         download_file(remote_path, local_pred_dir + "best_model_%s.pth" % download_date)
     #
