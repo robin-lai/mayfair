@@ -281,7 +281,7 @@ class DataConfig:
             split_date = split_date - timedelta(days=28)
             split_date = split_date.strftime("%Y-%m-%d")
             self.df = self.df[self.df[self.time_idx] >= split_date]
-            print("the eval date is", self.df[self.time_idx].min(), self.df[self.time_idx].max())
+            print("the eval date min date is", self.df[self.time_idx].min(), "eval date max date is:", self.df[self.time_idx].max())
 
         count = 0
         for code in iter_codes:
