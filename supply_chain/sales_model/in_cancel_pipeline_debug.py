@@ -38,6 +38,7 @@ def main(args):
     # step 1: process data
     if 'init' in args.pipeline:
         init(dc, data_path, local_data_path, tmp_path)
+        dc.init_df(local_data_path)
 
     if 'train' in args.pipeline:
         train_pipeline(dc, model_path, s3_model_path)

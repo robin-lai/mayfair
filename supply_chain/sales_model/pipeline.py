@@ -58,7 +58,7 @@ def metrics(s3_pred_path, local_metrics_path):
     print('step5: 评测')
     pred_date_str = '2025-05-11'
     pred_date = datetime.strptime(pred_date_str, "%Y-%m-%d")
-    pred_df = parquet.read_table(s3_pred_path % pred_date_str).to_pandas().drop_duplicates()
+    pred_df = parquet.read_table(s3_pred_path % pred_date_str.replace('-','')).to_pandas().drop_duplicates()
     print(pred_df.describe())
     real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/' % pred_date_str.replace(
         '-', '')
