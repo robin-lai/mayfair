@@ -37,11 +37,11 @@ if __name__ == '__main__':
         description='fun',
         epilog='fun-help')
     parser.add_argument('--ds', type=str,default='')
-    parser.add_argument('--site_in_file', type=str,default='s3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_iq/ds=%s/')
-    parser.add_argument('--site_s3_file', type=str,default='s3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/')
+    parser.add_argument('--in_file', type=str,default='s3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_iq/ds=%s/')
+    parser.add_argument('--s3_file', type=str,default='s3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/')
     args = parser.parse_args()
-    args.site_in_file = args.site_in_file % args.ds
-    args.site_s3_file = args.site_s3_file % args.ds
+    args.in_file = args.in_file % args.ds
+    args.s3_file = args.s3_file % args.ds
     # in
     # site_in_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc/ds=20250515/'
     # site_s3_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth/ds=20250515/'
