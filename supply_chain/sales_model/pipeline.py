@@ -108,3 +108,12 @@ def metrics(s3_pred_path, local_metrics_path, pred_date_str, real_date_str):
     ret_df.to_csv(local_metrics_path)
     df_ok = ret_df[(ret_df['w1_p'] > 0) & (ret_df['w1_r2'] > 0)]
     print(df_ok[['w1_diff','w2_diff','w3_diff', 'w4_diff']].describe())
+
+import requests
+def alert_feishu(msg, at_all=True):
+    at_str = '<at user_id="all"></at>' if at_all else ''
+    x = requests.post('https://open.feishu.cn/open-apis/bot/v2/hook/bb04f4f5-cc78-495b-8b59-c91b669dd55b',
+                     headers={'Content-Type': 'application/json'},
+                     json={'msg_type': 'text', 'content': {'text': at_str + str(msg)}},
+    )
+    print('Alert by Feishu', x)

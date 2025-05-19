@@ -10,8 +10,6 @@ model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
 s3_pred_path = 's3://warehouse-algo/sequence_model_predict_result/ds=%s/'
 s3_eval_path = 's3://warehouse-algo/sequence_model_evaluated_result/ds=%s/evaluated_result.parquet'
-os.system('rm -rf %s' % base_dir)
-os.system('mkdir %s' % base_dir)
 
 local_data_path = base_dir + "sequence_data.csv"
 local_metrics_path = base_dir + "metrics_skc_diff.csv"
@@ -25,6 +23,9 @@ os.system('mkdir %s' % local_pred_dir)
 
 def main(args):
     st1 = time.time()
+    os.system('rm -rf %s' % base_dir)
+    os.system('mkdir %s' % base_dir)
+    os.system('mkdir %s' % local_pred_dir)
     print('step1:process data')
     dc = DataConfig("no_cancel_sales_1d", args.time_delta)
 
@@ -59,4 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
-    main(args)
+    for  i in [6, 5, 4, 3, 2, 1, 0]:
+        args.time_delta = i
+        main(args)
+        alert_feishu(f"in_no_cancel_pipeline process :{args.time_delta}")
