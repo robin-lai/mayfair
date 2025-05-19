@@ -1,7 +1,6 @@
 import argparse
 from pipeline import *
 
-time_delta = 1
 base_dir = "./data_cancel/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_eval.csv"
@@ -27,7 +26,7 @@ os.system('mkdir %s' % local_pred_dir)
 def main(args):
     st1 = time.time()
     print('step1:process data')
-    dc = DataConfig("sales_1d", time_delta)
+    dc = DataConfig("sales_1d", args.time_delta)
 
     # step 1: process data
     if 'init' in args.pipeline:
@@ -44,7 +43,7 @@ def main(args):
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
 
     if 'metrics' in args.pipeline:
-        metrics(s3_pred_path, local_metrics_path)
+        metrics(s3_pred_path, local_metrics_path, args.pred_date_str, args.real_date_str)
 
     print('all cost[hour]:', (time.time() - st1) / 3600)
 
@@ -56,5 +55,8 @@ if __name__ == '__main__':
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
                         default='init,train,pred,eval,metrics')
+    parser.add_argument('--time_delta', type=int, default=7)
+    parser.add_argument('--pred_date_str', type=str, default="")
+    parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
     main(args)
