@@ -60,6 +60,7 @@ if __name__ == '__main__':
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
     for  i in [6, 5, 4, 3, 2, 1, 0]:
+        args = parser.parse_args()
         args.time_delta = i
         main(args)
         alert_feishu(f"in_cancel_pipeline_debug process :{args.time_delta}")
