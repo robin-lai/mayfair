@@ -18,7 +18,6 @@ local_future_dau_plan_path = base_dir + "savana_future_daus.csv"
 local_eval_path = base_dir + "evaluated_result.parquet"
 local_pred_path = base_dir + 'output.parquet'
 local_pred_dir = base_dir + 'pred/'
-os.system('mkdir %s' % local_pred_dir)
 
 
 def main(args):
