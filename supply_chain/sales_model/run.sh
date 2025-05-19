@@ -1,6 +1,4 @@
 if [ $1 = "in_c" ]; then
-    python -u in_cancel_pipeline.py --pipeline=init,train,pred --time_delta=7
-    sleep 60
     python -u in_cancel_pipeline.py --pipeline=init,train,pred --time_delta=6
     sleep 60
     python -u in_cancel_pipeline.py --pipeline=init,train,pred --time_delta=5
@@ -13,8 +11,6 @@ if [ $1 = "in_c" ]; then
     sleep 60
     python -u in_cancel_pipeline.py --pipeline=init,train,pred --time_delta=1
 elif [ $1 = "in_no_c" ]; then
-    python -u in_no_cancel_pipeline.py --pipeline=init,train,pred --time_delta=7
-    sleep 60
     python -u in_no_cancel_pipeline.py --pipeline=init,train,pred --time_delta=6
     sleep 60
     python -u in_no_cancel_pipeline.py --pipeline=init,train,pred --time_delta=5
