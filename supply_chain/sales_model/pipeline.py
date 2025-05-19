@@ -1,10 +1,4 @@
-import datetime
-import os
-
-import pandas as pd
-
 from common import *
-import argparse
 def init(dc, data_path, local_data_path, tmp_path):
     st = time.time()
     wait_for_ready(data_path, dc.yesterday.strftime("%Y%m%d"))
@@ -54,14 +48,12 @@ def eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_pat
     print('evalute cost:', time.time() - ed)
 
 
-def metrics(s3_pred_path, local_metrics_path):
+def metrics(s3_pred_path, local_metrics_path, pred_date_str, real_date_str):
     print('step5: 评测')
-    pred_date_str = '2025-05-11'
     pred_date = datetime.strptime(pred_date_str, "%Y-%m-%d")
-    pred_df = parquet.read_table(s3_pred_path % pred_date_str.replace('-','')).to_pandas().drop_duplicates()
+    pred_df = parquet.read_table(s3_pred_path).to_pandas().drop_duplicates()
     print(pred_df.describe())
-    real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/' % pred_date_str.replace(
-        '-', '')
+    real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/'%real_date_str
     real_df = parquet.read_table(real_df_file).to_pandas()[
         ['target_date', 'skc_id', 'sales_1d', 'no_cancel_sales_1d']].astype(
         {"target_date": str, "skc_id": int, "sales_1d": int, "no_cancel_sales_1d": int})
@@ -107,10 +99,12 @@ def metrics(s3_pred_path, local_metrics_path):
         ret_list.append(
             [id, w1_p, w2_p, w3_p, w4_p, w1_r2, w2_r2, w3_r2, r4_r2, w1_diff, w2_diff, w3_diff, w4_diff, w1_l, w2_l,
              w3_l, w4_l])
-        print(
-            f"id:{id}, w1_p:{w1_p}, w2_p:{w2_p}, w3_p:{w3_p}, w4_p:{w4_p},  w1_r2:{w1_r2}, w2_r2:{w2_r2}, w3_r2:{w3_r2}, r4_r2:{r4_r2}, "
-            f" w1_diff:{w1_diff}, w2_diff:{w2_diff}, w3_diff:{w3_diff}, w4_diff:{w4_diff},  w1_l:{w1_l}, w2_l:{w2_l}, w3_l:{w3_l}, w4_l:{w4_l} ")
+        # print(
+        #     f"id:{id}, w1_p:{w1_p}, w2_p:{w2_p}, w3_p:{w3_p}, w4_p:{w4_p},  w1_r2:{w1_r2}, w2_r2:{w2_r2}, w3_r2:{w3_r2}, r4_r2:{r4_r2}, "
+        #     f" w1_diff:{w1_diff}, w2_diff:{w2_diff}, w3_diff:{w3_diff}, w4_diff:{w4_diff},  w1_l:{w1_l}, w2_l:{w2_l}, w3_l:{w3_l}, w4_l:{w4_l} ")
     ret_df = pd.DataFrame(ret_list,
                           columns=['id', 'w1_p', 'w2_p', 'w3_p', 'w4_p', 'w1_r2', 'w2_r2', 'w3_r2', 'r4_r2',
                                    'w1_diff', 'w2_diff', 'w3_diff', 'w4_diff', 'w1_l', 'w2_l', 'w3_l', 'w4_l'])
     ret_df.to_csv(local_metrics_path)
+    df_ok = ret_df[(ret_df['w1_p'] > 0) & (ret_df['w1_r2'] > 0)]
+    print(df_ok[['w1_diff','w2_diff','w3_diff', 'w4_diff']].describe())
