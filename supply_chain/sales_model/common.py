@@ -544,6 +544,7 @@ def daily_predict(dc, local_predict_dir):
         to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
 
         for i, saved_model in enumerate(saved_models):
+            print('predict use model:', i)
             model_pred = saved_model(sequence_feature, to_predict_week_feature)
             model_pred = model_pred.detach().numpy().tolist()[0]
             real_predict_num = int(0.001 * 7)
