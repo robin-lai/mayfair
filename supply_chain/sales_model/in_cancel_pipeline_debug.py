@@ -4,7 +4,7 @@ from pipeline import *
 base_dir = "./data_cancel_debug/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_eval.csv"
-model_num = 10
+model_num = 1
 
 model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_d/ds=%s/'

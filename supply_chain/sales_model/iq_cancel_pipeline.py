@@ -55,7 +55,8 @@ if __name__ == '__main__':
         description='sc_iq',
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,train,pred,eval,metrics')
+                        default='init,train,pred')
+                        # default='init,train,pred,eval,metrics')
     parser.add_argument('--time_delta', type=int, default=7)
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")

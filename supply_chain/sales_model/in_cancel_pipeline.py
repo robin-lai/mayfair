@@ -4,7 +4,7 @@ from pipeline import *
 base_dir = "./data_cancel/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_eval.csv"
-model_num = 10
+model_num = 1
 
 model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
@@ -54,7 +54,7 @@ if __name__ == '__main__':
         description='sc',
         epilog='sc-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,train,pred,eval,metrics')
+                        default='init,train,pred')
     parser.add_argument('--time_delta', type=int, default=7)
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
