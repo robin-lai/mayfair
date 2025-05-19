@@ -50,9 +50,9 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        prog='sc_iq',
-        description='sc_iq',
-        epilog='sc-iq-help')
+        prog='sc',
+        description='sc',
+        epilog='sc-help')
     parser.add_argument('--pipeline', type=str,
                         default='init,train,pred,eval,metrics')
     parser.add_argument('--time_delta', type=int, default=7)

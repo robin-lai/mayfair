@@ -21,4 +21,3 @@ elif [ $1 = "mt_ana_pos_idx" ]; then
 elif [ $1 = "mt_ana_range_pos_idx" ]; then
     python check_recall_distribute_pos_idx.py
 fi
-c
