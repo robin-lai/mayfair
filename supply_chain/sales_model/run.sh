@@ -27,5 +27,5 @@ elif [ $1 = "in_no_c" ]; then
     sleep 60
     python -u in_no_cancel_pipeline.py --pipeline=init,train,pred --time_delta=1
 elif [ $1 = "iq_c" ]; then
-    python gen_tfrecored_multi_process_with_gen_mt_sample_select.py --ds=$2
+    python iq_cancel_pipeline.py
 fi
