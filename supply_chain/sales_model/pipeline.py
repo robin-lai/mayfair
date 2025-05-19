@@ -49,8 +49,8 @@ def eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_pat
 
 
 def metrics(s3_pred_path, local_metrics_path, pred_date_str, real_date_str):
-    print('step5: 评测')
-    pred_date = datetime.strptime(pred_date_str, "%Y-%m-%d")
+    print(f"step5: 评测, pred_date_str:{pred_date_str},real_date_str {real_date_str}")
+    pred_date = datetime.strptime(pred_date_str, "%Y%m%d")
     pred_df = parquet.read_table(s3_pred_path).to_pandas().drop_duplicates()
     print(pred_df.describe())
     real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/'%real_date_str

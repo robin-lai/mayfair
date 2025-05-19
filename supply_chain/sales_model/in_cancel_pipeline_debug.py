@@ -1,9 +1,3 @@
-import datetime
-import os
-
-import pandas as pd
-
-from common import *
 import argparse
 from pipeline import *
 
@@ -61,7 +55,7 @@ if __name__ == '__main__':
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
                         default='init,train,pred,eval,metrics')
-    parser.add_argument('--time_delta', type=int, default=0)
+    parser.add_argument('--time_delta', type=int, default=7)
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
