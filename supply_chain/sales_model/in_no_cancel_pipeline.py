@@ -7,9 +7,9 @@ data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_pred
 model_num = 1
 
 model_path = base_dir + "best_model.pth"
-s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
-s3_pred_path = 's3://warehouse-algo/sequence_model_predict_result/ds=%s/'
-s3_eval_path = 's3://warehouse-algo/sequence_model_evaluated_result/ds=%s/evaluated_result.parquet'
+s3_model_path = 's3://warehouse-algo/sequence_model_no_cancel_predict_best_model/ds=%s/'
+s3_pred_path = 's3://warehouse-algo/sequence_model_predict_no_cancel_result/ds=%s/'
+s3_eval_path = 's3://warehouse-algo/sequence_model_evaluated_no_cancel_result/ds=%s/evaluated_result.parquet'
 
 local_data_path = base_dir + "sequence_data.csv"
 local_metrics_path = base_dir + "metrics_skc_diff.csv"
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_delta', type=int, default=7)
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
-    for  i in [5, 4, 3, 2, 1, 0]:
+    for  i in [7, 6, 5, 4, 3, 2]:
         args = parser.parse_args()
         args.time_delta = i
         main(args)
