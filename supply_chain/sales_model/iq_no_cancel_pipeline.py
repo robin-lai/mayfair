@@ -59,7 +59,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_delta', type=int, default=0)
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
-    for  i in [8, 7, 6, 5, 4, 3, 2, 1, 0]:
+    for  i in [1, 0]:
         args = parser.parse_args()
         args.time_delta = i
         main(args)
