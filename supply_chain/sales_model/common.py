@@ -578,8 +578,8 @@ def daily_predict_thread(proc_id, shared_list,saved_model, sequence_features, to
     count = 0
     except_n = 0
     n = len(to_predict_codes)
-    for code, to_predict_week_feature, sequence_feature in zip(to_predict_codes[0:1000], to_predict_week_features[0:1000],
-                                                               sequence_features[0:1000]):
+    for code, to_predict_week_feature, sequence_feature in zip(to_predict_codes, to_predict_week_features,
+                                                               sequence_features):
         if count % 5000 == 0:
             print(f"proc_id:{proc_id} process count:{count} / {n}")
         week_num = to_predict_week_feature[1] + 1
@@ -606,6 +606,7 @@ def daily_predict_thread(proc_id, shared_list,saved_model, sequence_features, to
 
         code_predict_results.append([code, week_num, real_predict_num])
     print('except_n', except_n)
+    print('except_id_', len(except_id))
     print('except_id', except_id)
     shared_list.append(code_predict_results)
     print(f"proc_id:{proc_id} cost:{time.time()-st}")
