@@ -57,7 +57,7 @@ if __name__ == '__main__':
     parser.add_argument('--time_delta', type=int, default=9) # 12-9, 13-8
     parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
-    parser.add_argument('--model_num', type=int, default=3)
+    parser.add_argument('--model_num', type=int, default=10)
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
     if args.range != '':
