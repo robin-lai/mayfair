@@ -55,9 +55,16 @@ if __name__ == '__main__':
     parser.add_argument('--pipeline', type=str,
                         default='init,pred')
     parser.add_argument('--time_delta', type=int, default=9) # 12-9, 13-8
+    parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--model_num', type=int, default=3)
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
-    main(args)
-    alert_feishu(f"in_cancel_pipeline process :{args.time_delta}")
+    if args.range != '':
+        for i in args.range.split(','):
+            args.time_delta = str(i)
+            main(args)
+            alert_feishu(f"in_cancel_pipeline process :{args.time_delta}")
+    else:
+        main(args)
+        alert_feishu(f"in_cancel_pipeline process :{args.time_delta}")
