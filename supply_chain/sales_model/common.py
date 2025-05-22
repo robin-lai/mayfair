@@ -557,7 +557,9 @@ def daily_predict(dc, local_predict_dir):
                 if debug_n > 0:
                     print('exception', e)
                     debug_n -= 1
-                    print(sequence_feature, to_predict_week_feature)
+                    print('code', code)
+                    print("sequence_feature", sequence_feature)
+                    print("to_predict_week_feature", to_predict_week_feature)
                 pass
 
             code_predict_results.append([code, week_num, real_predict_num])

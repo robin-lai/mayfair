@@ -4,7 +4,6 @@ from pipeline import *
 base_dir = "./data_cancel_iq/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc_iq/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_iq_smooth_eval.csv"
-model_num = 1
 
 model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model_iq/ds=%s/'
@@ -37,7 +36,7 @@ def main(args):
         train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
-        pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
+        pred(dc, args.model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
 
     if 'eval' in args.pipeline:
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
@@ -54,11 +53,18 @@ if __name__ == '__main__':
         description='sc_iq',
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,train,pred')
-                        # default='init,train,pred,eval,metrics')
-    parser.add_argument('--time_delta', type=int, default=0)
+                        default='init,pred')
+    parser.add_argument('--time_delta', type=int, default=0) # 12-9, 13-8
+    parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
+    parser.add_argument('--model_num', type=int, default=10)
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
-    main(args)
-    alert_feishu(f"iq_cancel_pipeline process :{args.time_delta}")
+    if args.range != '':
+        for i in args.range.split(','):
+            args.time_delta = str(i)
+            main(args)
+            alert_feishu(f"iq_cancel_pipeline process :{args.time_delta}")
+    else:
+        main(args)
+        alert_feishu(f"iq_cancel_pipeline process :{args.time_delta}")
