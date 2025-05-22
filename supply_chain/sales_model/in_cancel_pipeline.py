@@ -4,7 +4,7 @@ from pipeline import *
 base_dir = "./data_cancel/"
 data_path = "sc_forecast_sequence_ts_model_train_and_predict_skc/"
 data_smooth_eval_path = base_dir + "sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_eval.csv"
-model_num = 1
+model_num = 10
 
 model_path = base_dir + "best_model.pth"
 s3_model_path = 's3://warehouse-algo/sequence_model_predict_best_model/ds=%s/'
@@ -37,7 +37,7 @@ def main(args):
         train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
-        pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
+        pred_multi(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
 
     if 'eval' in args.pipeline:
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         epilog='sc-help')
     parser.add_argument('--pipeline', type=str,
                         default='init,train,pred')
-    parser.add_argument('--time_delta', type=int, default=0)
+    parser.add_argument('--time_delta', type=int, default=9) # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()

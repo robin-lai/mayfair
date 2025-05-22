@@ -566,6 +566,53 @@ def daily_predict(dc, local_predict_dir):
     return code_predict_results
 
 
+def daily_predict_thread(proc_id, shared_list,saved_model, sequence_features, to_predict_week_features, to_predict_codes):
+    def reverse_predict(val):
+        val = math.exp(val) - 1
+        return val
+    st = time.time()
+
+    code_predict_results = []
+    except_id = set()
+    debug_n = 2
+    count = 0
+    except_n = 0
+    n = len(to_predict_codes)
+    for code, to_predict_week_feature, sequence_feature in zip(to_predict_codes, to_predict_week_features,
+                                                               sequence_features):
+        if count % 700 == 0:
+            print(f"proc_id:{proc_id} process count:{count} / {n}")
+        week_num = to_predict_week_feature[1] + 1
+        sequence_feature = torch.from_numpy(np.asarray([sequence_feature], dtype=np.float32))
+        to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
+
+        # print('predict use model:', i)
+        model_pred = saved_model(sequence_feature, to_predict_week_feature)
+        model_pred2 = model_pred.detach().numpy().tolist()[0]
+        real_predict_num = int(0.3 * 7)
+        count += 1
+        try:
+            if model_pred2 is not None:
+                pred_new = reverse_predict(model_pred2)
+                real_predict_num = int(pred_new * 7)
+        except Exception as e:
+            except_n += 1
+            except_id.add(code)
+            if debug_n > 0:
+                print('exception', e)
+                debug_n -= 1
+                print(sequence_feature, to_predict_week_feature)
+            pass
+
+        code_predict_results.append([code, week_num, real_predict_num])
+    print('except_n', except_n)
+    print('except_id', except_id)
+    shared_list.append(code_predict_results)
+    print(f"proc_id:{proc_id} cost:{time.time()-st}")
+    # code_predict_results = pd.DataFrame(code_predict_results, columns=["skc_id", "week_num", "predict"])
+    # return code_predict_results
+
+
 def evaluate_model(dc, local_eval_path, model_path, data_smooth_eval_path):
     def reverse_predict(val):
         val = math.exp(val) - 1

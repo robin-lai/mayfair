@@ -1,4 +1,7 @@
+import multiprocessing
 from common import *
+
+
 def init(dc, data_path, local_data_path, tmp_path):
     st = time.time()
     wait_for_ready(data_path, dc.yesterday.strftime("%Y%m%d"))
@@ -39,6 +42,45 @@ def pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_
     print('pred cost:', time.time() - ed)
 
 
+def pred_multi(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path):
+    print('step3: pred')
+    ed = time.time()
+    st = time.time()
+    for i in range(0, model_num):
+        download_date = dc.yesterday - timedelta(days=i)
+        download_date = download_date.strftime("%Y%m%d")
+        remote_path = s3_model_path % download_date + "best_model.pth"
+        print('remote_path', remote_path)
+        download_file(remote_path, local_pred_dir + "best_model_%s.pth" % download_date)
+    saved_models = get_saved_model(dc, local_pred_dir)
+    sequence_features, to_predict_week_features, to_predict_codes = dc.process_to_predict_code()
+    print('step3.1: pred - process data and download model cost', time.time()-ed)
+    ed = time.time()
+
+    manager = multiprocessing.Manager()
+    shared_list = manager.list()
+    proc_list = [multiprocessing.Process(target=daily_predict_thread, args=(proc_id,
+    shared_list, saved_model, sequence_features, to_predict_week_features, to_predict_codes
+    )) for proc_id, saved_model in
+                 enumerate(saved_models[0:5])]
+    [p.start() for p in proc_list]
+    [p.join() for p in proc_list]
+
+    print('step 3.2 multi predict cost', time.time() - ed)
+    ed = time.time()
+
+    normal_list = list()
+    for l in shared_list:
+        normal_list.extend(l)
+    predicted_result = pd.DataFrame(normal_list, columns=["skc_id", "week_num", "predict"])
+    predicted_result.to_parquet(local_pred_path)
+    os.system(
+        'aws s3 cp %s %s' % (local_pred_path, s3_pred_path % (dc.yesterday.strftime("%Y%m%d"))))
+    print('step 3.3 after process cost:', time.time() - ed)
+
+    print('pred all cost:', time.time() - st)
+
+
 def eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path):
     ed = time.time()
     print('step4: evalute')
@@ -53,7 +95,7 @@ def metrics(s3_pred_path, local_metrics_path, pred_date_str, real_date_str):
     pred_date = datetime.strptime(pred_date_str, "%Y%m%d")
     pred_df = parquet.read_table(s3_pred_path).to_pandas().drop_duplicates()
     print(pred_df.describe())
-    real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/'%real_date_str
+    real_df_file = 's3://warehouse-algo/sc_forecast_sequence_ts_model_train_and_predict_skc_smooth_iq/ds=%s/' % real_date_str
     real_df = parquet.read_table(real_df_file).to_pandas()[
         ['target_date', 'skc_id', 'sales_1d', 'no_cancel_sales_1d']].astype(
         {"target_date": str, "skc_id": int, "sales_1d": int, "no_cancel_sales_1d": int})
@@ -107,13 +149,16 @@ def metrics(s3_pred_path, local_metrics_path, pred_date_str, real_date_str):
                                    'w1_diff', 'w2_diff', 'w3_diff', 'w4_diff', 'w1_l', 'w2_l', 'w3_l', 'w4_l'])
     ret_df.to_csv(local_metrics_path)
     df_ok = ret_df[(ret_df['w1_p'] > 0) & (ret_df['w1_r2'] > 0)]
-    print(df_ok[['w1_diff','w2_diff','w3_diff', 'w4_diff']].describe())
+    print(df_ok[['w1_diff', 'w2_diff', 'w3_diff', 'w4_diff']].describe())
+
 
 import requests
+
+
 def alert_feishu(msg, at_all=True):
     at_str = '<at user_id="all"></at>' if at_all else ''
     x = requests.post('https://open.feishu.cn/open-apis/bot/v2/hook/bb04f4f5-cc78-495b-8b59-c91b669dd55b',
-                     headers={'Content-Type': 'application/json'},
-                     json={'msg_type': 'text', 'content': {'text': at_str + str(msg)}},
-    )
+                      headers={'Content-Type': 'application/json'},
+                      json={'msg_type': 'text', 'content': {'text': at_str + str(msg)}},
+                      )
     print('Alert by Feishu', x)
