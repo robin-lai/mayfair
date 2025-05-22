@@ -62,7 +62,7 @@ def pred_multi(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3
     proc_list = [multiprocessing.Process(target=daily_predict_thread, args=(proc_id,
     shared_list, saved_model, sequence_features, to_predict_week_features, to_predict_codes
     )) for proc_id, saved_model in
-                 enumerate(saved_models[0:5])]
+                 enumerate(saved_models)]
     [p.start() for p in proc_list]
     [p.join() for p in proc_list]
 
