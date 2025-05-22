@@ -53,7 +53,7 @@ if __name__ == '__main__':
         description='sc',
         epilog='sc-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,pred')
+                        default='init,train,pred')
     parser.add_argument('--time_delta', type=int, default=0) # 12-9, 13-8
     parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
