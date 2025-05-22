@@ -37,7 +37,7 @@ def main(args):
         train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
-        pred(dc, model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
+        pred_multi(dc, args.model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
 
     if 'eval' in args.pipeline:
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
@@ -54,10 +54,18 @@ if __name__ == '__main__':
         description='sc',
         epilog='sc-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,train,pred')
-    parser.add_argument('--time_delta', type=int, default=0)
+                        default='init,pred')
+    parser.add_argument('--time_delta', type=int, default=0) # 12-9, 13-8
+    parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
+    parser.add_argument('--model_num', type=int, default=10)
     parser.add_argument('--real_date_str', type=str, default="")
     args = parser.parse_args()
-    main(args)
-    alert_feishu(f"in_no_cancel_pipeline process :{args.time_delta}")
+    if args.range != '':
+        for i in args.range.split(','):
+            args.time_delta = str(i)
+            main(args)
+            alert_feishu(f"in_no_cancel_pipeline process :{args.time_delta}")
+    else:
+        main(args)
+        alert_feishu(f"in_no_cancel_pipeline process :{args.time_delta}")
