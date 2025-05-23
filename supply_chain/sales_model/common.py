@@ -545,15 +545,15 @@ def daily_predict(dc, local_predict_dir):
 
         for i, saved_model in enumerate(saved_models):
             # print('predict use model:', i)
-            model_pred = saved_model(sequence_feature, to_predict_week_feature)
-            model_pred = model_pred.detach().numpy().tolist()[0]
-            real_predict_num = int(0.001 * 7)
+            real_predict_num = int(1 * 7)
             try:
+                model_pred = saved_model(sequence_feature, to_predict_week_feature)
+                model_pred = model_pred.detach().numpy().tolist()[0]
                 if model_pred is not None:
                     pred_new = reverse_predict(model_pred)
                     real_predict_num = int(pred_new * 7)
             except Exception as e:
-                debug_model.add(i)
+                debug_model.add(code)
                 if debug_n > 0:
                     print('exception', e)
                     debug_n -= 1
@@ -563,6 +563,7 @@ def daily_predict(dc, local_predict_dir):
                 pass
 
             code_predict_results.append([code, week_num, real_predict_num])
+    print('debug_model_n', len(debug_model))
     print('debug_model', debug_model)
     code_predict_results = pd.DataFrame(code_predict_results, columns=["skc_id", "week_num", "predict"])
     return code_predict_results
@@ -589,11 +590,11 @@ def daily_predict_thread(proc_id, shared_list,saved_model, sequence_features, to
         to_predict_week_feature = torch.from_numpy(np.asarray([to_predict_week_feature], dtype=np.float32))
 
         # print('predict use model:', i)
-        model_pred = saved_model(sequence_feature, to_predict_week_feature)
-        model_pred2 = model_pred.detach().numpy().tolist()[0]
-        real_predict_num = int(0.3 * 7)
-        count += 1
+        real_predict_num = int(0.8 * 7)
         try:
+            model_pred = saved_model(sequence_feature, to_predict_week_feature)
+            model_pred2 = model_pred.detach().numpy().tolist()[0]
+            count += 1
             if model_pred2 is not None:
                 pred_new = reverse_predict(model_pred2)
                 real_predict_num = int(pred_new * 7)
@@ -605,8 +606,8 @@ def daily_predict_thread(proc_id, shared_list,saved_model, sequence_features, to
                 debug_n -= 1
                 print(sequence_feature, to_predict_week_feature)
             pass
-
         code_predict_results.append([code, week_num, real_predict_num])
+
     print('except_n', except_n)
     print('except_id_', len(except_id))
     print('except_id', except_id)
