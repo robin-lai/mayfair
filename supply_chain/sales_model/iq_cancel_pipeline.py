@@ -62,7 +62,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.range != '':
         for i in args.range.split(','):
-            args.time_delta = str(i)
+            args.time_delta = int(i)
             main(args)
             alert_feishu(f"iq_cancel_pipeline process :{args.time_delta}")
     else:
