@@ -370,7 +370,7 @@ class DataConfig:
                     # mean_dau_rate = np.mean(self.future_28_day_daus[i * 7:(i + 1) * 7])
                     mean_dau_rate = train_df["dau"].mean()
                     sequence_features.append(train_df)
-                    to_predict_week_features.append([0 if mean_dau_rate is not None else mean_dau_rate, j])
+                    to_predict_week_features.append([0 if mean_dau_rate is None else mean_dau_rate, j])
                     to_predict_codes.append(code)
         return sequence_features, to_predict_week_features, to_predict_codes
 
