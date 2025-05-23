@@ -36,7 +36,7 @@ def main(args):
         train_pipeline(dc, model_path, s3_model_path)
 
     if 'pred' in args.pipeline:
-        pred(dc, args.model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
+        pred_multi(dc, args.model_num, s3_model_path, local_pred_dir, local_pred_path, s3_pred_path)
 
     if 'eval' in args.pipeline:
         eval(dc, local_eval_path, local_pred_dir, data_smooth_eval_path, s3_eval_path)
@@ -53,8 +53,8 @@ if __name__ == '__main__':
         description='sc_iq',
         epilog='sc-iq-help')
     parser.add_argument('--pipeline', type=str,
-                        default='init,pred')
-    parser.add_argument('--time_delta', type=int, default=0) # 12-9, 13-8
+                        default='init,train,pred')
+    parser.add_argument('--time_delta', type=int, default=-1) # 12-9, 13-8
     parser.add_argument('--range', type=str, default="") # 12-9, 13-8
     parser.add_argument('--pred_date_str', type=str, default="")
     parser.add_argument('--model_num', type=int, default=10)
