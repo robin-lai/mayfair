@@ -233,8 +233,8 @@ class DataConfig:
         self.time_idx = "target_date"
         self.normalized_features = ["full_size", "discount_rate"]
         self.to_normalized_features = {"temperature": 30, "dau": 500000, "show_times": 10000, "click_times": 2000}
-        self.na_features = {"discount_rate": 1.0, "temperature": 30}
-        self.features = self.id_features + self.normalized_features + list(self.to_normalized_features) + [self.target]
+        self.na_features = {"discount_rate": 1.0, "temperature": 30, "dau": 500000, "show_times": 10000, "click_times": 2000}
+        self.features = self.id_features + self.normalized_features + list(self.to_normalized_features) + [self.target] # 特征数：7 + 2 + 4 + 1 # 11
         self.pos_weight = 1.5
 
         self.min_predict_length = 3
@@ -370,7 +370,7 @@ class DataConfig:
                     # mean_dau_rate = np.mean(self.future_28_day_daus[i * 7:(i + 1) * 7])
                     mean_dau_rate = train_df["dau"].mean()
                     sequence_features.append(train_df)
-                    to_predict_week_features.append([0 if mean_dau_rate is None else mean_dau_rate, j])
+                    to_predict_week_features.append([mean_dau_rate, j])
                     to_predict_codes.append(code)
         return sequence_features, to_predict_week_features, to_predict_codes
 
