@@ -49,6 +49,7 @@ if __name__ == '__main__':
     # iq
     if args.range != '':
         for ds in args.range.split(','):
+            args = parser.parse_args()
             args.in_file = args.in_file % ds
             args.s3_file = args.s3_file % ds
             main(args)
